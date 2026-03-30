@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TradeJournal Pro · Cloud</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ── LIGHT THEME (default) ── */
+:root{
+  --color-scheme:light;
+  --bg:#f5f6fa;--surface:#ffffff;--s2:#f2f4f8;--s3:#eaecf3;
+  --border:#e2e6f0;--border2:#cbd2e3;
+  --text:#0b0f1a;--t2:#374259;--t3:#7f8fa6;
+  --acc:#c8983a;--accD:#9a721e;--accL:#fdf3e0;--accF:#fffbf2;
+  --green:#0ea04f;--gBg:#edfaf3;--gBdr:#a7f3cc;
+  --red:#e02424;--rBg:#fef1f1;--rBdr:#fca5a5;
+  --blue:#1d4ed8;--bBg:#eff3ff;--bBdr:#bfcffe;
+  --purple:#6d28d9;--pBg:#f4f1ff;--pBdr:#d8cffc;
+  --orange:#ea580c;--oBg:#fff7ed;--oBdr:#fed7aa;
+  --cyan:#0891b2;--cBg:#ecfeff;--cBdr:#a5f3fc;
+  --indigo:#4338ca;
+  --topbar-bg:rgba(245,246,250,.94);
+  --sh1:0 1px 4px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh2:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
+  --sh3:0 20px 50px rgba(0,0,0,.10),0 4px 12px rgba(0,0,0,.06);
+  --r:14px;
+  /* accent aliases */
+  --gold:var(--acc);--goldD:var(--accD);--goldL:var(--accL);--goldF:var(--accF);
+}
+
+/* ── DARK THEME ── */
+[data-theme="dark"]{
+  --color-scheme:dark;
+  --bg:#0e1117;--surface:#161b26;--s2:#1c2333;--s3:#222a3a;
+  --border:#2a3347;--border2:#3a4660;
+  --text:#e8ecf4;--t2:#a0aec0;--t3:#5a6a82;
+  --gBg:#0d2618;--gBdr:#166534;
+  --rBg:#2d0f0f;--rBdr:#7f1d1d;
+  --bBg:#0f1d3a;--bBdr:#1e3a8a;
+  --pBg:#1a0f35;--pBdr:#4c1d95;
+  --oBg:#1f0f00;--oBdr:#7c2d12;
+  --cBg:#04192a;--cBdr:#164e63;
+  --topbar-bg:rgba(14,17,23,.94);
+  --sh1:0 1px 4px rgba(0,0,0,.4);
+  --sh2:0 4px 16px rgba(0,0,0,.5);
+  --sh3:0 20px 50px rgba(0,0,0,.7);
+}
+
+/* ── ACCENT THEMES ── */
+[data-accent="emerald"]{--acc:#059669;--accD:#047857;--accL:#d1fae5;--accF:#ecfdf5;}
+[data-accent="sky"]{--acc:#0284c7;--accD:#0369a1;--accL:#e0f2fe;--accF:#f0f9ff;}
+[data-accent="violet"]{--acc:#7c3aed;--accD:#6d28d9;--accL:#ede9fe;--accF:#f5f3ff;}
+[data-accent="rose"]{--acc:#e11d48;--accD:#be123c;--accL:#ffe4e6;--accF:#fff1f2;}
+[data-accent="amber"]{--acc:#c8983a;--accD:#a87c28;--accL:#fdf5e6;--accF:#fffbf0;}
+[data-accent="slate"]{--acc:#475569;--accD:#334155;--accL:#f1f5f9;--accF:#f8fafc;}
+[data-accent="teal"]{--acc:#0d9488;--accD:#0f766e;--accL:#ccfbf1;--accF:#f0fdfa;}
+[data-accent="indigo"]{--acc:#4f46e5;--accD:#4338ca;--accL:#e0e7ff;--accF:#eef2ff;}
+
+[data-accent] { --gold:var(--acc);--goldD:var(--accD);--goldL:var(--accL);--goldF:var(--accF); }
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+html{font-family:'Outfit',system-ui,sans-serif;text-rendering:optimizeLegibility;}
+body{background:var(--bg);color:var(--text);transition:background .25s,color .25s;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:var(--acc);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes sidebarSlide{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+@keyframes barIn{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+@keyframes scaleIn{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes countUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px color-mix(in srgb, var(--acc) 30%, transparent)}50%{box-shadow:0 0 20px color-mix(in srgb, var(--acc) 60%, transparent)}}
+
+.fade-up{animation:fadeUp .38s cubic-bezier(.22,1,.36,1) both;}
+.scale-in{animation:scaleIn .28s cubic-bezier(.22,1,.36,1) both;}
+.bar-anim{transform-origin:bottom;animation:barIn .5s cubic-bezier(.22,1,.36,1) both;}
+.count-up{animation:countUp .45s cubic-bezier(.22,1,.36,1) both;}
+
+input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--acc)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 15%,transparent)!important;}
+button:focus{outline:none;}
+
+.chip{display:inline-flex;align-items:center;gap:3px;border-radius:7px;padding:2px 9px;font-size:10.5px;font-weight:600;white-space:nowrap;line-height:1.5;}
+.hover-row:hover{background:var(--s2)!important;}
+.nav-btn{transition:all .18s cubic-bezier(.22,1,.36,1);border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:9px 12px;width:100%;text-align:left;font-family:inherit;}
+.nav-btn:hover:not(.active){background:var(--s2);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh1);transition:border-color .2s,box-shadow .2s;}
+.card:hover{border-color:var(--border2);box-shadow:var(--sh2);}
+
+/* KPI card number shimmer effect */
+.kpi-val{font-feature-settings:'tnum';letter-spacing:-1.5px;line-height:1;}
+
+@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr)!important;}.g3{grid-template-columns:repeat(2,1fr)!important;}}
+@media(max-width:768px){.g4,.g3,.g2{grid-template-columns:1fr!important;}.hide-m{display:none!important;}.m-stack{flex-direction:column!important;align-items:stretch!important;}.m-scroll{overflow-x:auto!important;}}
+@media(max-width:480px){.content-area{padding:14px 12px 60px!important;}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useMemo,useEffect,useRef,useCallback,memo,Component}=React;
+
+/* ── ERROR BOUNDARY ── */
+class ErrorBoundary extends Component{
+  constructor(p){super(p);this.state={err:false,msg:''};}
+  static getDerivedStateFromError(e){return{err:true,msg:e?.message||''};}
+  render(){
+    if(this.state.err)return(
+      <div style={{minHeight:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#f7f8fa',fontFamily:'Plus Jakarta Sans,sans-serif'}}>
+        <div style={{fontSize:48,marginBottom:16}}>⚠️</div>
+        <h2 style={{fontSize:18,fontWeight:600,marginBottom:8}}>Something went wrong</h2>
+        <p style={{color:'#3d4a5c',marginBottom:20,fontSize:14,maxWidth:340,textAlign:'center',lineHeight:1.7}}>{this.state.msg||'An unexpected error occurred.'}</p>
+        <button onClick={()=>this.setState({err:false})} style={{background:'#c8983a',color:'#fff',border:'none',borderRadius:10,padding:'11px 28px',fontSize:14,fontWeight:700,cursor:'pointer'}}>Try Again</button>
+      </div>
+    );
+    return this.props.children;
+  }
+}
+
+const API_URL="https://films-golden-classes-angela.trycloudflare.com";
+
+/* ── INDEXEDDB FOR SCREENSHOTS ── */
+const SDB={_db:null,_N:'TJScreenshots',_S:'shots',
+  async open(){if(this._db)return this._db;return new Promise((res,rej)=>{const r=indexedDB.open(this._N,1);r.onupgradeneeded=e=>e.target.result.createObjectStore(this._S);r.onsuccess=e=>{this._db=e.target.result;res(this._db)};r.onerror=()=>rej(r.error)})},
+  async save(id,url){const db=await this.open();return new Promise((res,rej)=>{const tx=db.transaction(this._S,'readwrite');tx.objectStore(this._S).put(url,String(id));tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})},
+  async get(id){const db=await this.open();return new Promise((res,rej)=>{const tx=db.transaction(this._S,'readonly');const r=tx.objectStore(this._S).get(String(id));r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error)})},
+  async remove(id){const db=await this.open();return new Promise((res,rej)=>{const tx=db.transaction(this._S,'readwrite');tx.objectStore(this._S).delete(String(id));tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})},
+  async compress(id,file,maxW=900){return new Promise((res,rej)=>{const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const sc=Math.min(1,maxW/img.width);c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);const d=c.toDataURL('image/webp',.78);this.save(id,d).then(()=>res(d)).catch(rej)};img.onerror=rej;img.src=e.target.result};reader.onerror=rej;reader.readAsDataURL(file)})}
+};
+
+/* ── CONSTANTS ── */
+const CONFLUENCES=['Break of Structure','Fair Value Gap','Order Block','Liquidity Sweep','Inducement','Change of Character','Market Structure Shift','Premium/Discount','VWAP','EMA Confluence','Supply/Demand Zone','Fibonacci Level','Session Open','News Catalyst','Trendline Bounce','Divergence','Volume Spike','Pin Bar','Engulfing','Inside Bar','Liq Sweep','TL BO','RTO Bullish','V Shape','TL BD','4H Bullish','IFVG','Rejection Candle','4H Bearish','RTO Bearish','NYO Rejection','4H Flip','S/D Zone','1H Flip','RTO Flip'];
+const SESSIONS=['London Open','New York','Out of Session','London Mid','Asia'];
+const MODELS=['In Session','Off Session','Off Session Reversal','In Session Reversal','SMC (Smart Money)','ICT Concepts','Price Action','Scalping','Swing Trade','Trend Following','Counter Trend','Breakout','Reversal','Range','Momentum','VWAP Strategy','News Play'];
+const EMOTIONS_B=['Calm & Focused','Confident','Neutral','Slightly Anxious','FOMO','Greedy','Fearful','Overconfident','Tired/Unfocused','Excited','Impatient','Revenge Mindset'];
+const EMOTIONS_A=['Satisfied','Disciplined','Neutral','Slightly Regretful','Regretful','Euphoric','Frustrated','Angry','Relieved','Disappointed','Proud','Lesson Learned'];
+const MISTAKES=['None','Moved Stop Loss','Position Too Large','Revenge Trading','FOMO Entry','Early Exit','Late Entry','No Trading Plan','Ignored Rules','Overtraded','Chased Price','Poor RR Setup','Wrong Timeframe','Emotional Decision','Skipped Analysis'];
+const GRADES=['A+','A','B','C','D'];
+const RR_OPTIONS=['1:0.5','1:1','1:1.5','1:2','1:2.5','1:3','1:4','1:5','1:6+','Custom'];
+const ACC_COLS=['#c8983a','#2563eb','#7c3aed','#16a34a','#ea580c','#0891b2','#ec4899'];
+
+/* ── FORMATTERS ── */
+const fmtPct=(n,d=2)=>(n>=0?'+':'')+n.toFixed(d)+'%';
+const fmtUSD=(n,plus=true)=>(plus&&n>=0?'+':'')+new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2}).format(n);
+const fmtK=v=>v>=1000?(v/1000).toFixed(1)+'k':v.toFixed(0);
+const fmtPrice=n=>n?.toLocaleString('en-US',{maximumFractionDigits:5})||'—';
+const tTxt=n=>n>=0?'var(--accD)':'var(--t2)';
+const tBg=n=>n>=0?'var(--accL)':'var(--s2)';
+const tBdr=n=>n>=0?'color-mix(in srgb, var(--acc) 25%, transparent)':'var(--border)';
+
+function inferCapital(trades){
+  const s=[...trades].sort((a,b)=>a.entryDate.localeCompare(b.entryDate)||a.entryTime.localeCompare(b.entryTime));
+  for(const t of s){if(t.profit&&t.pnl&&Math.abs(t.pnl)>0)return Math.abs(t.profit/(t.pnl/100));}
+  return 1000;
+}
+function deriveDir(t){
+  if(t.entryPrice&&t.exitPrice&&t.pnl!==0){const up=t.exitPrice>t.entryPrice,win=t.pnl>0;if(up&&win)return'Long';if(up&&!win)return'Short';if(!up&&win)return'Short';return'Long';}
+  return t.side||'Long';
+}
+
+/* ── HOOKS ── */
+function useMediaQuery(q){
+  const[m,setM]=useState(()=>window.matchMedia(q).matches);
+  useEffect(()=>{const mq=window.matchMedia(q);const h=e=>setM(e.matches);mq.addEventListener('change',h);return()=>mq.removeEventListener('change',h)},[q]);
+  return m;
+}
+
+/* ── STORAGE ── */
+function loadAccounts(){try{const r=localStorage.getItem('tj5_accounts');if(!r)return[];return JSON.parse(r)}catch{return[]}}
+function saveAccounts(accs){try{localStorage.setItem('tj5_accounts',JSON.stringify(accs))}catch{}}
+function loadTradeMeta(){try{const r=localStorage.getItem('tj5_meta');return r?JSON.parse(r):{}}catch{return{}}}
+function loadTheme(){try{return localStorage.getItem('tj5_theme')||'light'}catch{return'light'}}
+function loadAccent(){try{return localStorage.getItem('tj5_accent')||'amber'}catch{return'amber'}}
+
+/* ── SEED DATA (with new fields) ── */
+const SEED=[
+  {id:1,symbol:'XAUUSD',entryDate:'2026-03-27',entryTime:'10:15:00',side:'Long',entryPrice:3180.50,exitPrice:3198.20,pnl:0.56,profit:42.30,status:'Closed',confluences:['Fair Value Gap','Order Block','Break of Structure'],session:'London',model:'SMC (Smart Money)',emotionBefore:'Calm & Focused',emotionAfter:'Satisfied',mistakes:'None',grade:'A',expectedRR:'1:2',actualRR:'1:1.8',notes:'Clean FVG fill on LTF, confluence with HTF OB'},
+  {id:2,symbol:'BTCUSD',entryDate:'2026-03-26',entryTime:'09:01:00',side:'Short',entryPrice:69882,exitPrice:70706,pnl:-1.18,profit:-88.50,status:'Closed',confluences:['FOMO Entry'],session:'New York',model:'Price Action',emotionBefore:'FOMO',emotionAfter:'Regretful',mistakes:'FOMO Entry',grade:'D',expectedRR:'1:2',actualRR:'-1',notes:'Chased the move, no valid setup'},
+  {id:3,symbol:'XAUUSD',entryDate:'2026-03-26',entryTime:'08:56:00',side:'Short',entryPrice:3210.42,exitPrice:3198.80,pnl:0.36,profit:27.60,status:'Closed',confluences:['Break of Structure','Liquidity Sweep','Change of Character'],session:'London',model:'ICT Concepts',emotionBefore:'Confident',emotionAfter:'Disciplined',mistakes:'None',grade:'A+',expectedRR:'1:3',actualRR:'1:2.8',notes:'Perfect CHoCH entry after liquidity sweep'},
+  {id:4,symbol:'BTCUSD',entryDate:'2026-03-25',entryTime:'14:30:00',side:'Long',entryPrice:71382,exitPrice:70638,pnl:-1.04,profit:-78.30,status:'Closed',confluences:['Trendline Bounce','VWAP'],session:'New York',model:'Trend Following',emotionBefore:'Confident',emotionAfter:'Frustrated',mistakes:'Wrong Timeframe',grade:'C',expectedRR:'1:2',actualRR:'-1',notes:'Trend was down on HTF, ignored the bias'},
+  {id:5,symbol:'XAUUSD',entryDate:'2026-03-22',entryTime:'02:46:00',side:'Short',entryPrice:3190.13,exitPrice:3138.50,pnl:1.62,profit:103.80,status:'Closed',confluences:['Order Block','Market Structure Shift','Premium/Discount'],session:'Asian',model:'SMC (Smart Money)',emotionBefore:'Calm & Focused',emotionAfter:'Satisfied',mistakes:'None',grade:'A+',expectedRR:'1:3',actualRR:'1:3.2',notes:'Textbook OB rejection in premium, perfect execution'},
+  {id:6,symbol:'NAS100',entryDate:'2026-03-20',entryTime:'15:30:00',side:'Long',entryPrice:19850,exitPrice:20120,pnl:1.36,profit:68.00,status:'Closed',confluences:['VWAP','EMA Confluence','Volume Spike'],session:'New York',model:'Momentum',emotionBefore:'Neutral',emotionAfter:'Satisfied',mistakes:'None',grade:'A',expectedRR:'1:2',actualRR:'1:2.1',notes:'NY session open momentum play'},
+  {id:7,symbol:'BTCUSD',entryDate:'2026-03-19',entryTime:'10:01:00',side:'Short',entryPrice:70436,exitPrice:70212,pnl:0.32,profit:19.20,status:'Closed',confluences:['Fair Value Gap','Fibonacci Level'],session:'London-NY Overlap',model:'Price Action',emotionBefore:'Calm & Focused',emotionAfter:'Neutral',mistakes:'Early Exit',grade:'B',expectedRR:'1:3',actualRR:'1:1',notes:'Good setup, left money on the table'},
+  {id:8,symbol:'XAUUSD',entryDate:'2026-03-18',entryTime:'13:35:00',side:'Short',entryPrice:3245.93,exitPrice:3182.50,pnl:1.96,profit:127.40,status:'Closed',confluences:['Break of Structure','Order Block','Change of Character','Liquidity Sweep'],session:'London',model:'SMC (Smart Money)',emotionBefore:'Confident',emotionAfter:'Proud',mistakes:'None',grade:'A+',expectedRR:'1:4',actualRR:'1:3.9',notes:'Multiple confluences aligned perfectly'},
+  {id:9,symbol:'XAUUSD',entryDate:'2026-03-17',entryTime:'07:44:00',side:'Long',entryPrice:3200.46,exitPrice:3188.00,pnl:-0.39,profit:-24.90,status:'Closed',confluences:['Supply/Demand Zone'],session:'London',model:'Price Action',emotionBefore:'Slightly Anxious',emotionAfter:'Lesson Learned',mistakes:'Moved Stop Loss',grade:'C',expectedRR:'1:2',actualRR:'-0.5',notes:'Moved SL after feeling pressure'},
+  {id:10,symbol:'BTCUSD',entryDate:'2026-03-13',entryTime:'03:12:00',side:'Long',entryPrice:70929,exitPrice:71360,pnl:0.61,profit:36.60,status:'Closed',confluences:['Fair Value Gap','Session Open'],session:'Asian',model:'SMC (Smart Money)',emotionBefore:'Calm & Focused',emotionAfter:'Satisfied',mistakes:'None',grade:'A',expectedRR:'1:2',actualRR:'1:1.9',notes:'Asian session FVG fill as planned'},
+  {id:11,symbol:'XAUUSD',entryDate:'2026-03-12',entryTime:'01:56:00',side:'Short',entryPrice:3290.41,exitPrice:3175.00,pnl:3.51,profit:231.50,status:'Closed',confluences:['Break of Structure','Market Structure Shift','Premium/Discount','Order Block'],session:'Asian',model:'SMC (Smart Money)',emotionBefore:'Calm & Focused',emotionAfter:'Satisfied',mistakes:'None',grade:'A+',expectedRR:'1:5',actualRR:'1:4.8',notes:'Perfect HTF bias, caught the full move'},
+  {id:12,symbol:'NAS100',entryDate:'2026-03-11',entryTime:'16:30:00',side:'Long',entryPrice:19600,exitPrice:19480,pnl:-0.61,profit:-30.60,status:'Closed',confluences:['Trendline Bounce'],session:'New York',model:'Scalping',emotionBefore:'Impatient',emotionAfter:'Frustrated',mistakes:'FOMO Entry',grade:'D',expectedRR:'1:2',actualRR:'-1',notes:'Impatient entry, no confluence'},
+  {id:13,symbol:'XAUUSD',entryDate:'2026-03-09',entryTime:'16:42:00',side:'Short',entryPrice:3210.70,exitPrice:3080.00,pnl:4.07,profit:261.40,status:'Closed',confluences:['Liquidity Sweep','Order Block','Fair Value Gap','Change of Character'],session:'New York',model:'SMC (Smart Money)',emotionBefore:'Calm & Focused',emotionAfter:'Euphoric',mistakes:'None',grade:'A+',expectedRR:'1:4',actualRR:'1:4.2',notes:'Best trade of the month'},
+  {id:14,symbol:'BTCUSD',entryDate:'2026-03-05',entryTime:'09:10:00',side:'Short',entryPrice:72000,exitPrice:72800,pnl:-1.11,profit:-66.60,status:'Closed',confluences:['Resistance Level'],session:'London',model:'Price Action',emotionBefore:'Overconfident',emotionAfter:'Angry',mistakes:'Position Too Large',grade:'C',expectedRR:'1:2',actualRR:'-1',notes:'Oversized after winning streak'},
+];
+
+
+/* ══════════════════════════════════════════════════
+   UI ATOMS
+══════════════════════════════════════════════════ */
+const C={
+  green:'var(--green)',gBg:'var(--gBg)',gBdr:'var(--gBdr)',
+  red:'var(--red)',rBg:'var(--rBg)',rBdr:'var(--rBdr)',
+  gold:'var(--acc)',goldD:'var(--accD)',goldL:'var(--accL)',goldF:'var(--accF)',
+  blue:'var(--blue)',bBg:'var(--bBg)',bBdr:'var(--bBdr)',
+  purple:'var(--purple)',pBg:'var(--pBg)',pBdr:'var(--pBdr)',
+  text:'var(--text)',t2:'var(--t2)',t3:'var(--t3)',
+  surface:'var(--surface)',s2:'var(--s2)',s3:'var(--s3)',
+  border:'var(--border)',border2:'var(--border2)',
+  bg:'var(--bg)',indigo:'var(--indigo)',
+};
+
+function Chip({children,color='gray',size='sm'}){
+  const map={
+    green:['var(--gBg)','var(--gBdr)','var(--green)'],
+    profit:['var(--accL)','color-mix(in srgb, var(--acc) 30%, transparent)','var(--accD)'],
+    loss:['var(--s3)','var(--border2)','var(--t2)'],
+    gold:['var(--accF)','color-mix(in srgb, var(--acc) 35%, transparent)','var(--accD)'],
+    blue:['var(--bBg)','var(--bBdr)','var(--blue)'],
+    purple:['var(--pBg)','var(--pBdr)','var(--purple)'],
+    orange:['var(--oBg)','var(--oBdr)','var(--orange)'],
+    cyan:['var(--cBg)','var(--cBdr)','var(--cyan)'],
+    red:['var(--rBg)','var(--rBdr)','var(--red)'],
+    gray:['var(--s3)','var(--border)','var(--t2)'],
+    truegreen:['var(--gBg)','var(--gBdr)','var(--green)'],
+  };
+  const[bg,bdr,txt]=map[color]||map.gray;
+  const pad=size==='sm'?'2px 8px':size==='lg'?'5px 14px':'4px 11px';
+  const fs=size==='sm'?'10px':size==='lg'?'13px':'11px';
+  return <span className="chip" style={{background:bg,border:`1px solid ${bdr}`,color:txt,padding:pad,fontSize:fs}}>{children}</span>;
+}
+
+function StatPill({val,pnl}){
+  const col=pnl>=0?C.goldD:C.t2;
+  const bg=pnl>=0?C.goldL:C.s3;
+  const bdr=pnl>=0?'color-mix(in srgb, var(--acc) 25%, transparent)':C.border;
+  return <span style={{background:bg,border:`1px solid ${bdr}`,color:col,borderRadius:7,padding:'2px 9px',fontSize:10.5,fontWeight:700}}>{val}</span>;
+}
+
+function Label({children}){
+  return <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.2,marginBottom:8,fontFamily:"'Outfit',sans-serif"}}>{children}</div>;
+}
+
+function PnlBadge({pnl,profit,size=12}){
+  const col=pnl>=0?C.goldD:C.t2;
+  return <span style={{color:col,fontSize:size,fontWeight:700}}>
+    {fmtPct(pnl)}
+    {profit!=null&&profit!==0&&<span style={{fontSize:size-1,opacity:.7,marginLeft:4}}>({fmtUSD(profit)})</span>}
+  </span>;
+}
+
+function GradeChip({grade}){
+  const map={'A+':[C.goldF,'color-mix(in srgb, var(--acc) 40%, transparent)',C.goldD],'A':[C.gBg,C.gBdr,C.green],'B':[C.bBg,C.bBdr,C.blue],'C':[C.pBg,C.pBdr,C.purple],'D':[C.rBg,C.rBdr,C.red]};
+  const[bg,bdr,txt]=map[grade||'B']||map['B'];
+  return <span style={{background:bg,border:`1px solid ${bdr}`,color:txt,borderRadius:6,padding:'2px 8px',fontSize:10.5,fontWeight:600}}>{grade||'—'}</span>;
+}
+
+function SessionChip({session}){
+  const map={'Asian':['#ecfeff','#a5f3fc','#0891b2'],'London':['#eff6ff','#bfdbfe','#2563eb'],'New York':['#fef3c7','color-mix(in srgb, var(--acc) 30%, transparent)','#a87c28'],'London-NY Overlap':['#f5f3ff','#ddd6fe','#7c3aed'],'Pre-Market':['var(--s3)','var(--border2)','var(--t2)'],'After Hours':['var(--s3)','var(--border2)','var(--t2)'],'Weekly Open':['#f0fdf4','#bbf7d0','#16a34a'],'Weekly Close':['#fef2f2','#fecaca','#dc2626']};
+  const[bg,bdr,txt]=map[session]||['var(--s3)','var(--border)','var(--t2)'];
+  return <span className="chip" style={{background:bg,border:`1px solid ${bdr}`,color:txt,padding:'2px 8px',fontSize:10}}>{session||'—'}</span>;
+}
+
+function EmotionChip({emotion,type='before'}){
+  const positive=['Calm & Focused','Confident','Neutral','Disciplined','Satisfied','Proud','Relieved'];
+  const negative=['FOMO','Greedy','Fearful','Angry','Revenge Mindset','Impatient','Euphoric','Overconfident'];
+  const isPos=positive.includes(emotion);const isNeg=negative.includes(emotion);
+  const bg=isPos?C.gBg:isNeg?C.rBg:C.bBg;
+  const bdr=isPos?C.gBdr:isNeg?C.rBdr:C.bBdr;
+  const col=isPos?C.green:isNeg?C.red:C.blue;
+  const icon=isPos?'😌':isNeg?'😰':'😐';
+  return <span className="chip" style={{background:bg,border:`1px solid ${bdr}`,color:col,padding:'2px 8px',fontSize:10}}>{icon} {emotion||'—'}</span>;
+}
+
+/* ── MINI SPARKLINE ── */
+function Sparkline({pts,w=120,h=36,color}){
+  if(!pts||pts.length<2)return <div style={{width:w,height:h}}/>;
+  const lo=Math.min(...pts),hi=Math.max(...pts),rng=hi-lo||1;
+  const P=2,IW=w-P*2,IH=h-P*2;
+  const xi=i=>(i/(pts.length-1||1))*IW+P;
+  const yi=v=>IH-((v-lo)/rng)*IH+P;
+  const d=pts.map((v,i)=>`${i===0?'M':'L'}${xi(i).toFixed(1)},${yi(v).toFixed(1)}`).join(' ');
+  const last=pts[pts.length-1];
+  const col=color||(last>=0?'var(--acc)':'#94a3b8');
+  const fill=`${d} L${xi(pts.length-1).toFixed(1)},${IH+P} L${P},${IH+P} Z`;
+  const gid=`sg${w}${h}${Math.abs(last).toFixed(0)}`;
+  return <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{display:'block',overflow:'hidden'}}>
+    <defs><linearGradient id={gid} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={col} stopOpacity={0.2}/><stop offset="100%" stopColor={col} stopOpacity={0.02}/></linearGradient></defs>
+    <path d={fill} fill={`url(#${gid})`}/>
+    <path d={d} fill="none" stroke={col} strokeWidth={1.8} strokeLinejoin="round" strokeLinecap="round"/>
+  </svg>;
+}
+
+/* ── HORIZONTAL BAR WITH LABEL ── */
+function HBar({label,value,max,color='var(--acc)',subtitle,rightLabel}){
+  const pct=max>0?Math.min(100,(Math.abs(value)/max)*100):0;
+  return <div style={{marginBottom:10}}>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
+      <span style={{fontSize:12,fontWeight:600,color:'var(--t2)'}}>{label}</span>
+      <div style={{display:'flex',gap:8,alignItems:'center'}}>
+        {subtitle&&<span style={{fontSize:10,color:'var(--t3)'}}>{subtitle}</span>}
+        {rightLabel&&<span style={{fontSize:12,fontWeight:700,color:value>=0?'var(--accD)':'var(--t2)'}}>{rightLabel}</span>}
+      </div>
+    </div>
+    <div style={{height:7,background:'var(--s3)',borderRadius:4,overflow:'hidden'}}>
+      <div style={{width:`${pct}%`,height:'100%',background:color,borderRadius:4,transition:'width .5s cubic-bezier(.22,1,.36,1)'}}/>
+    </div>
+  </div>;
+}
+
+/* ── DONUT ── */
+function Donut({pct,size=56,color='var(--acc)',label}){
+  const r=23,cx=32,cy=32,circ=2*Math.PI*r;
+  const dash=Math.max(0,Math.min(circ,circ*(pct/100)));
+  return <svg width={size} height={size} viewBox="0 0 64 64">
+    <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--s3)" strokeWidth={7}/>
+    <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth={7}
+      strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" transform="rotate(-90 32 32)"
+      style={{transition:'stroke-dasharray .6s ease'}}/>
+    <text x={cx} y={cy+4} textAnchor="middle" fontSize={11} fontWeight={700} fill="var(--text)" fontFamily="Plus Jakarta Sans">{label||pct.toFixed(0)+'%'}</text>
+  </svg>;
+}
+
+/* ── PROFIT CURVE ── */
+const ProfitCurve=memo(function ProfitCurve({trades,height=140}){
+  const svgRef=useRef(null);
+  const[hover,setHover]=useState(null);
+  const[mounted,setMounted]=useState(false);
+  const pathRef=useRef(null);
+  useEffect(()=>{setMounted(false);const t=setTimeout(()=>setMounted(true),60);return()=>clearTimeout(t)},[trades.length]);
+  useEffect(()=>{
+    if(!mounted||!pathRef.current)return;
+    const len=pathRef.current.getTotalLength?.()??2000;
+    pathRef.current.style.strokeDasharray=len;
+    pathRef.current.style.strokeDashoffset=len;
+    pathRef.current.style.transition='stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)';
+    requestAnimationFrame(()=>{pathRef.current&&(pathRef.current.style.strokeDashoffset='0')});
+  },[mounted]);
+  const sorted=[...trades].sort((a,b)=>a.entryDate.localeCompare(b.entryDate)||a.entryTime.localeCompare(b.entryTime));
+  let cum=0;
+  const pts=[{x:0,y:0,date:'Start'},{...sorted.map((t,i)=>{cum+=t.pnl;return{x:i+1,y:cum,date:t.entryDate,pnl:t.pnl,label:t.symbol}})}];
+  const allPts=[{x:0,y:0,date:'Start'},...sorted.map((t,i)=>{let c2=0;for(let j=0;j<=i;j++)c2+=sorted[j].pnl;return{x:i+1,y:c2,date:t.entryDate,pnl:t.pnl,label:t.symbol}})];
+  const maxX=allPts.length-1||1;
+  const lo=Math.min(...allPts.map(p=>p.y)),hi=Math.max(...allPts.map(p=>p.y)),rng=hi-lo||1;
+  const PAD={t:8,b:20,l:42,r:12};
+  const W=900,H=height,IW=W-PAD.l-PAD.r,IH=H-PAD.t-PAD.b;
+  const sx=x=>(x/maxX)*IW+PAD.l;
+  const sy=y=>IH-((y-lo)/rng)*IH+PAD.t;
+  const last=allPts[allPts.length-1].y;
+  const col=last>=0?'var(--acc)':'#94a3b8';
+  const zero=Math.max(PAD.t,Math.min(PAD.t+IH,sy(Math.max(lo,Math.min(0,hi)))));
+  const d=allPts.map((p,i)=>`${i===0?'M':'L'}${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join(' ');
+  const fill=`${d} L${sx(maxX).toFixed(1)},${zero.toFixed(1)} L${sx(0).toFixed(1)},${zero.toFixed(1)} Z`;
+  const ySteps=Array.from({length:5},(_,i)=>lo+(rng/4)*i);
+  const handleMove=useCallback(e=>{
+    const rect=svgRef.current?.getBoundingClientRect();if(!rect)return;
+    const mx=((e.clientX-rect.left)/rect.width)*W;
+    const idx=Math.max(0,Math.min(maxX,Math.round((mx-PAD.l)/IW*maxX)));
+    setHover({idx});
+  },[maxX]);
+  const hp=hover!=null?allPts[hover.idx]:null;
+  return <div style={{position:'relative'}}>
+    <svg ref={svgRef} width="100%" viewBox={`0 0 ${W} ${H}`} style={{display:'block',cursor:'crosshair'}}
+      onMouseMove={handleMove} onMouseLeave={()=>setHover(null)}>
+      <defs>
+        <linearGradient id="pcg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={col} stopOpacity={0.15}/>
+          <stop offset="100%" stopColor={col} stopOpacity={0.01}/>
+        </linearGradient>
+        <clipPath id="pcc"><rect x={PAD.l} y={PAD.t} width={IW} height={IH}/></clipPath>
+      </defs>
+      {ySteps.map((v,i)=><g key={i}>
+        <line x1={PAD.l} x2={PAD.l+IW} y1={sy(v)} y2={sy(v)} stroke="var(--border)" strokeWidth={.7}/>
+        <text x={PAD.l-5} y={sy(v)+4} textAnchor="end" fontSize={9} fill="var(--t3)" fontFamily="Plus Jakarta Sans">{fmtPct(v,0)}</text>
+      </g>)}
+      {lo<0&&hi>0&&<line x1={PAD.l} x2={PAD.l+IW} y1={zero} y2={zero} stroke="var(--border2)" strokeWidth={1} strokeDasharray="4,3"/>}
+      <path d={fill} fill="url(#pcg)" clipPath="url(#pcc)" style={{opacity:mounted?1:0,transition:'opacity .6s'}}/>
+      <path ref={pathRef} d={d} fill="none" stroke={col} strokeWidth={2.2} strokeLinejoin="round" strokeLinecap="round" clipPath="url(#pcc)"/>
+      <circle cx={sx(maxX)} cy={sy(last)} r={4} fill={col} stroke="white" strokeWidth={2} opacity={mounted?1:0} style={{transition:'opacity .3s .8s'}}/>
+      {hp&&hover.idx>0&&<g style={{pointerEvents:'none'}}>
+        <line x1={sx(hover.idx)} x2={sx(hover.idx)} y1={PAD.t} y2={PAD.t+IH} stroke={col} strokeWidth={1} strokeDasharray="3,3" opacity={.5}/>
+        <circle cx={sx(hover.idx)} cy={sy(hp.y)} r={5} fill={col} stroke="white" strokeWidth={2}/>
+      </g>}
+    </svg>
+    {hp&&hover.idx>0&&(()=>{
+      const frac=sx(hover.idx)/W;
+      const left=frac>.72?'auto':`calc(${Math.round(frac*100)}% + 10px)`;
+      const right=frac>.72?'10px':'auto';
+      return <div style={{position:'absolute',top:4,left,right,background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'11px 15px',fontSize:11,pointerEvents:'none',zIndex:10,minWidth:160,boxShadow:'0 8px 30px rgba(0,0,0,.12)'}}>
+        <div style={{fontWeight:500,marginBottom:6,fontSize:12,borderBottom:'1px solid var(--border)',paddingBottom:6}}>{hp.date}</div>
+        <div style={{display:'flex',justifyContent:'space-between',gap:14,marginBottom:4}}>
+          <span style={{color:'var(--t3)'}}>Cum P&L</span>
+          <span style={{fontWeight:700,color:hp.y>=0?'var(--accD)':'var(--t2)'}}>{fmtPct(hp.y)}</span>
+        </div>
+        {hp.pnl!=null&&<div style={{display:'flex',justifyContent:'space-between',gap:14}}>
+          <span style={{color:'var(--t3)'}}>{hp.label||'Trade'}</span>
+          <span style={{fontWeight:700,color:hp.pnl>=0?'var(--accD)':'var(--t2)'}}>{fmtPct(hp.pnl)}</span>
+        </div>}
+      </div>;
+    })()}
+  </div>;
+});
+
+
+/* ══════════════════════════════════════════════════
+   ACCOUNTS PANEL (with Demo Account support)
+══════════════════════════════════════════════════ */
+function AccountsPanel({accounts,onSync,onRemove,onAdd,syncingId}){
+  const[adding,setAdding]=useState(false);
+  const[mode,setMode]=useState('demo');// 'demo' or 'mt5'
+  const[creds,setCreds]=useState({label:'',capital:'10000',login:'',password:'',server:'',type:'live'});
+  const[showPw,setShowPw]=useState(false);
+  const isMobile=useMediaQuery('(max-width:768px)');
+  const canAdd=mode==='demo'?creds.label&&creds.capital:creds.login&&creds.password&&creds.server;
+  const inp={width:'100%',border:'1.5px solid var(--border)',borderRadius:9,padding:'9px 12px',fontSize:13,outline:'none',background:'var(--s2)',color:'var(--text)',boxSizing:'border-box',fontFamily:'inherit'};
+
+  const handleAdd=()=>{
+    if(!canAdd)return;
+    if(mode==='demo'){
+      onAdd({label:creds.label||'Demo Account',capital:+creds.capital||10000,isDemo:true,login:'demo',password:'demo',server:'demo',type:'demo'});
+    }else{
+      onAdd({label:creds.label||`Account #${creds.login}`,capital:+creds.capital||10000,isDemo:false,login:creds.login,password:creds.password,server:creds.server,type:creds.type});
+    }
+    setCreds({label:'',capital:'10000',login:'',password:'',server:'',type:'live'});
+    setAdding(false);
+  };
+
+  return <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:16,marginBottom:20,boxShadow:'var(--sh1)'}}>
+    <div style={{display:'flex',alignItems:'center',gap:14,padding:'15px 20px',borderBottom:accounts.length||adding?'1px solid var(--border)':'none',flexWrap:'wrap'}}>
+      <div style={{width:40,height:40,borderRadius:11,background:'linear-gradient(135deg,var(--accF),var(--s3))',border:'1.5px solid color-mix(in srgb, var(--acc) 30%, transparent)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>⇌</div>
+      <div style={{flex:1,minWidth:120}}>
+        <div style={{fontSize:14,fontWeight:600,color:'var(--text)'}}>Accounts</div>
+        <div style={{fontSize:11,color:'var(--t3)',marginTop:1}}>{accounts.length===0?'No accounts — add one to start tracking':`${accounts.filter(a=>a.connected).length} connected · ${accounts.length} total`}</div>
+      </div>
+      <button onClick={()=>setAdding(a=>!a)} style={{background:adding?'var(--s3)':'linear-gradient(135deg,var(--acc),var(--accD))',color:adding?'var(--t2)':'#fff',border:`1.5px solid ${adding?'var(--border)':'transparent'}`,borderRadius:10,padding:'9px 20px',fontWeight:700,fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',gap:6,boxShadow:adding?'none':'0 3px 10px color-mix(in srgb, var(--acc) 35%, transparent)'}}>
+        {adding?'✕ Cancel':'+ Add Account'}
+      </button>
+    </div>
+
+    {accounts.length>0&&<div style={{padding:'12px 20px',display:'flex',flexDirection:'column',gap:8}}>
+      {accounts.map((acc,i)=>{
+        const col=ACC_COLS[i%ACC_COLS.length];
+        const isSyncing=syncingId===acc.id;
+        return <div key={acc.id} style={{display:'flex',alignItems:'center',gap:12,background:'var(--s2)',border:`1px solid ${acc.connected?'var(--gBdr)':'var(--border)'}`,borderRadius:11,padding:'11px 16px',flexWrap:'wrap'}}>
+          <span style={{width:9,height:9,borderRadius:'50%',background:col,flexShrink:0,boxShadow:`0 0 0 3px ${col}25`}}/>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:13,fontWeight:700,display:'flex',alignItems:'center',gap:7,flexWrap:'wrap'}}>
+              {acc.label}
+              {acc.isDemo&&<Chip color="purple" size="sm">DEMO</Chip>}
+              {acc.connected&&!acc.isDemo&&<Chip color="truegreen" size="sm">● LIVE</Chip>}
+              {acc.type==='demo'&&!acc.isDemo&&<Chip color="blue" size="sm">TEST</Chip>}
+            </div>
+            <div style={{fontSize:11,color:'var(--t3)',marginTop:2}}>
+              {acc.isDemo?`Capital: ${fmtUSD(acc.capital||10000,false)}`:`#${acc.login} · ${acc.server}`}
+              {acc.lastSync&&` · synced ${acc.lastSync}`}
+            </div>
+          </div>
+          {!acc.isDemo&&<button onClick={()=>onSync(acc)} disabled={isSyncing} style={{background:isSyncing?'var(--s3)':col,color:'#fff',border:'none',borderRadius:8,padding:'7px 14px',fontWeight:700,fontSize:11,cursor:isSyncing?'not-allowed':'pointer',display:'flex',alignItems:'center',gap:5,opacity:isSyncing?.65:1}}>
+            <span style={{display:'inline-block',animation:isSyncing?'spin 1s linear infinite':'none'}}>⟳</span>
+            {isSyncing?'Syncing':'Sync'}
+          </button>}
+          <button onClick={()=>onRemove(acc.id)} style={{background:'none',border:'1px solid var(--border)',color:'var(--t3)',cursor:'pointer',fontSize:11,padding:'6px 9px',borderRadius:7}}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--red)';e.currentTarget.style.color='var(--red)';}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--t3)';}}>✕</button>
+        </div>;
+      })}
+    </div>}
+
+    {adding&&<div style={{padding:'20px',borderTop:'1px solid var(--border)',background:'var(--s2)',borderBottomLeftRadius:16,borderBottomRightRadius:16}}>
+      <div style={{display:'flex',gap:8,marginBottom:18}}>
+        <button onClick={()=>setMode('demo')} style={{padding:'7px 18px',borderRadius:10,border:`1.5px solid ${mode==='demo'?'var(--purple)':'var(--border)'}`,background:mode==='demo'?'var(--pBg)':'var(--surface)',color:mode==='demo'?'var(--purple)':'var(--t2)',fontWeight:700,fontSize:12,cursor:'pointer'}}>🎮 Demo Account</button>
+        <button onClick={()=>setMode('mt5')} style={{padding:'7px 18px',borderRadius:10,border:`1.5px solid ${mode==='mt5'?'var(--acc)':'var(--border)'}`,background:mode==='mt5'?'var(--accF)':'var(--surface)',color:mode==='mt5'?'var(--accD)':'var(--t2)',fontWeight:700,fontSize:12,cursor:'pointer'}}>📡 MT5 Account</button>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:12,marginBottom:14}}>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Account Name</div><input placeholder="e.g. My Paper Trading" value={creds.label} onChange={e=>setCreds(c=>({...c,label:e.target.value}))} style={inp}/></div>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Starting Capital ($)</div><input type="number" placeholder="10000" value={creds.capital} onChange={e=>setCreds(c=>({...c,capital:e.target.value}))} style={inp}/></div>
+        {mode==='mt5'&&<>
+          <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Login ID</div><input placeholder="12345678" value={creds.login} onChange={e=>setCreds(c=>({...c,login:e.target.value}))} style={inp}/></div>
+          <div style={{position:'relative'}}><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Investor Password</div>
+            <input type={showPw?'text':'password'} placeholder="Read-only password" value={creds.password} onChange={e=>setCreds(c=>({...c,password:e.target.value}))} style={{...inp,paddingRight:36}}/>
+            <button type="button" onClick={()=>setShowPw(s=>!s)} style={{position:'absolute',right:10,top:32,background:'none',border:'none',cursor:'pointer',color:'var(--t3)',fontSize:13}}>{showPw?'●':'○'}</button>
+          </div>
+          <div style={{gridColumn:'1/-1'}}><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Server</div><input placeholder="Broker-Server" value={creds.server} onChange={e=>setCreds(c=>({...c,server:e.target.value}))} style={inp}/></div>
+        </>}
+      </div>
+      <button onClick={handleAdd} disabled={!canAdd} style={{background:canAdd?'linear-gradient(135deg,var(--acc),var(--accD))':'var(--s3)',color:canAdd?'#fff':'var(--t3)',border:'none',borderRadius:10,padding:'11px 26px',fontWeight:600,fontSize:13,cursor:canAdd?'pointer':'not-allowed',boxShadow:canAdd?'0 3px 12px color-mix(in srgb, var(--acc) 40%, transparent)':'none'}}>
+        {mode==='demo'?'✓ Create Demo Account':'⟳ Add & Sync MT5'}
+      </button>
+      {mode==='mt5'&&<span style={{fontSize:11,color:'var(--t3)',marginLeft:12}}>Use investor (read-only) password</span>}
+    </div>}
+  </div>;
+}
+
+/* ── DATE RANGE BAR ── */
+function DateRangeBar({trades,dateRange,setDateRange}){
+  const[mode,setMode]=useState('all');
+  const today=new Date();
+  const apply=(m,from,to)=>{setMode(m);setDateRange({from,to})};
+  const presets=[
+    {id:'all',label:'All',fn:()=>apply('all',null,null)},
+    {id:'thisweek',label:'This Week',fn:()=>{const mon=new Date(today);mon.setDate(today.getDate()-((today.getDay()+6)%7));const sun=new Date(mon);sun.setDate(mon.getDate()+6);apply('thisweek',mon.toISOString().slice(0,10),sun.toISOString().slice(0,10))}},
+    {id:'thismonth',label:'Month',fn:()=>{const y=today.getFullYear(),m=today.getMonth();const last=new Date(y,m+1,0);apply('thismonth',`${y}-${String(m+1).padStart(2,'0')}-01`,last.toISOString().slice(0,10))}},
+    {id:'30d',label:'30 Days',fn:()=>{const from=new Date(today);from.setDate(from.getDate()-30);apply('30d',from.toISOString().slice(0,10),today.toISOString().slice(0,10))}},
+  ];
+  const filtered=dateRange.from||dateRange.to?trades.filter(t=>(!dateRange.from||t.entryDate>=dateRange.from)&&(!dateRange.to||t.entryDate<=dateRange.to)):trades;
+  const totalP=filtered.reduce((s,t)=>s+(t.profit||0),0);
+  const totalPnl=filtered.reduce((s,t)=>s+t.pnl,0);
+  return <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:13,padding:'11px 16px',marginBottom:16,display:'flex',gap:6,flexWrap:'wrap',alignItems:'center'}}>
+    {presets.map(p=><button key={p.id} onClick={p.fn} style={{padding:'5px 14px',borderRadius:20,border:`1.5px solid ${mode===p.id?'var(--acc)':'var(--border)'}`,background:mode===p.id?'var(--accF)':'var(--surface)',color:mode===p.id?'var(--accD)':'var(--t2)',fontWeight:mode===p.id?700:500,fontSize:12,cursor:'pointer'}}>{p.label}</button>)}
+    <div style={{marginLeft:'auto',display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
+      <input type="date" value={dateRange.from||''} onChange={e=>setDateRange(r=>({...r,from:e.target.value||null}))} style={{border:'1.5px solid var(--border)',borderRadius:8,padding:'5px 10px',fontSize:12,outline:'none',background:'var(--surface)',color:'var(--text)',colorScheme:'var(--color-scheme, light)'}}/>
+      <span style={{color:'var(--t3)',fontSize:14}}>→</span>
+      <input type="date" value={dateRange.to||''} onChange={e=>setDateRange(r=>({...r,to:e.target.value||null}))} style={{border:'1.5px solid var(--border)',borderRadius:8,padding:'5px 10px',fontSize:12,outline:'none',background:'var(--surface)',color:'var(--text)',colorScheme:'var(--color-scheme, light)'}}/>
+      <span style={{fontSize:12,fontWeight:700,color:totalP>=0?'var(--accD)':'var(--t2)'}}>{fmtPct(totalPnl,2)} · {filtered.length}t</span>
+    </div>
+  </div>;
+}
+
+/* ══════════════════════════════════════════════════
+   OVERVIEW TAB
+══════════════════════════════════════════════════ */
+const Overview=memo(function Overview({trades,uiBlocks={}}){
+  const wins=trades.filter(t=>t.pnl>0),losses=trades.filter(t=>t.pnl<=0),total=trades.length;
+  const wr=total?wins.length/total*100:0;
+  const grossPct=trades.reduce((s,t)=>s+t.pnl,0);
+  const grossUSD=trades.reduce((s,t)=>s+(t.profit||0),0);
+  const avgW=wins.length?wins.reduce((s,t)=>s+t.pnl,0)/wins.length:0;
+  const avgL=losses.length?Math.abs(losses.reduce((s,t)=>s+t.pnl,0)/losses.length):0;
+  const wlR=avgL?(avgW/avgL).toFixed(2):'—';
+  const ic=inferCapital(trades);
+  const byMonth={};trades.forEach(t=>{const m=t.entryDate.slice(0,7);if(!byMonth[m])byMonth[m]={pnl:0,profit:0,cnt:0};byMonth[m].pnl+=t.pnl;byMonth[m].profit+=(t.profit||0);byMonth[m].cnt++});
+  const months=Object.entries(byMonth).sort();
+  const now=new Date();
+  const last30=Array.from({length:30},(_,i)=>{const d=new Date(now);d.setDate(d.getDate()-(29-i));return d.toISOString().slice(0,10)});
+  const byDay={};trades.forEach(t=>{if(!byDay[t.entryDate])byDay[t.entryDate]={pnl:0,profit:0};byDay[t.entryDate].pnl+=t.pnl;byDay[t.entryDate].profit+=(t.profit||0)});
+  const dayBars=last30.map(d=>({d,...(byDay[d]||{pnl:0,profit:0})}));
+  const maxDay=Math.max(...dayBars.map(b=>Math.abs(b.profit)),.1);
+  let cum=0,peak=0,maxDD=0;
+  [...trades].sort((a,b)=>a.entryDate.localeCompare(b.entryDate)).forEach(t=>{cum+=t.pnl;if(cum>peak)peak=cum;const dd=cum-peak;if(dd<maxDD)maxDD=dd});
+  const pnlPts=[];let runPnl=0;[...trades].sort((a,b)=>a.entryDate.localeCompare(b.entryDate)).forEach(t=>{runPnl+=t.pnl;pnlPts.push(runPnl)});
+
+  if(!total)return <div style={{textAlign:'center',padding:'100px 20px'}} className="fade-up">
+    <div style={{width:88,height:88,borderRadius:22,background:'linear-gradient(135deg,var(--accF),var(--s3))',border:'2px dashed color-mix(in srgb, var(--acc) 40%, transparent)',margin:'0 auto 20px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:40}}>📊</div>
+    <div style={{fontSize:20,fontWeight:600,marginBottom:10,letterSpacing:'-.5px'}}>No trades yet</div>
+    <div style={{fontSize:14,color:'var(--t2)',lineHeight:1.8}}>Add an account and log your first trade to begin tracking performance.</div>
+  </div>;
+
+  const gradeMap={};trades.forEach(t=>{const g=t.grade||'B';if(!gradeMap[g])gradeMap[g]={n:0,w:0};gradeMap[g].n++;if(t.pnl>0)gradeMap[g].w++});
+  const topGrade=Object.entries(gradeMap).sort((a,b)=>b[1].w/b[1].n-a[1].w/a[1].n)[0];
+  const expectedRR=trades.filter(t=>t.expectedRR&&t.expectedRR!=='Custom').map(t=>parseFloat(t.expectedRR?.split(':')[1]||1));
+  const avgExpRR=expectedRR.length?expectedRR.reduce((s,v)=>s+v,0)/expectedRR.length:0;
+  const actualRR_pos=trades.filter(t=>t.pnl>0&&t.actualRR&&!t.actualRR.startsWith('-')).map(t=>parseFloat(t.actualRR?.split(':')[1]||0));
+  const avgActRR=actualRR_pos.length?actualRR_pos.reduce((s,v)=>s+v,0)/actualRR_pos.length:0;
+
+  // Sparkline data per KPI (last 7 daily values)
+  const last7Days=Array.from({length:7},(_,i)=>{const d=new Date(now);d.setDate(d.getDate()-(6-i));return d.toISOString().slice(0,10)});
+  const dayPnlMap={};trades.forEach(t=>{if(!dayPnlMap[t.entryDate])dayPnlMap[t.entryDate]={pnl:0,wins:0,n:0,profit:0};dayPnlMap[t.entryDate].pnl+=t.pnl;dayPnlMap[t.entryDate].profit+=(t.profit||0);dayPnlMap[t.entryDate].n++;if(t.pnl>0)dayPnlMap[t.entryDate].wins++});
+  function MiniSparkline({values,color,height=28}){
+    if(!values||values.length<2)return null;
+    const mn=Math.min(...values),mx=Math.max(...values),rng=mx-mn||1;
+    const W=60,H=height,pts=values.map((v,i)=>`${(i/(values.length-1))*W},${H-(((v-mn)/rng)*(H-4)+2)}`).join(' ');
+    return <svg width={W} height={H} style={{display:'block',flexShrink:0}}>
+      <polyline points={pts} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>;
+  }
+  const sparkWR=last7Days.map(d=>dayPnlMap[d]?dayPnlMap[d].wins/dayPnlMap[d].n*100:null).filter(v=>v!==null);
+  const sparkPnl=last7Days.map(d=>dayPnlMap[d]?.pnl||0);
+  const sparkProfit=last7Days.map(d=>dayPnlMap[d]?.profit||0);
+  const sparkDD=[];let rd=0,rp=0,rm=0;[...trades].sort((a,b)=>a.entryDate.localeCompare(b.entryDate)).forEach(t=>{rd+=t.pnl;if(rd>rp)rp=rd;sparkDD.push(rd-rp);});
+
+  return <div style={{display:'flex',flexDirection:'column',gap:16}} className="fade-up">
+    {/* KPI row */}
+    <div className="g4" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}}>
+      {[
+        {label:'Total Trades',val:total,sub:`${wins.length} wins · ${losses.length} losses`,subCol:'var(--t3)',accent:'var(--blue)',spark:last7Days.map(d=>dayPnlMap[d]?.n||0),sparkCol:'#3b82f6'},
+        {label:'Win Rate',val:wr.toFixed(1)+'%',sub:wr>=50?'Performing above average':'Below average',subCol:wr>=50?'var(--accD)':'var(--t3)',accent:wr>=50?'var(--acc)':'var(--t2)',spark:sparkWR,sparkCol:wr>=50?'#16a34a':'#9ca3af'},
+        {label:'Gross P&L',val:fmtPct(grossPct),sub:grossUSD!==0?fmtUSD(grossUSD):'',subCol:grossPct>=0?'var(--accD)':'var(--red)',accent:grossPct>=0?'var(--acc)':'var(--red)',spark:sparkPnl,sparkCol:grossPct>=0?'var(--acc)':'#ef4444'},
+        {label:'Avg Win/Loss Ratio',val:wlR,sub:parseFloat(wlR)>=1.5?'Excellent risk management':parseFloat(wlR)>=1?'On track':'Needs improvement',subCol:parseFloat(wlR)>=1?'var(--green)':'var(--t3)',accent:'var(--green)',spark:[],sparkCol:'#16a34a'},
+      ].map((kpi,i)=><div key={i} className="card count-up" style={{borderTop:`2px solid ${kpi.accent}`,paddingTop:18,animationDelay:`${i*60}ms`,position:'relative',overflow:'hidden'}}>
+        <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',letterSpacing:.3,marginBottom:10,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          {kpi.label}
+          <div style={{width:5,height:5,borderRadius:'50%',background:kpi.accent,opacity:.7}}/>
+        </div>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',gap:8}}>
+          <div>
+            <div style={{fontSize:30,fontWeight:600,letterSpacing:'-1px',lineHeight:1,color:'var(--text)',fontFamily:"'Outfit',sans-serif"}}>{kpi.val}</div>
+            {kpi.sub&&<div style={{fontSize:11,marginTop:6,color:kpi.subCol,fontWeight:400,letterSpacing:.1}}>{kpi.sub}</div>}
+          </div>
+          {kpi.spark&&kpi.spark.length>1&&<MiniSparkline values={kpi.spark} color={kpi.sparkCol}/>}
+        </div>
+      </div>)}
+    </div>
+
+    {/* Second KPI row */}
+    <div className="g4" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}}>
+      {[
+        {label:'MAX DRAWDOWN',val:fmtPct(maxDD,1),sub:'Peak-to-trough',accent:'var(--red)',key:null,spark:sparkDD.slice(-7),sparkCol:'#ef4444'},
+        {label:'BEST GRADE',val:topGrade?topGrade[0]:'—',sub:topGrade?`${((topGrade[1].w/topGrade[1].n)*100).toFixed(0)}% win rate`:'',accent:'var(--acc)',key:'bestTradeGrade',spark:[],sparkCol:'var(--acc)'},
+        {label:'AVG EXP. RR',val:avgExpRR>0?`1:${avgExpRR.toFixed(1)}`:'—',sub:'Target reward ratio',accent:'var(--purple)',key:null,spark:[],sparkCol:'#7c3aed'},
+        {label:'AVG ACTUAL RR',val:avgActRR>0?`1:${avgActRR.toFixed(1)}`:'—',sub:avgActRR>=avgExpRR?'Meeting targets ✓':'Below target',subCol:avgActRR>=avgExpRR?'var(--green)':'var(--t3)',accent:'var(--cyan)',key:null,spark:[],sparkCol:'#0891b2'},
+      ].filter(kpi=>kpi.key==null||uiBlocks[kpi.key]!==false).map((kpi,i)=><div key={i} className="card count-up" style={{borderTop:`3px solid ${kpi.accent}`,paddingTop:18,animationDelay:`${(i+4)*60}ms`}}>
+        <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.1,marginBottom:10,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          {kpi.label}
+          <div style={{width:6,height:6,borderRadius:'50%',background:kpi.accent,opacity:.8}}/>
+        </div>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',gap:8}}>
+          <div>
+            <div style={{fontSize:28,fontWeight:600,letterSpacing:'-1px',lineHeight:1,fontFamily:"'Outfit',sans-serif"}}>{kpi.val}</div>
+            {kpi.sub&&<div style={{fontSize:11.5,marginTop:7,color:kpi.subCol||'var(--t3)',fontWeight:600}}>{kpi.sub}</div>}
+          </div>
+          {kpi.spark&&kpi.spark.length>1&&<MiniSparkline values={kpi.spark} color={kpi.sparkCol}/>}
+        </div>
+      </div>)}
+    </div>
+
+    {/* Profit Curve */}
+    {uiBlocks.equityCurve!==false&&<div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14,flexWrap:'wrap',gap:8}}>
+        <div>
+          <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.1,marginBottom:6}}>Cumulative P&L</div>
+          <div style={{fontSize:28,fontWeight:600,letterSpacing:'-1px',color:grossPct>=0?'var(--accD)':'var(--red)',fontFamily:"'Outfit',sans-serif"}}>{fmtPct(grossPct)}{grossUSD!==0&&<span style={{fontSize:15,marginLeft:10,fontWeight:600,opacity:.65}}>{fmtUSD(grossUSD)}</span>}</div>
+        </div>
+        <div style={{display:'flex',gap:16,fontSize:11}}>
+          <div style={{textAlign:'center'}}><div style={{fontWeight:500,color:'var(--accD)',fontSize:16}}>{wins.length}</div><div style={{color:'var(--t3)',fontWeight:600,letterSpacing:.5}}>WINS</div></div>
+          <div style={{width:1,background:'var(--border)'}}/>
+          <div style={{textAlign:'center'}}><div style={{fontWeight:500,color:'var(--t2)',fontSize:16}}>{losses.length}</div><div style={{color:'var(--t3)',fontWeight:600,letterSpacing:.5}}>LOSSES</div></div>
+        </div>
+      </div>
+      <ProfitCurve trades={trades} height={150}/>
+    </div>}
+
+    {/* Win/Loss Donut + Monthly */}
+    <div className="g2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+      {/* Win/Loss Donut */}
+      <div className="card">
+        <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.1,marginBottom:14}}>Performance Breakdown</div>
+        <div style={{display:'flex',alignItems:'center',gap:20}}>
+          {(()=>{
+            const r=60,cx=75,cy=75,stroke=12;
+            const circ=2*Math.PI*r;
+            const wrFrac=wr/100;
+            return <svg width="150" height="150" style={{flexShrink:0}}>
+              <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--s3)" strokeWidth={stroke}/>
+              <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--green)" strokeWidth={stroke}
+                strokeDasharray={`${circ*wrFrac} ${circ*(1-wrFrac)}`}
+                strokeDashoffset={circ*.25} strokeLinecap="round"
+                style={{transition:'stroke-dasharray .8s cubic-bezier(.22,1,.36,1)'}}/>
+              <circle cx={cx} cy={cy} r={r-stroke-4} fill="none" stroke="var(--border)" strokeWidth={1}/>
+              <text x={cx} y={cy-6} textAnchor="middle" fontSize="22" fontWeight="900" fill="var(--text)" fontFamily="Outfit,sans-serif">{wr.toFixed(0)}%</text>
+              <text x={cx} y={cy+12} textAnchor="middle" fontSize="9.5" fontWeight="700" fill="var(--t3)" letterSpacing="1" fontFamily="Outfit,sans-serif">WIN RATE</text>
+            </svg>;
+          })()}
+          <div style={{flex:1,display:'flex',flexDirection:'column',gap:10}}>
+            {[
+              {label:'Winning Trades',val:wins.length,pct:wr.toFixed(0)+'%',col:'var(--green)'},
+              {label:'Losing Trades',val:losses.length,pct:((losses.length/total)*100).toFixed(0)+'%',col:'var(--t3)'},
+              {label:'Avg Win',val:fmtPct(wins.length?wins.reduce((s,t)=>s+t.pnl,0)/wins.length:0,2),col:'var(--green)'},
+              {label:'Avg Loss',val:fmtPct(losses.length?losses.reduce((s,t)=>s+t.pnl,0)/losses.length:0,2),col:'var(--red)'},
+            ].map((r,i)=><div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <span style={{fontSize:11.5,color:'var(--t3)',fontWeight:500}}>{r.label}</span>
+              <span style={{fontSize:13,fontWeight:500,color:r.col,fontFamily:"'Outfit',sans-serif"}}>{r.pct||r.val}</span>
+            </div>)}
+          </div>
+        </div>
+      </div>
+
+      {/* Monthly breakdown */}
+      {uiBlocks.monthlyBars!==false&&<div className="card">
+        <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.1,marginBottom:14}}>Monthly P&L</div>
+        <div style={{display:'flex',flexDirection:'column',gap:7,marginTop:4}}>
+          {months.slice(-5).map(([m,data])=>{
+            const maxV=Math.max(...months.map(([,x])=>Math.abs(x.profit)),1);
+            const pct=(Math.abs(data.profit)/maxV)*100;
+            return <div key={m} style={{display:'flex',alignItems:'center',gap:10}}>
+              <div style={{width:32,fontSize:10.5,color:'var(--t3)',fontWeight:700,flexShrink:0}}>{m.slice(5)}</div>
+              <div style={{flex:1,height:8,background:'var(--s3)',borderRadius:4,overflow:'hidden'}}>
+                <div style={{width:`${pct}%`,height:'100%',background:data.profit>=0?'linear-gradient(90deg,var(--acc),var(--accD))':'var(--border2)',borderRadius:4,transition:'width .8s cubic-bezier(.22,1,.36,1)'}}/>
+              </div>
+              <div style={{width:66,textAlign:'right',fontSize:12,fontWeight:500,color:data.profit>=0?'var(--accD)':'var(--t2)',fontFamily:"'Outfit',sans-serif"}}>{data.profit>=0?'+$':'-$'}{Math.abs(data.profit).toFixed(0)}</div>
+              <div style={{width:42,textAlign:'right',fontSize:10.5,color:'var(--t3)',fontWeight:600}}>{fmtPct(data.pnl,1)}</div>
+            </div>;
+          })}
+        </div>
+      </div>}
+    </div>
+
+    {/* 30-Day Bar Chart + Symbol Breakdown */}
+    <div className="g2" style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:14}}>
+      {/* 30-day chart */}
+      <div className="card">
+        <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.1,marginBottom:14}}>Daily P&L — Last 30 Days</div>
+        <div style={{display:'flex',alignItems:'flex-end',gap:2,height:90,marginBottom:4}}>
+          {dayBars.map((b,i)=>{
+            const h=b.profit!==0?Math.max(4,(Math.abs(b.profit)/maxDay)*86):0;
+            return <div key={i} title={`${b.d}: ${fmtUSD(b.profit)}`} style={{flex:1,display:'flex',flexDirection:'column',justifyContent:'flex-end',height:90,cursor:'default'}}
+              onMouseEnter={e=>{e.currentTarget.firstChild&&(e.currentTarget.firstChild.style.opacity='.75')}}
+              onMouseLeave={e=>{e.currentTarget.firstChild&&(e.currentTarget.firstChild.style.opacity='1')}}>
+              {b.profit!==0&&<div className="bar-anim" style={{width:'100%',height:h,background:b.profit>=0?'linear-gradient(180deg,var(--acc),var(--accD))':'linear-gradient(180deg,#94a3b8,#64748b)',borderRadius:'3px 3px 0 0',animationDelay:`${i*12}ms`,transition:'opacity .15s'}}/>}
+            </div>;
+          })}
+        </div>
+        <div style={{display:'flex',justifyContent:'space-between',fontSize:9.5,color:'var(--t3)',fontWeight:600}}>
+          <span>{last30[0]&&new Date(last30[0]).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+          <span>{last30[14]&&new Date(last30[14]).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+          <span>{last30[29]&&new Date(last30[29]).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+        </div>
+      </div>
+
+      {/* Symbol P&L */}
+      <div className="card">
+        <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.1,marginBottom:14}}>By Symbol</div>
+        {(()=>{
+          const sm={};trades.forEach(t=>{if(!sm[t.symbol])sm[t.symbol]={n:0,w:0,pnl:0,profit:0};sm[t.symbol].n++;if(t.pnl>0)sm[t.symbol].w++;sm[t.symbol].pnl+=t.pnl;sm[t.symbol].profit+=(t.profit||0)});
+          const maxP=Math.max(...Object.values(sm).map(d=>Math.abs(d.profit)),1);
+          return <div style={{display:'flex',flexDirection:'column',gap:10}}>
+            {Object.entries(sm).sort((a,b)=>b[1].n-a[1].n).slice(0,5).map(([sym,d])=>{
+              const wr2=d.n?d.w/d.n*100:0;
+              return <div key={sym}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                  <span style={{fontSize:12,fontWeight:500,color:'var(--text)',fontFamily:"'JetBrains Mono',monospace"}}>{sym}</span>
+                  <span style={{fontSize:11.5,fontWeight:700,color:d.profit>=0?'var(--accD)':'var(--red)',fontFamily:"'Outfit',sans-serif"}}>{fmtUSD(d.profit)}</span>
+                </div>
+                <div style={{height:5,background:'var(--s3)',borderRadius:3,overflow:'hidden'}}>
+                  <div style={{width:`${(Math.abs(d.profit)/maxP)*100}%`,height:'100%',background:d.profit>=0?'var(--acc)':'var(--red)',borderRadius:3,transition:'width .7s'}}/>
+                </div>
+                <div style={{fontSize:10,color:'var(--t3)',marginTop:3,fontWeight:600}}>{d.n} trades · {wr2.toFixed(0)}% WR</div>
+              </div>;
+            })}
+          </div>;
+        })()}
+      </div>
+    </div>
+  </div>;
+});
+
+/* ══════════════════════════════════════════════════
+   ANALYTICS TAB - Win rates by confluence, session, model etc.
+══════════════════════════════════════════════════ */
+const Analytics=memo(function Analytics({trades,uiBlocks={}}){
+  const[activeView,setActiveView]=useState('confluence');
+  if(!trades.length)return <div style={{textAlign:'center',padding:'80px 20px',color:'var(--t3)'}}>No trade data to analyze yet.</div>;
+
+  // By Confluence
+  const confMap={};trades.forEach(t=>{(t.confluences||[]).forEach(c=>{if(!confMap[c])confMap[c]={n:0,w:0,pnl:0,profit:0};confMap[c].n++;if(t.pnl>0)confMap[c].w++;confMap[c].pnl+=t.pnl;confMap[c].profit+=(t.profit||0)})});
+  const confData=Object.entries(confMap).sort((a,b)=>b[1].n-a[1].n).map(([name,d])=>({name,wr:d.n?d.w/d.n*100:0,...d}));
+
+  // By Session
+  const sessMap={};trades.forEach(t=>{const s=t.session||'Unknown';if(!sessMap[s])sessMap[s]={n:0,w:0,pnl:0,profit:0};sessMap[s].n++;if(t.pnl>0)sessMap[s].w++;sessMap[s].pnl+=t.pnl;sessMap[s].profit+=(t.profit||0)});
+  const sessData=Object.entries(sessMap).sort((a,b)=>b[1].n-a[1].n).map(([name,d])=>({name,wr:d.n?d.w/d.n*100:0,...d}));
+
+  // By Model
+  const modelMap={};trades.forEach(t=>{const m=t.model||'Unknown';if(!modelMap[m])modelMap[m]={n:0,w:0,pnl:0,profit:0};modelMap[m].n++;if(t.pnl>0)modelMap[m].w++;modelMap[m].pnl+=t.pnl;modelMap[m].profit+=(t.profit||0)});
+  const modelData=Object.entries(modelMap).sort((a,b)=>b[1].n-a[1].n).map(([name,d])=>({name,wr:d.n?d.w/d.n*100:0,...d}));
+
+  // By Grade
+  const gradeMap={};trades.forEach(t=>{const g=t.grade||'—';if(!gradeMap[g])gradeMap[g]={n:0,w:0,pnl:0,profit:0};gradeMap[g].n++;if(t.pnl>0)gradeMap[g].w++;gradeMap[g].pnl+=t.pnl;gradeMap[g].profit+=(t.profit||0)});
+
+  // By Expected RR
+  const rrMap={};trades.forEach(t=>{const rr=t.expectedRR||'Unknown';if(!rrMap[rr])rrMap[rr]={n:0,w:0,pnl:0};rrMap[rr].n++;if(t.pnl>0)rrMap[rr].w++;rrMap[rr].pnl+=t.pnl});
+
+  // By Symbol
+  const symMap={};trades.forEach(t=>{if(!symMap[t.symbol])symMap[t.symbol]={n:0,w:0,pnl:0,profit:0};symMap[t.symbol].n++;if(t.pnl>0)symMap[t.symbol].w++;symMap[t.symbol].pnl+=t.pnl;symMap[t.symbol].profit+=(t.profit||0)});
+  const symData=Object.entries(symMap).sort((a,b)=>b[1].n-a[1].n).map(([name,d])=>({name,wr:d.n?d.w/d.n*100:0,...d}));
+
+  const views=[{id:'confluence',label:'Confluences'},{id:'session',label:'Sessions'},{id:'model',label:'Models'},{id:'symbol',label:'Symbols'},{id:'grade',label:'Grade Quality'}];
+
+  function DataTable({data,maxWR=100}){
+    return <div style={{display:'flex',flexDirection:'column',gap:0}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 70px 70px 80px 90px',gap:8,padding:'8px 14px',background:'var(--s2)',borderRadius:'10px 10px 0 0',borderBottom:'1px solid var(--border)'}}>
+        {['Factor','Trades','Win Rate','Avg P&L','Total $'].map(h=><div key={h} style={{fontSize:10,fontWeight:500,color:'var(--t3)',letterSpacing:.1}}>{h}</div>)}
+      </div>
+      {data.map((row,i)=><div key={i} style={{display:'grid',gridTemplateColumns:'1fr 70px 70px 80px 90px',gap:8,padding:'10px 14px',borderBottom:'1px solid var(--border)',background:i%2===0?'var(--surface)':'var(--s2)',transition:'background .1s',cursor:'default'}}
+        onMouseEnter={e=>e.currentTarget.style.background='var(--s3)'}
+        onMouseLeave={e=>e.currentTarget.style.background=i%2===0?'var(--surface)':'var(--s2)'}>
+        <div style={{fontSize:12,fontWeight:600,color:'var(--text)',display:'flex',alignItems:'center',gap:8}}>
+          <div style={{width:5,height:5,borderRadius:'50%',background:row.wr>=60?'var(--green)':row.wr>=40?'var(--acc)':'var(--red)',flexShrink:0}}/>
+          {row.name}
+        </div>
+        <div style={{fontSize:12,color:'var(--t2)',fontWeight:600}}>{row.n}</div>
+        <div style={{fontSize:12,fontWeight:500,color:row.wr>=50?'var(--green)':row.wr>=40?'var(--acc)':'var(--red)'}}>{row.wr.toFixed(0)}%</div>
+        <div style={{fontSize:12,fontWeight:700,color:row.pnl>=0?'var(--accD)':'var(--t2)'}}>{fmtPct(row.pnl/row.n,2)}</div>
+        <div style={{fontSize:12,fontWeight:700,color:row.profit>=0?'var(--accD)':'var(--t2)'}}>{fmtUSD(row.profit,true)}</div>
+      </div>)}
+    </div>;
+  }
+
+  return <div style={{display:'flex',flexDirection:'column',gap:16}} className="fade-up">
+    {/* Summary Row */}
+    <div className="g4" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}}>
+      {[
+        {label:'BEST CONFLUENCE',val:confData.sort((a,b)=>b.wr-a.wr)[0]?.name?.split(' ').slice(0,2).join(' ')||'—',sub:confData.sort((a,b)=>b.wr-a.wr)[0]?`${confData.sort((a,b)=>b.wr-a.wr)[0].wr.toFixed(0)}% win rate`:'',accent:'var(--acc)'},
+        {label:'BEST SESSION',val:sessData.sort((a,b)=>b.wr-a.wr)[0]?.name||'—',sub:sessData.sort((a,b)=>b.wr-a.wr)[0]?`${sessData.sort((a,b)=>b.wr-a.wr)[0].wr.toFixed(0)}% win rate`:'',accent:'var(--blue)'},
+        {label:'BEST MODEL',val:modelData.sort((a,b)=>b.wr-a.wr)[0]?.name?.split(' ')[0]||'—',sub:modelData.sort((a,b)=>b.wr-a.wr)[0]?`${modelData.sort((a,b)=>b.wr-a.wr)[0].wr.toFixed(0)}% win rate`:'',accent:'var(--purple)'},
+        {label:'BEST SYMBOL',val:symData.sort((a,b)=>b.wr-a.wr)[0]?.name||'—',sub:symData.sort((a,b)=>b.wr-a.wr)[0]?`${symData.sort((a,b)=>b.wr-a.wr)[0].wr.toFixed(0)}% win rate`:'',accent:'var(--green)'},
+      ].map((k,i)=><div key={i} className="card count-up" style={{borderTop:`3px solid ${k.accent}`,paddingTop:18,animationDelay:`${i*60}ms`}}>
+        <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.1,marginBottom:10}}>{k.label}</div>
+        <div style={{fontSize:19,fontWeight:600,color:'var(--text)',marginBottom:4,fontFamily:"'Outfit',sans-serif"}}>{k.val}</div>
+        <div style={{fontSize:11.5,color:'var(--t3)',fontWeight:600}}>{k.sub}</div>
+      </div>)}
+    </div>
+
+    {/* Tab switcher */}
+    <div className="card" style={{padding:0,overflow:'hidden'}}>
+      <div style={{display:'flex',gap:0,borderBottom:'1px solid var(--border)',overflowX:'auto'}}>
+        {views.map(v=><button key={v.id} onClick={()=>setActiveView(v.id)} style={{padding:'12px 20px',fontSize:12,fontWeight:activeView===v.id?700:500,color:activeView===v.id?'var(--accD)':'var(--t3)',background:'none',border:'none',cursor:'pointer',borderBottom:activeView===v.id?'2px solid var(--acc)':'2px solid transparent',whiteSpace:'nowrap',fontFamily:'inherit'}}>
+          {v.label}
+        </button>)}
+      </div>
+      <div style={{padding:'16px'}}>
+        {activeView==='confluence'&&<DataTable data={[...confData].sort((a,b)=>b.wr-a.wr)}/>}
+        {activeView==='session'&&<DataTable data={[...sessData].sort((a,b)=>b.wr-a.wr)}/>}
+        {activeView==='model'&&<DataTable data={[...modelData].sort((a,b)=>b.wr-a.wr)}/>}
+        {activeView==='symbol'&&<DataTable data={[...symData].sort((a,b)=>b.wr-a.wr)}/>}
+        {activeView==='grade'&&<div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:16}}>
+            {GRADES.map(g=>{
+              const d=gradeMap[g]||{n:0,w:0,pnl:0,profit:0};
+              const wr=d.n?d.w/d.n*100:0;
+              return <div key={g} className="card" style={{textAlign:'center',padding:'16px 12px'}}>
+                <GradeChip grade={g}/>
+                <div style={{fontSize:22,fontWeight:600,marginTop:10,color:'var(--text)'}}>{wr.toFixed(0)}%</div>
+                <div style={{fontSize:10,color:'var(--t3)',marginTop:3}}>{d.n} trades</div>
+                <div style={{fontSize:11,fontWeight:700,color:d.profit>=0?'var(--accD)':'var(--t2)',marginTop:4}}>{d.n>0?fmtUSD(d.profit):'—'}</div>
+              </div>;
+            })}
+          </div>
+          <div style={{padding:'12px',background:'var(--s2)',borderRadius:10,fontSize:12,color:'var(--t2)',lineHeight:1.6}}>
+            💡 Grade A+ and A setups should represent your highest win rate. If lower grades outperform, review your grading criteria.
+          </div>
+        </div>}
+      </div>
+    </div>
+
+    {/* RR Analysis */}
+    <div className="card">
+      <Label>Expected RR vs Actual Performance</Label>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:12,marginTop:8}}>
+        {Object.entries(rrMap).sort((a,b)=>b[1].n-a[1].n).map(([rr,d])=>{
+          const wr=d.n?d.w/d.n*100:0;
+          return <div key={rr} style={{background:'var(--s2)',border:'1px solid var(--border)',borderRadius:11,padding:'14px'}}>
+            <div style={{fontSize:12,fontWeight:500,color:'var(--text)',marginBottom:8}}>Target {rr}</div>
+            <div style={{display:'flex',gap:12}}>
+              <div><div style={{fontSize:9.5,color:'var(--t3)',fontWeight:400,letterSpacing:.1,marginBottom:3}}>Trades</div><div style={{fontSize:18,fontWeight:600}}>{d.n}</div></div>
+              <div><div style={{fontSize:9.5,color:'var(--t3)',fontWeight:400,letterSpacing:.1,marginBottom:3}}>Win Rate</div><div style={{fontSize:16,fontWeight:500,color:wr>=50?'var(--green)':'var(--t2)'}}>{wr.toFixed(0)}%</div></div>
+              <div><div style={{fontSize:9.5,color:'var(--t3)',fontWeight:400,letterSpacing:.1,marginBottom:3}}>Avg P&L</div><div style={{fontSize:16,fontWeight:500,color:d.pnl/d.n>=0?'var(--accD)':'var(--t2)'}}>{fmtPct(d.pnl/d.n,1)}</div></div>
+            </div>
+          </div>;
+        })}
+      </div>
+    </div>
+  </div>;
+});
+
+/* ══════════════════════════════════════════════════
+   PSYCHOLOGY TAB
+══════════════════════════════════════════════════ */
+const Psychology=memo(function Psychology({trades,uiBlocks={}}){
+  if(!trades.length)return <div style={{textAlign:'center',padding:'80px 20px',color:'var(--t3)'}}>Log trades with emotion data to unlock psychology insights.</div>;
+  const emotBefore={};trades.forEach(t=>{const e=t.emotionBefore||'Neutral';if(!emotBefore[e])emotBefore[e]={n:0,w:0,pnl:0};emotBefore[e].n++;if(t.pnl>0)emotBefore[e].w++;emotBefore[e].pnl+=t.pnl});
+  const emotAfter={};trades.forEach(t=>{const e=t.emotionAfter||'Neutral';if(!emotAfter[e])emotAfter[e]={n:0,w:0};emotAfter[e].n++;if(t.pnl>0)emotAfter[e].w++});
+  const mistakeMap={};trades.forEach(t=>{const m=t.mistakes||'None';if(!mistakeMap[m])mistakeMap[m]={n:0,loss:0};mistakeMap[m].n++;if(t.pnl<=0)mistakeMap[m].loss++});
+  const totalTrades=trades.length;
+  const disciplineScore=Math.round((trades.filter(t=>t.mistakes==='None'||!t.mistakes).length/totalTrades)*100);
+  const bestEmotion=Object.entries(emotBefore).sort((a,b)=>(b[1].w/b[1].n)-(a[1].w/a[1].n))[0];
+  const worstEmotion=Object.entries(emotBefore).sort((a,b)=>(a[1].w/a[1].n)-(b[1].w/b[1].n))[0];
+  const topMistake=Object.entries(mistakeMap).filter(([m])=>m!=='None').sort((a,b)=>b[1].n-a[1].n)[0];
+  const mistakeRate=Math.round((trades.filter(t=>t.mistakes&&t.mistakes!=='None').length/totalTrades)*100);
+
+  return <div style={{display:'flex',flexDirection:'column',gap:16}} className="fade-up">
+    {/* Summary */}
+    <div className="g4" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}}>
+      {[
+        {label:'Discipline Score',val:`${disciplineScore}%`,sub:disciplineScore>=80?'Excellent':disciplineScore>=60?'Good':'Needs work',accent:disciplineScore>=80?'var(--green)':disciplineScore>=60?'var(--acc)':'var(--t3)',key:'disciplineScore'},
+        {label:'Best Mindset',val:bestEmotion?bestEmotion[0].split(' ')[0]||'—':'—',sub:bestEmotion?`${((bestEmotion[1].w/bestEmotion[1].n)*100).toFixed(0)}% win rate in this state`:'',accent:'var(--acc)',key:'bestMindset'},
+        {label:'Worst Mindset',val:worstEmotion&&worstEmotion[1].n>1?worstEmotion[0].split(' ')[0]:'—',sub:worstEmotion&&worstEmotion[1].n>1?`${((worstEmotion[1].w/worstEmotion[1].n)*100).toFixed(0)}% win rate`:'',accent:'var(--border2)',key:'worstMindset'},
+        {label:'Mistake Rate',val:`${mistakeRate}%`,sub:topMistake&&topMistake[0]!=='None'?`Top: ${topMistake[0].split(' ').slice(0,2).join(' ')}`:'Clean execution',accent:mistakeRate>30?'var(--orange)':mistakeRate>15?'var(--acc)':'var(--green)',key:'mistakeRate'},
+      ].filter(k=>uiBlocks[k.key]!==false).map((k,i)=><div key={i} className="card count-up" style={{borderTop:`2px solid ${k.accent}`,paddingTop:18,animationDelay:`${i*60}ms`}}>
+        <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',letterSpacing:.2,marginBottom:10}}>{k.label}</div>
+        <div style={{fontSize:28,fontWeight:600,letterSpacing:'-1px',fontFamily:"'Outfit',sans-serif"}}>{k.val}</div>
+        <div style={{fontSize:11,color:'var(--t3)',marginTop:6,fontWeight:400}}>{k.sub}</div>
+      </div>)}
+    </div>
+
+    <div className="g2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+      {/* Emotion before → performance */}
+      <div className="card">
+        <Label>Pre-Trade Mindset Performance</Label>
+        <div style={{display:'flex',flexDirection:'column',gap:8,marginTop:6}}>
+          {Object.entries(emotBefore).sort((a,b)=>b[1].n-a[1].n).map(([e,d])=>{
+            const wr=d.n?d.w/d.n*100:0;
+            const positive=['Calm & Focused','Confident','Neutral'];
+            const col=positive.includes(e)?'var(--acc)':wr>=50?'var(--acc)':'var(--t3)';
+            return <div key={e} style={{display:'flex',alignItems:'center',gap:10}}>
+              <EmotionChip emotion={e}/>
+              <div style={{flex:1,height:5,background:'var(--s3)',borderRadius:4,overflow:'hidden'}}>
+                <div style={{width:`${wr}%`,height:'100%',background:col,borderRadius:4,opacity:.85}}/>
+              </div>
+              <span style={{fontSize:11,fontWeight:500,color:col,width:38,textAlign:'right'}}>{wr.toFixed(0)}%</span>
+              <span style={{fontSize:10,color:'var(--t3)',width:18}}>{d.n}t</span>
+            </div>;
+          })}
+        </div>
+        <div style={{marginTop:12,padding:'10px 14px',background:'var(--s2)',borderRadius:10,fontSize:12,color:'var(--t2)',lineHeight:1.6}}>
+          💡 Trade only when Calm & Focused. Emotions like FOMO and Greed historically lead to losses.
+        </div>
+      </div>
+
+      {/* Mistakes breakdown */}
+      <div className="card">
+        <Label>Mistake Frequency</Label>
+        <div style={{display:'flex',flexDirection:'column',gap:8,marginTop:6}}>
+          {Object.entries(mistakeMap).filter(([m])=>m!=='None').sort((a,b)=>b[1].n-a[1].n).map(([m,d])=>{
+            const lossRate=d.n?d.loss/d.n*100:0;
+            return <div key={m}>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                <span style={{fontSize:12,fontWeight:600,color:'var(--text)'}}>{m}</span>
+                <div style={{display:'flex',gap:8}}>
+                  <span style={{fontSize:10,color:'var(--t3)'}}>{d.n} times</span>
+                  <span style={{fontSize:11,fontWeight:400,color:lossRate>50?'var(--t2)':'var(--t3)'}}>{lossRate.toFixed(0)}% result in loss</span>
+                </div>
+              </div>
+              <div style={{height:4,background:'var(--s3)',borderRadius:3,overflow:'hidden'}}>
+                <div style={{width:`${(d.n/totalTrades)*100}%`,height:'100%',background:'var(--acc)',borderRadius:3,opacity:.6}}/>
+              </div>
+            </div>;
+          })}
+          {Object.keys(mistakeMap).filter(m=>m!=='None').length===0&&<div style={{color:'var(--t3)',fontSize:13,textAlign:'center',padding:'20px 0'}}>No mistakes recorded 🎉</div>}
+        </div>
+      </div>
+    </div>
+
+    {/* Discipline Timeline */}
+    <div className="card">
+      <Label>Trade Quality Timeline (last 20 trades)</Label>
+      <div style={{display:'flex',gap:4,marginTop:10,flexWrap:'wrap'}}>
+        {[...trades].sort((a,b)=>b.entryDate.localeCompare(a.entryDate)).slice(0,20).reverse().map((t,i)=>{
+          const g=t.grade||'B';
+          const hasMistake=t.mistakes&&t.mistakes!=='None';
+          const gradeColor={'A+':'var(--accD)','A':'var(--accD)','B':'var(--acc)','C':'var(--t2)','D':'var(--t3)'}[g]||'var(--t2)';
+          return <div key={i} title={`${t.symbol} ${t.entryDate} | Grade: ${g} | ${hasMistake?'⚠ '+t.mistakes:'Clean'}`} style={{width:36,height:52,borderRadius:8,border:`1.5px solid ${hasMistake?'var(--accD)':'var(--border)'}`,background:'var(--surface)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:3,cursor:'default'}}>
+            <span style={{fontSize:9,fontWeight:500,color:gradeColor}}>{g}</span>
+            <div style={{width:5,height:5,borderRadius:'50%',background:t.pnl>0?'var(--acc)':'var(--border2)'}}/>
+            {hasMistake&&<span style={{fontSize:7,color:'var(--acc)'}}>!</span>}
+          </div>;
+        })}
+      </div>
+      <div style={{display:'flex',gap:16,marginTop:12,fontSize:11,color:'var(--t3)'}}>
+        <span>● Accent = Win</span><span>● Gray = Loss</span><span>! = Mistake</span>
+        <span>Border = mistake flag</span>
+      </div>
+    </div>
+
+    {/* Post-trade emotion → actual outcome */}
+    <div className="card">
+      <Label>Post-Trade Outcomes by Feeling</Label>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:10,marginTop:8}}>
+        {Object.entries(emotAfter).sort((a,b)=>b[1].n-a[1].n).map(([e,d])=>{
+          const wr=d.n?d.w/d.n*100:0;
+          return <div key={e} style={{background:'var(--s2)',border:'1px solid var(--border)',borderRadius:11,padding:'12px 14px'}}>
+            <EmotionChip emotion={e}/>
+            <div style={{marginTop:10,display:'flex',gap:12}}>
+              <div><div style={{fontSize:9.5,color:'var(--t3)',fontWeight:400,letterSpacing:.1,marginBottom:2}}>Win Rate</div><div style={{fontSize:18,fontWeight:600,color:wr>=50?'var(--acc)':'var(--t2)'}}>{wr.toFixed(0)}%</div></div>
+              <div><div style={{fontSize:9.5,color:'var(--t3)',fontWeight:400,letterSpacing:.1,marginBottom:2}}>Count</div><div style={{fontSize:18,fontWeight:500}}>{d.n}</div></div>
+            </div>
+          </div>;
+        })}
+      </div>
+    </div>
+  </div>;
+});
+
+
+/* ══════════════════════════════════════════════════
+   TRADE LOG (with all new fields)
+══════════════════════════════════════════════════ */
+function TradeLog({trades,onAdd,onDelete,onEdit,onUpdateMeta,tradeMeta}){
+  const blank={symbol:'XAUUSD',entryDate:'',entryTime:'09:00:00',side:'Long',entryPrice:'',exitPrice:'',pnl:'',profit:'',status:'Closed',grade:'A',expectedRR:'1:2',actualRR:'',session:'London',model:'SMC (Smart Money)',emotionBefore:'Calm & Focused',emotionAfter:'Satisfied',mistakes:'None',confluences:[],notes:''};
+  const[form,setForm]=useState(blank);
+  const[open,setOpen]=useState(false);
+  const[editingId,setEditingId]=useState(null);
+  const[symF,setSymF]=useState('All');
+  const[sideF,setSideF]=useState('All');
+  const[gradeF,setGradeF]=useState('All');
+  const[expandedId,setExpandedId]=useState(null);
+  const[screenshots,setScreenshots]=useState({});
+  const[sf,setF]=useState('entryDate');
+  const[sd,setD]=useState(-1);
+  const isMobile=useMediaQuery('(max-width:768px)');
+  const[sessF,setSessF]=useState('All');
+  const[modelF,setModelF]=useState('All');
+  const[showFilters,setShowFilters]=useState(false);
+  const syms=['All',...new Set(trades.map(t=>t.symbol))];
+  const sessOpts=['All',...SESSIONS];
+  const modelOpts=['All',...MODELS];
+  const inp={border:'1.5px solid var(--border)',borderRadius:9,padding:'8px 11px',fontSize:12,outline:'none',background:'var(--s2)',color:'var(--text)',width:'100%',boxSizing:'border-box',fontFamily:'inherit'};
+  const sel={...inp,cursor:'pointer'};
+  const toggleSort=f=>{if(sf===f)setD(d=>-d);else{setF(f);setD(-1)}};
+  const activeFilters=[symF,sideF,gradeF,sessF,modelF].filter(f=>f!=='All').length;
+  const visible=useMemo(()=>[...trades].filter(t=>
+    (symF==='All'||t.symbol===symF)&&
+    (sideF==='All'||t.side===sideF)&&
+    (gradeF==='All'||t.grade===gradeF)&&
+    (sessF==='All'||t.session===sessF)&&
+    (modelF==='All'||t.model===modelF)
+  ).sort((a,b)=>{let va=a[sf],vb=b[sf];if(['pnl','entryPrice','exitPrice','profit'].includes(sf)){va=+va;vb=+vb}return va>vb?sd:va<vb?-sd:0}),[trades,symF,sideF,gradeF,sessF,modelF,sf,sd]);
+
+  const handleSave=useCallback(()=>{
+    if(!form.entryDate||!form.entryPrice)return;
+    const td={...form,entryPrice:+form.entryPrice,exitPrice:+form.exitPrice,pnl:+form.pnl||0,profit:+form.profit||0};
+    if(editingId){onEdit(editingId,td);}else{onAdd({...td,id:Date.now()});}
+    setForm(blank);setEditingId(null);setOpen(false);
+  },[form,editingId,onAdd,onEdit]);
+
+  const startEdit=useCallback(t=>{setForm({symbol:t.symbol,entryDate:t.entryDate,entryTime:t.entryTime,side:t.side||deriveDir(t),entryPrice:String(t.entryPrice),exitPrice:String(t.exitPrice||''),pnl:String(t.pnl),profit:String(t.profit||''),status:t.status||'Closed',grade:t.grade||'A',expectedRR:t.expectedRR||'1:2',actualRR:t.actualRR||'',session:t.session||'London',model:t.model||'SMC (Smart Money)',emotionBefore:t.emotionBefore||'Calm & Focused',emotionAfter:t.emotionAfter||'Satisfied',mistakes:t.mistakes||'None',confluences:t.confluences||[],notes:t.notes||''});setEditingId(t.id);setOpen(true)},[]);
+
+  const handleScreenshot=useCallback(async(id,file)=>{if(!file)return;try{const c=await SDB.compress(id,file);setScreenshots(s=>({...s,[id]:c}));onUpdateMeta(id,{hasScreenshot:true})}catch(e){console.error(e)}},[onUpdateMeta]);
+  const handleRemoveShot=useCallback(async id=>{try{await SDB.remove(id);setScreenshots(s=>{const n={...s};delete n[id];return n});onUpdateMeta(id,{hasScreenshot:false})}catch(e){console.error(e)}},[onUpdateMeta]);
+
+  useEffect(()=>{
+    if(!expandedId)return;
+    const meta=tradeMeta[expandedId]||{};
+    if(meta.hasScreenshot&&!screenshots[expandedId]){
+      setScreenshots(s=>({...s,[expandedId]:'__loading__'}));
+      SDB.get(expandedId).then(data=>{if(data)setScreenshots(s=>({...s,[expandedId]:data}));else setScreenshots(s=>{const n={...s};delete n[expandedId];return n})}).catch(()=>setScreenshots(s=>{const n={...s};delete n[expandedId];return n}));
+    }
+  },[expandedId,tradeMeta]);
+
+  const toggleConfluence=c=>{setForm(f=>({...f,confluences:f.confluences.includes(c)?f.confluences.filter(x=>x!==c):[...f.confluences,c]}))};
+
+  const TH=({l,f})=><th onClick={()=>toggleSort(f)} style={{padding:'10px 12px',textAlign:'left',fontSize:10,color:sf===f?'var(--accD)':'var(--t3)',fontWeight:500,letterSpacing:.1,cursor:'pointer',userSelect:'none',whiteSpace:'nowrap',background:'var(--s2)',borderBottom:`2px solid ${sf===f?'var(--acc)':'transparent'}`,transition:'all .15s'}}>{l} <span style={{opacity:.4}}>{sf===f?(sd>0?'↑':'↓'):'↕'}</span></th>;
+
+  return <div className="fade-up">
+    {/* Controls */}
+    <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:10,flexWrap:'wrap'}}>
+      <button onClick={()=>{if(open&&!editingId){setForm(blank);setOpen(false);}else{setEditingId(null);setForm(blank);setOpen(o=>!o)}}} style={{background:open?'var(--s3)':'linear-gradient(135deg,var(--acc),var(--accD))',color:open?'var(--t2)':'#fff',border:`1.5px solid ${open?'var(--border)':'transparent'}`,borderRadius:10,padding:'9px 18px',fontWeight:700,fontSize:12,cursor:'pointer',boxShadow:open?'none':'0 3px 10px color-mix(in srgb, var(--acc) 35%, transparent)',flexShrink:0}}>
+        {open&&!editingId?'✕ Cancel':'+ Log Trade'}
+      </button>
+      {/* Symbol chips */}
+      <div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
+        {syms.map(s=><button key={s} onClick={()=>setSymF(s)} style={{padding:'5px 13px',borderRadius:20,border:`1.5px solid ${symF===s?'var(--acc)':'var(--border)'}`,background:symF===s?'var(--accF)':'var(--surface)',color:symF===s?'var(--acc)':'var(--t2)',fontWeight:symF===s?700:500,fontSize:12,cursor:'pointer'}}>{s}</button>)}
+      </div>
+      <div style={{marginLeft:'auto',display:'flex',gap:6,flexWrap:'wrap',alignItems:'center'}}>
+        {activeFilters>0&&<button onClick={()=>{setSymF('All');setSideF('All');setGradeF('All');setSessF('All');setModelF('All')}} style={{padding:'5px 11px',borderRadius:20,border:'1.5px solid var(--rBdr)',background:'var(--rBg)',color:'var(--red)',fontSize:11,fontWeight:700,cursor:'pointer'}}>✕ Clear ({activeFilters})</button>}
+        <button onClick={()=>setShowFilters(f=>!f)} style={{padding:'5px 14px',borderRadius:20,border:`1.5px solid ${showFilters?'var(--acc)':'var(--border)'}`,background:showFilters?'var(--accF)':'var(--surface)',color:showFilters?'var(--accD)':'var(--t2)',fontSize:12,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',gap:5}}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filters{activeFilters>0?` (${activeFilters})`:''}
+        </button>
+      </div>
+    </div>
+    {/* Expanded filter panel */}
+    {showFilters&&<div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'14px 16px',marginBottom:12,display:'flex',gap:12,flexWrap:'wrap',alignItems:'flex-start'}}>
+      <div style={{flex:'0 0 auto'}}>
+        <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Side</div>
+        <div style={{display:'flex',gap:4}}>
+          {['All','Long','Short'].map(s=><button key={s} onClick={()=>setSideF(s)} style={{padding:'4px 12px',borderRadius:20,border:`1.5px solid ${sideF===s?'var(--acc)':'var(--border)'}`,background:sideF===s?'var(--accF)':'var(--surface)',color:sideF===s?'var(--accD)':'var(--t2)',fontWeight:sideF===s?700:500,fontSize:11,cursor:'pointer'}}>{s}</button>)}
+        </div>
+      </div>
+      <div style={{flex:'0 0 auto'}}>
+        <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Grade</div>
+        <div style={{display:'flex',gap:4}}>
+          {['All',...GRADES].map(g=><button key={g} onClick={()=>setGradeF(g)} style={{padding:'4px 11px',borderRadius:20,border:`1.5px solid ${gradeF===g?'var(--acc)':'var(--border)'}`,background:gradeF===g?'var(--accF)':'var(--surface)',color:gradeF===g?'var(--accD)':'var(--t2)',fontWeight:gradeF===g?700:500,fontSize:11,cursor:'pointer'}}>{g}</button>)}
+        </div>
+      </div>
+      <div style={{flex:'0 0 auto',minWidth:160}}>
+        <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Session</div>
+        <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+          {sessOpts.map(s=><button key={s} onClick={()=>setSessF(s)} style={{padding:'4px 11px',borderRadius:20,border:`1.5px solid ${sessF===s?'var(--acc)':'var(--border)'}`,background:sessF===s?'var(--accF)':'var(--surface)',color:sessF===s?'var(--accD)':'var(--t2)',fontWeight:sessF===s?700:500,fontSize:11,cursor:'pointer'}}>{s}</button>)}
+        </div>
+      </div>
+      <div style={{flex:'0 0 auto',minWidth:200}}>
+        <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Model</div>
+        <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+          {modelOpts.map(m=><button key={m} onClick={()=>setModelF(m)} style={{padding:'4px 11px',borderRadius:20,border:`1.5px solid ${modelF===m?'var(--acc)':'var(--border)'}`,background:modelF===m?'var(--accF)':'var(--surface)',color:modelF===m?'var(--accD)':'var(--t2)',fontWeight:modelF===m?700:500,fontSize:11,cursor:'pointer'}}>{m}</button>)}
+        </div>
+      </div>
+    </div>}
+
+    {/* Trade Form */}
+    {open&&<div className="card scale-in" style={{marginBottom:16,border:editingId?'2px solid var(--acc)':'1px solid var(--border)'}}>
+      <div style={{fontSize:14,fontWeight:600,marginBottom:16,color:'var(--text)'}}>{editingId?'✏️ Edit Trade':'📊 Log New Trade'}</div>
+      <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(auto-fill,minmax(140px,1fr))',gap:10,marginBottom:14}}>
+        {[['Symbol','symbol','text'],['Date','entryDate','date'],['Time','entryTime','time'],['Entry $','entryPrice','number'],['Exit $','exitPrice','number'],['P&L %','pnl','number'],['Profit $','profit','number']].map(([l,k,t])=><div key={k}><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>{l}</div><input type={t} step={t==='number'?'.01':undefined} value={form[k]} onChange={e=>setForm(f=>({...f,[k]:e.target.value}))} style={inp}/></div>)}
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>Side</div><select value={form.side} onChange={e=>setForm(f=>({...f,side:e.target.value}))} style={sel}><option>Long</option><option>Short</option></select></div>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>Grade</div><select value={form.grade} onChange={e=>setForm(f=>({...f,grade:e.target.value}))} style={sel}>{GRADES.map(g=><option key={g}>{g}</option>)}</select></div>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>Expected RR</div><select value={form.expectedRR} onChange={e=>setForm(f=>({...f,expectedRR:e.target.value}))} style={sel}>{RR_OPTIONS.map(r=><option key={r}>{r}</option>)}</select></div>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>Actual RR</div><input placeholder="e.g. 1:2.5 or -1" value={form.actualRR} onChange={e=>setForm(f=>({...f,actualRR:e.target.value}))} style={inp}/></div>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>Session</div><select value={form.session} onChange={e=>setForm(f=>({...f,session:e.target.value}))} style={sel}>{SESSIONS.map(s=><option key={s}>{s}</option>)}</select></div>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>Model</div><select value={form.model} onChange={e=>setForm(f=>({...f,model:e.target.value}))} style={sel}>{MODELS.map(m=><option key={m}>{m}</option>)}</select></div>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>Emotion Before</div><select value={form.emotionBefore} onChange={e=>setForm(f=>({...f,emotionBefore:e.target.value}))} style={sel}>{EMOTIONS_B.map(e=><option key={e}>{e}</option>)}</select></div>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>Emotion After</div><select value={form.emotionAfter} onChange={e=>setForm(f=>({...f,emotionAfter:e.target.value}))} style={sel}>{EMOTIONS_A.map(e=><option key={e}>{e}</option>)}</select></div>
+        <div><div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:5}}>Mistakes</div><select value={form.mistakes} onChange={e=>setForm(f=>({...f,mistakes:e.target.value}))} style={sel}>{MISTAKES.map(m=><option key={m}>{m}</option>)}</select></div>
+      </div>
+      {/* Confluences multi-select */}
+      <div style={{marginBottom:14}}>
+        <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:8}}>Confluences (select all that apply)</div>
+        <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+          {CONFLUENCES.map(c=><button key={c} type="button" onClick={()=>toggleConfluence(c)} style={{padding:'4px 11px',borderRadius:20,border:`1.5px solid ${form.confluences.includes(c)?'var(--acc)':'var(--border)'}`,background:form.confluences.includes(c)?'var(--accF)':'var(--surface)',color:form.confluences.includes(c)?'var(--accD)':'var(--t2)',fontSize:11,fontWeight:form.confluences.includes(c)?700:400,cursor:'pointer',fontFamily:'inherit'}}>
+            {form.confluences.includes(c)?'✓ ':''}{c}
+          </button>)}
+        </div>
+      </div>
+      {/* Notes */}
+      <div style={{marginBottom:14}}>
+        <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Trade Notes</div>
+        <textarea value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))} placeholder="Describe your trade rationale, what you saw, lessons learned..." style={{width:'100%',minHeight:80,border:'1.5px solid var(--border)',borderRadius:10,padding:'10px 12px',fontSize:12,color:'var(--text)',background:'var(--s2)',resize:'vertical',outline:'none',lineHeight:1.7,fontFamily:'inherit'}}/>
+      </div>
+      <div style={{display:'flex',gap:8}}>
+        <button onClick={handleSave} style={{background:'linear-gradient(135deg,var(--acc),var(--accD))',color:'#fff',border:'none',borderRadius:10,padding:'10px 26px',fontWeight:700,fontSize:13,cursor:'pointer',boxShadow:'0 3px 10px color-mix(in srgb, var(--acc) 35%, transparent)'}}>
+          {editingId?'💾 Save Changes':'✓ Log Trade'}
+        </button>
+        {editingId&&<button onClick={()=>{setForm(blank);setEditingId(null);setOpen(false)}} style={{background:'var(--s3)',color:'var(--t2)',border:'1px solid var(--border)',borderRadius:10,padding:'10px 18px',fontWeight:600,fontSize:13,cursor:'pointer'}}>Cancel</button>}
+      </div>
+    </div>}
+
+    {/* Table */}
+    <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:16,overflow:'hidden',boxShadow:'var(--sh2)'}}>
+      <div style={{overflowX:'auto'}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:12,minWidth:900}}>
+          <thead>
+            <tr style={{borderBottom:'1px solid var(--border)'}}>
+              <TH l="Symbol" f="symbol"/><TH l="Date" f="entryDate"/>
+              {!isMobile&&<TH l="Time" f="entryTime"/>}
+              <TH l="Side" f="side"/><TH l="Session" f="session"/>
+              {!isMobile&&<TH l="Model" f="model"/>}
+              <TH l="Grade" f="grade"/><TH l="Entry" f="entryPrice"/><TH l="Exit" f="exitPrice"/>
+              <TH l="P&L%" f="pnl"/><TH l="Exp.RR" f="expectedRR"/>
+              {!isMobile&&<TH l="Emotion" f="emotionBefore"/>}
+              <th style={{padding:'10px 12px',background:'var(--s2)',fontSize:10,color:'var(--t3)',fontWeight:500}}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {!visible.length&&<tr><td colSpan={13} style={{padding:36,textAlign:'center',color:'var(--t3)',fontSize:13}}>No trades match current filters</td></tr>}
+            {visible.map((t,i)=>{
+              const dir=deriveDir(t);
+              const meta=tradeMeta[t.id]||{};
+              const isExp=expandedId===t.id;
+              const hasMistake=t.mistakes&&t.mistakes!=='None';
+              const rowBg=i%2===0?'var(--surface)':'var(--s2)';
+              return <React.Fragment key={t.id}>
+                <tr style={{background:rowBg,borderBottom:isExp?'none':`1px solid var(--border)`,cursor:'pointer',transition:'background .1s'}}
+                  onClick={()=>setExpandedId(isExp?null:t.id)}
+                  onMouseEnter={e=>{e.currentTarget.style.background='var(--s3)';e.currentTarget.style.boxShadow=`inset 3px 0 0 var(--acc)`;}}
+                  onMouseLeave={e=>{e.currentTarget.style.background=rowBg;e.currentTarget.style.boxShadow='none';}}>
+                  <td style={{padding:'10px 12px',fontWeight:700}}><div style={{display:'flex',alignItems:'center',gap:6}}>{hasMistake&&<span title={t.mistakes} style={{color:'var(--red)',fontSize:10}}>⚠</span>}{t.symbol}</div></td>
+                  <td style={{padding:'10px 12px',color:'var(--t2)',fontFamily:'JetBrains Mono,monospace',fontSize:11}}>{t.entryDate}</td>
+                  {!isMobile&&<td style={{padding:'10px 12px',color:'var(--t3)',fontFamily:'JetBrains Mono,monospace',fontSize:11}}>{t.entryTime}</td>}
+                  <td style={{padding:'10px 12px'}}><Chip color={dir==='Long'?'truegreen':'red'} size="sm">{dir==='Long'?'↑':'↓'} {dir}</Chip></td>
+                  <td style={{padding:'10px 12px'}}><SessionChip session={t.session}/></td>
+                  {!isMobile&&<td style={{padding:'10px 12px',fontSize:11,color:'var(--t2)',maxWidth:120,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.model?.split(' ')[0]||'—'}</td>}
+                  <td style={{padding:'10px 12px'}}><GradeChip grade={t.grade}/></td>
+                  <td style={{padding:'10px 12px',fontFamily:'JetBrains Mono,monospace',fontSize:11,color:'var(--t2)'}}>{fmtPrice(t.entryPrice)}</td>
+                  <td style={{padding:'10px 12px',fontFamily:'JetBrains Mono,monospace',fontSize:11,color:'var(--t2)'}}>{fmtPrice(t.exitPrice||0)}</td>
+                  <td style={{padding:'10px 12px'}}><PnlBadge pnl={t.pnl} profit={t.profit||0}/></td>
+                  <td style={{padding:'10px 12px',fontSize:11,color:'var(--t3)',fontWeight:600}}>{t.expectedRR||'—'}</td>
+                  {!isMobile&&<td style={{padding:'10px 12px'}}><EmotionChip emotion={t.emotionBefore}/></td>}
+                  <td style={{padding:'10px 8px'}} onClick={e=>e.stopPropagation()}>
+                    <div style={{display:'flex',gap:4}}>
+                      <button onClick={()=>startEdit(t)} style={{background:'none',border:'1px solid var(--border)',color:'var(--t3)',cursor:'pointer',fontSize:11,padding:'4px 8px',borderRadius:6}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--acc)';e.currentTarget.style.color='var(--acc)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--t3)'}}>✏</button>
+                      <button onClick={()=>onDelete(t.id)} style={{background:'none',border:'1px solid var(--border)',color:'var(--t3)',cursor:'pointer',fontSize:11,padding:'4px 8px',borderRadius:6}} onMouseEnter={e=>{e.currentTarget.style.background='var(--rBg)';e.currentTarget.style.borderColor='var(--red)';e.currentTarget.style.color='var(--red)'}} onMouseLeave={e=>{e.currentTarget.style.background='none';e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--t3)'}}>✕</button>
+                    </div>
+                  </td>
+                </tr>
+                {isExp&&<tr style={{background:rowBg,borderBottom:`1px solid var(--border)`}}>
+                  <td colSpan={13} style={{padding:'0 16px 16px',borderTop:'1px solid var(--border)'}}>
+                    <div style={{paddingTop:14,display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:14}}>
+                      {/* Left: Details */}
+                      <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                        {/* Confluences */}
+                        <div><div style={{fontSize:9.5,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Confluences Used</div>
+                          <div style={{display:'flex',flexWrap:'wrap',gap:5}}>{(t.confluences||[]).length>0?t.confluences.map(c=><Chip key={c} color="gold" size="sm">{c}</Chip>):<span style={{color:'var(--t3)',fontSize:12}}>None recorded</span>}</div>
+                        </div>
+                        {/* Stats row */}
+                        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>
+                          {[['Emotion Before',t.emotionBefore||'—'],['Emotion After',t.emotionAfter||'—'],['Mistakes',t.mistakes||'None']].map(([l,v])=><div key={l} style={{background:'var(--s2)',border:'1px solid var(--border)',borderRadius:9,padding:'10px 12px'}}>
+                            <div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>{l}</div>
+                            <div style={{fontSize:12,fontWeight:600,color:v==='None'?'var(--green)':v?.includes('FOMO')||v?.includes('Revenge')||v?.includes('Angry')?'var(--red)':'var(--text)'}}>{v}</div>
+                          </div>)}
+                        </div>
+                        {/* RR */}
+                        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                          {[['Expected RR',t.expectedRR||'—'],['Actual RR',t.actualRR||'—']].map(([l,v])=><div key={l} style={{background:'var(--s2)',border:'1px solid var(--border)',borderRadius:9,padding:'10px 12px'}}>
+                            <div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>{l}</div>
+                            <div style={{fontSize:15,fontWeight:500,color:'var(--text)',fontFamily:'JetBrains Mono,monospace'}}>{v}</div>
+                          </div>)}
+                        </div>
+                        {/* Notes */}
+                        <div>
+                          <div style={{fontSize:9.5,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Trade Notes</div>
+                          <textarea value={meta.notes||t.notes||''} onChange={e=>onUpdateMeta(t.id,{notes:e.target.value})} onClick={e=>e.stopPropagation()} placeholder="Add notes, lessons, observations..." style={{width:'100%',minHeight:80,border:'1.5px solid var(--border)',borderRadius:10,padding:'10px 12px',fontSize:12,color:'var(--text)',background:'var(--surface)',resize:'vertical',outline:'none',lineHeight:1.7,fontFamily:'inherit'}}/>
+                        </div>
+                      </div>
+                      {/* Right: Screenshot */}
+                      <div>
+                        <div style={{fontSize:9.5,fontWeight:500,color:'var(--t3)',marginBottom:6}}>Chart Screenshot</div>
+                        {screenshots[t.id]==='__loading__'?<div style={{display:'flex',alignItems:'center',justifyContent:'center',height:120,background:'var(--s3)',borderRadius:10,color:'var(--t3)',fontSize:12}}>Loading…</div>
+                        :screenshots[t.id]?<div style={{position:'relative'}}>
+                          <img src={screenshots[t.id]} alt="Chart" style={{width:'100%',maxHeight:180,objectFit:'cover',borderRadius:10,border:'1px solid var(--border)',display:'block'}}/>
+                          <div style={{position:'absolute',top:6,right:6,display:'flex',gap:5}}>
+                            <label style={{background:'rgba(15,23,42,.7)',color:'#fff',border:'none',borderRadius:7,padding:'4px 10px',fontSize:10,cursor:'pointer',fontWeight:600,backdropFilter:'blur(4px)'}}>↺ Replace<input type="file" accept="image/*" style={{display:'none'}} onChange={e=>handleScreenshot(t.id,e.target.files[0])}/></label>
+                            <button onClick={e=>{e.stopPropagation();handleRemoveShot(t.id)}} style={{background:'rgba(220,38,38,.8)',color:'#fff',border:'none',borderRadius:7,padding:'4px 8px',fontSize:10,cursor:'pointer',fontWeight:600}}>✕</button>
+                          </div>
+                        </div>:<label style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:7,border:'2px dashed var(--border2)',borderRadius:10,minHeight:120,cursor:'pointer',background:'var(--s2)',transition:'all .15s'}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--acc)';e.currentTarget.style.background='var(--accF)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border2)';e.currentTarget.style.background='var(--s2)'}}>
+                          <span style={{fontSize:24}}>📸</span>
+                          <span style={{fontSize:11,color:'var(--t3)',fontWeight:600}}>Upload chart screenshot</span>
+                          <input type="file" accept="image/*" style={{display:'none'}} onChange={e=>handleScreenshot(t.id,e.target.files[0])}/>
+                        </label>}
+                      </div>
+                    </div>
+                  </td>
+                </tr>}
+              </React.Fragment>;
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div style={{padding:'9px 16px',background:'var(--s2)',borderTop:'1px solid var(--border)',fontSize:11,color:'var(--t3)',display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:6}}>
+        <span style={{fontWeight:600}}>{visible.length} of {trades.length} trades</span>
+        <span>Filtered P&L: <strong style={{color:visible.reduce((s,t)=>s+t.pnl,0)>=0?'var(--accD)':'var(--t2)'}}>{fmtPct(visible.reduce((s,t)=>s+t.pnl,0))}</strong></span>
+      </div>
+    </div>
+  </div>;
+}
+
+/* ══════════════════════════════════════════════════
+   CALENDAR TAB
+══════════════════════════════════════════════════ */
+const CalendarView=memo(function CalendarView({trades,onDayClick}){
+  const[month,setMonth]=useState(new Date().getMonth());
+  const[year,setYear]=useState(new Date().getFullYear());
+  const[mode,setMode]=useState('pct');
+  const ic=inferCapital(trades);
+  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const byDate={};trades.forEach(t=>{if(!byDate[t.entryDate])byDate[t.entryDate]={profit:0,count:0,trades:[]};byDate[t.entryDate].profit+=(t.profit||0);byDate[t.entryDate].count++;byDate[t.entryDate].trades.push(t)});
+  Object.keys(byDate).forEach(d=>{byDate[d].pnl=(byDate[d].profit/ic)*100});
+  const first=new Date(year,month,1).getDay();
+  const days=new Date(year,month+1,0).getDate();
+  const cells=[...Array(first).fill(null),...Array.from({length:days},(_,i)=>i+1)];
+  const dk=d=>`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  const mEntries=Object.entries(byDate).filter(([d])=>{const[y,m]=d.split('-').map(Number);return y===year&&m-1===month});
+  const mProfit=mEntries.reduce((s,[,v])=>s+v.profit,0);
+  const mPnl=(mProfit/ic)*100;
+  const mCount=mEntries.reduce((s,[,v])=>s+v.count,0);
+  const maxP=Math.max(...Object.values(byDate).map(d=>Math.abs(d.profit)),1);
+  const weeks=[];for(let i=0;i<cells.length;i+=7)weeks.push(cells.slice(i,i+7));
+  const weekStats=weeks.map(w=>{const p=w.filter(Boolean).reduce((s,d)=>s+(byDate[dk(d)]?.profit||0),0);return{profit:p,pnl:(p/ic)*100,count:w.filter(Boolean).reduce((s,d)=>s+(byDate[dk(d)]?.count||0),0)}});
+  const fmt=(p,pct)=>mode==='pct'?fmtPct(pct,1):fmtUSD(p);
+  const todayStr=new Date().toISOString().slice(0,10);
+
+  return <div className="fade-up">
+    <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20,flexWrap:'wrap'}}>
+      <button onClick={()=>{if(month===0){setMonth(11);setYear(y=>y-1)}else setMonth(m=>m-1)}} style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:10,width:34,height:34,cursor:'pointer',fontSize:18,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--t2)'}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--acc)';e.currentTarget.style.color='var(--acc)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--t2)'}}>‹</button>
+      <select value={month} onChange={e=>setMonth(+e.target.value)} style={{border:'1px solid var(--border)',borderRadius:10,padding:'6px 12px',fontSize:13,fontWeight:700,background:'var(--surface)',cursor:'pointer',outline:'none',color:'var(--text)'}}>{MN.map((m,i)=><option key={i} value={i}>{m}</option>)}</select>
+      <select value={year} onChange={e=>setYear(+e.target.value)} style={{border:'1px solid var(--border)',borderRadius:10,padding:'6px 12px',fontSize:13,fontWeight:700,background:'var(--surface)',cursor:'pointer',outline:'none',color:'var(--text)'}}>{[2024,2025,2026,2027].map(y=><option key={y}>{y}</option>)}</select>
+      <button onClick={()=>{if(month===11){setMonth(0);setYear(y=>y+1)}else setMonth(m=>m+1)}} style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:10,width:34,height:34,cursor:'pointer',fontSize:18,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--t2)'}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--acc)';e.currentTarget.style.color='var(--acc)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--t2)'}}>›</button>
+      <div style={{display:'flex',border:'1.5px solid var(--border)',borderRadius:10,overflow:'hidden'}}>
+        <button onClick={()=>setMode('pct')} style={{padding:'6px 18px',fontSize:12,fontWeight:700,background:mode==='pct'?'linear-gradient(135deg,var(--acc),var(--accD))':'var(--surface)',color:mode==='pct'?'#fff':'var(--t3)',border:'none',cursor:'pointer'}}>%</button>
+        <button onClick={()=>setMode('usd')} style={{padding:'6px 18px',fontSize:12,fontWeight:700,background:mode==='usd'?'linear-gradient(135deg,var(--acc),var(--accD))':'var(--surface)',color:mode==='usd'?'#fff':'var(--t3)',border:'none',cursor:'pointer'}}>$</button>
+      </div>
+      <div style={{marginLeft:'auto',display:'flex',gap:8,alignItems:'center'}}>
+        {mCount>0&&<Chip color="gray">{mCount} trades</Chip>}
+        <div style={{background:mProfit>=0?'var(--accF)':'var(--s3)',border:`1px solid ${mProfit>=0?'color-mix(in srgb, var(--acc) 30%, transparent)':'var(--border)'}`,borderRadius:9,padding:'5px 14px'}}>
+          <span style={{fontSize:13,fontWeight:700,color:mProfit>=0?'var(--accD)':'var(--t2)'}}>Total: {fmt(mProfit,mPnl)}</span>
+        </div>
+      </div>
+    </div>
+    <div style={{overflowX:'auto'}}>
+      <div style={{minWidth:600}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr) 90px',gap:4,marginBottom:4}}>
+          {DOW.map(d=><div key={d} style={{textAlign:'center',fontSize:9.5,color:'var(--t3)',fontWeight:400,padding:'5px 0'}}>{d}</div>)}
+          <div style={{textAlign:'center',fontSize:9.5,color:'var(--t3)',fontWeight:400,padding:'5px 0'}}>WEEK</div>
+        </div>
+        {weeks.map((week,wi)=><div key={wi} style={{display:'grid',gridTemplateColumns:'repeat(7,1fr) 90px',gap:4,marginBottom:4}}>
+          {[...Array(7)].map((_,ci)=>{
+            const d=week[ci];
+            if(!d)return <div key={`e${ci}`} style={{borderRadius:12,minHeight:80}}/>;
+            const dateKey=dk(d);
+            const data=byDate[dateKey];
+            const p=data?.profit||0;
+            const pct=data?.pnl||0;
+            const has=!!data;
+            const intensity=has?Math.min(1,Math.abs(p)/maxP*2):0;
+            const bg=!has?'var(--surface)':p>=0?`color-mix(in srgb, var(--acc) ${Math.round((.07+intensity*.22)*100)}%, var(--surface))`:`rgba(148,163,184,${.1+intensity*.2})`;
+            const bdr=!has?'var(--border)':p>=0?'color-mix(in srgb, var(--acc) 30%, transparent)':'var(--border2)';
+            const isToday=dateKey===todayStr;
+            return <div key={dateKey} onClick={()=>has&&onDayClick(dateKey)} style={{background:bg,border:`1.5px solid ${isToday?'var(--indigo)':bdr}`,borderRadius:12,padding:'8px 10px',minHeight:80,cursor:has?'pointer':'default',transition:'transform .12s,box-shadow .12s',boxShadow:isToday?'0 0 0 1px var(--indigo)':'none'}}
+              onMouseEnter={e=>{if(has){e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow='var(--sh2)'}}}
+              onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow=isToday?'0 0 0 1px var(--indigo)':'none'}}>
+              <div style={{fontSize:11,fontWeight:isToday?900:700,color:isToday?'var(--indigo)':'var(--t3)',marginBottom:4}}>{d}</div>
+              {has&&<>
+                <div style={{fontSize:13,fontWeight:500,color:p>=0?'var(--accD)':'var(--t2)',lineHeight:1.1,letterSpacing:'-.5px'}}>{fmt(p,pct)}</div>
+                <div style={{fontSize:9.5,color:'var(--t3)',marginTop:4,fontWeight:600}}>{data.count} {data.count===1?'trade':'trades'}</div>
+              </>}
+            </div>;
+          })}
+          <div style={{background:weekStats[wi].count?weekStats[wi].profit>=0?'color-mix(in srgb, var(--acc) 10%, transparent)':'rgba(148,163,184,.15)':'var(--s2)',border:`1.5px solid ${weekStats[wi].count?weekStats[wi].profit>=0?'color-mix(in srgb, var(--acc) 30%, transparent)':'var(--border2)':'var(--border)'}`,borderRadius:12,padding:'8px',minHeight:80,display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',gap:3}}>
+            {weekStats[wi].count>0&&<>
+              <div style={{fontSize:13,fontWeight:500,color:weekStats[wi].profit>=0?'var(--accD)':'var(--t2)',textAlign:'center'}}>{fmt(weekStats[wi].profit,weekStats[wi].pnl)}</div>
+              <div style={{fontSize:9,color:'var(--t3)',textAlign:'center'}}>{weekStats[wi].count}t</div>
+            </>}
+          </div>
+        </div>)}
+      </div>
+    </div>
+  </div>;
+});
+
+/* ══════════════════════════════════════════════════
+   DAY POPUP — with inline trade editing
+══════════════════════════════════════════════════ */
+function DayPopup({date,trades,onClose,ic,onEdit,editingId,setEditingId}){
+  const dayTrades=trades.filter(t=>t.entryDate===date).sort((a,b)=>a.entryTime.localeCompare(b.entryTime));
+  const[editForm,setEditForm]=useState(null);
+  const[saved,setSaved]=useState(null);
+  const[symFilter,setSymFilter]=useState('All');
+  const[gradeFilter,setGradeFilter]=useState('All');
+  const[sortBy,setSortBy]=useState('entryTime');
+  const[sortDir,setSortDir]=useState(1);
+  const inp={border:'1.5px solid var(--border)',borderRadius:8,padding:'6px 9px',fontSize:12,outline:'none',background:'var(--s2)',color:'var(--text)',width:'100%',boxSizing:'border-box',fontFamily:'inherit'};
+  const sel={...inp,cursor:'pointer'};
+  const syms=['All',...new Set(dayTrades.map(t=>t.symbol))];
+  const visible=useMemo(()=>[...dayTrades]
+    .filter(t=>(symFilter==='All'||t.symbol===symFilter)&&(gradeFilter==='All'||t.grade===gradeFilter))
+    .sort((a,b)=>{let va=a[sortBy],vb=b[sortBy];if(['pnl','profit'].includes(sortBy)){va=+va;vb=+vb}return va>vb?sortDir:va<vb?-sortDir:0})
+  ,[dayTrades,symFilter,gradeFilter,sortBy,sortDir]);
+  const dayProfit=dayTrades.reduce((s,t)=>s+(t.profit||0),0);
+  const dayPct=(dayProfit/ic)*100;
+  const wins=dayTrades.filter(t=>t.pnl>0).length;
+  const wr=dayTrades.length?Math.round(wins/dayTrades.length*100):0;
+  const[yr,mo,dy]=date.split('-').map(Number);
+  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const prettyDate=`${MN[mo-1]} ${dy}, ${yr}`;
+  const startEdit=t=>{setEditingId(t.id);setEditForm({symbol:t.symbol,side:t.side||deriveDir(t),entryPrice:String(t.entryPrice||''),exitPrice:String(t.exitPrice||''),pnl:String(t.pnl||''),profit:String(t.profit||''),session:t.session||'London Open',model:t.model||'In Session',grade:t.grade||'A',expectedRR:t.expectedRR||'1:2',actualRR:t.actualRR||'',mistakes:t.mistakes||'None',notes:t.notes||''})};
+  const cancelEdit=()=>{setEditingId(null);setEditForm(null)};
+  const saveEdit=id=>{if(!editForm)return;onEdit(id,{...editForm,entryPrice:+editForm.entryPrice,exitPrice:+editForm.exitPrice,pnl:+editForm.pnl||0,profit:+editForm.profit||0});setSaved(id);setTimeout(()=>setSaved(null),1800);cancelEdit()};
+  const toggleSort=f=>{if(sortBy===f)setSortDir(d=>-d);else{setSortBy(f);setSortDir(1)}};
+  const SH=({l,f})=><span onClick={()=>toggleSort(f)} style={{fontSize:10,fontWeight:500,color:sortBy===f?'var(--accD)':'var(--t3)',letterSpacing:.1,cursor:'pointer',userSelect:'none'}}>{l}{sortBy===f?(sortDir>0?' ↑':' ↓'):' ↕'}</span>;
+  return <div style={{position:'fixed',inset:0,background:'rgba(10,18,35,.55)',backdropFilter:'blur(16px)',zIndex:500,display:'flex',alignItems:'center',justifyContent:'center',padding:16}} onClick={onClose}>
+    <div style={{background:'var(--surface)',borderRadius:20,boxShadow:'0 32px 80px rgba(0,0,0,.2)',width:720,maxWidth:'100%',maxHeight:'93vh',overflow:'auto',border:'1px solid var(--border)'}} onClick={e=>e.stopPropagation()}>
+      {/* Header */}
+      <div style={{padding:'22px 26px 16px',display:'flex',alignItems:'flex-start',justifyContent:'space-between',borderBottom:'1px solid var(--border)',position:'sticky',top:0,background:'var(--surface)',zIndex:10}}>
+        <div><div style={{fontSize:10,fontWeight:600,color:'var(--t3)',letterSpacing:.1,marginBottom:5}}>📅 Day Summary</div><div style={{fontSize:20,fontWeight:600,letterSpacing:'-.4px'}}>{prettyDate}</div></div>
+        <button onClick={onClose} style={{background:'var(--s3)',border:'1px solid var(--border)',color:'var(--t3)',cursor:'pointer',fontSize:16,padding:'6px 10px',borderRadius:9,fontWeight:700}} onMouseEnter={e=>{e.currentTarget.style.background='var(--rBg)';e.currentTarget.style.color='var(--red)'}} onMouseLeave={e=>{e.currentTarget.style.background='var(--s3)';e.currentTarget.style.color='var(--t3)'}}>×</button>
+      </div>
+      {/* Stats */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,padding:'16px 26px 14px'}}>
+        {[{l:'P&L%',v:fmtPct(dayPct),c:dayPct>=0?'var(--accD)':'var(--t2)',bg:dayPct>=0?'var(--accL)':'var(--s3)'},
+          {l:'Net P&L',v:fmtUSD(dayProfit),c:dayProfit>=0?'var(--accD)':'var(--t2)',bg:dayProfit>=0?'var(--accL)':'var(--s3)'},
+          {l:'Trades',v:dayTrades.length,c:'var(--text)',bg:'var(--s2)'},
+          {l:'Win Rate',v:`${wr}%`,c:wr>=50?'var(--acc)':'var(--t2)',bg:'var(--s2)'},
+        ].map((m,i)=><div key={i} style={{background:m.bg,border:'1px solid var(--border)',borderRadius:12,padding:'14px 16px'}}>
+          <div style={{fontSize:9,fontWeight:600,color:'var(--t3)',letterSpacing:.1,marginBottom:8}}>{m.l}</div>
+          <div style={{fontSize:20,fontWeight:600,color:m.c,letterSpacing:'-1px'}}>{m.v}</div>
+        </div>)}
+      </div>
+      {/* Filters & Sort */}
+      <div style={{padding:'0 26px 12px',display:'flex',gap:6,flexWrap:'wrap',alignItems:'center'}}>
+        <span style={{fontSize:11,color:'var(--t3)',fontWeight:600,marginRight:4}}>Filter:</span>
+        {syms.map(s=><button key={s} onClick={()=>setSymFilter(s)} style={{padding:'3px 11px',borderRadius:20,border:`1.5px solid ${symFilter===s?'var(--acc)':'var(--border)'}`,background:symFilter===s?'var(--accF)':'var(--surface)',color:symFilter===s?'var(--accD)':'var(--t2)',fontWeight:symFilter===s?700:500,fontSize:11,cursor:'pointer'}}>{s}</button>)}
+        <span style={{borderLeft:'1px solid var(--border)',height:16,margin:'0 4px'}}/>
+        {['All',...GRADES].map(g=><button key={g} onClick={()=>setGradeFilter(g)} style={{padding:'3px 10px',borderRadius:20,border:`1.5px solid ${gradeFilter===g?'var(--acc)':'var(--border)'}`,background:gradeFilter===g?'var(--accF)':'var(--surface)',color:gradeFilter===g?'var(--accD)':'var(--t2)',fontWeight:gradeFilter===g?700:500,fontSize:11,cursor:'pointer'}}>{g}</button>)}
+        <div style={{marginLeft:'auto',display:'flex',gap:10,alignItems:'center'}}>
+          <SH l="Time" f="entryTime"/><SH l="P&L" f="pnl"/><SH l="Grade" f="grade"/>
+        </div>
+      </div>
+      {/* Trade List */}
+      <div style={{padding:'0 26px 24px',display:'flex',flexDirection:'column',gap:8}}>
+        {visible.map((t,i)=>{
+          const isEditing=editingId===t.id;
+          const isSaved=saved===t.id;
+          return <div key={t.id} style={{border:`1.5px solid ${isEditing?'var(--acc)':isSaved?'var(--gBdr)':'var(--border)'}`,borderRadius:14,overflow:'hidden',transition:'border-color .2s',background:isEditing?'var(--accF)':isSaved?'var(--gBg)':'var(--surface)'}}>
+            {/* Trade Header Row */}
+            <div style={{display:'grid',gridTemplateColumns:'2fr 1.2fr 1fr 1fr 1fr 1fr auto',gap:8,padding:'11px 16px',alignItems:'center',background:i%2===0?'var(--surface)':'var(--s2)'}}>
+              <div style={{display:'flex',flexDirection:'column',gap:2}}>
+                <span style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>{t.symbol}</span>
+                <span style={{fontSize:10,color:'var(--t3)'}}>{t.entryTime?.slice(0,5)||'—'} · {t.side||deriveDir(t)}</span>
+              </div>
+              <div><SessionChip session={t.session}/></div>
+              <div><GradeChip grade={t.grade}/></div>
+              <div style={{fontSize:13,fontWeight:700,color:t.pnl>=0?'var(--accD)':'var(--t2)'}}>{fmtPct(t.pnl)}</div>
+              <div style={{fontSize:12,color:'var(--t3)'}}>{t.expectedRR||'—'}</div>
+              <div style={{fontSize:11,color:'var(--t3)',maxWidth:100,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.model||'—'}</div>
+              <div style={{display:'flex',gap:5}}>
+                {!isEditing&&<button onClick={()=>startEdit(t)} style={{background:'linear-gradient(135deg,var(--acc),var(--accD))',color:'#fff',border:'none',borderRadius:8,padding:'5px 12px',fontSize:11,fontWeight:700,cursor:'pointer',whiteSpace:'nowrap'}}>✏️ Edit</button>}
+                {isEditing&&<><button onClick={()=>saveEdit(t.id)} style={{background:'var(--green)',color:'#fff',border:'none',borderRadius:8,padding:'5px 12px',fontSize:11,fontWeight:700,cursor:'pointer'}}>✓ Save</button><button onClick={cancelEdit} style={{background:'var(--s3)',color:'var(--t2)',border:'1px solid var(--border)',borderRadius:8,padding:'5px 10px',fontSize:11,fontWeight:700,cursor:'pointer'}}>✕</button></>}
+              </div>
+            </div>
+            {/* Edit Form */}
+            {isEditing&&editForm&&<div style={{padding:'16px',borderTop:'1px dashed color-mix(in srgb, var(--acc) 35%, transparent)',background:'var(--accF)'}}>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))',gap:8,marginBottom:10}}>
+                {[['Symbol','symbol'],['Entry Price','entryPrice'],['Exit Price','exitPrice'],['P&L %','pnl'],['Profit $','profit'],['Actual RR','actualRR']].map(([l,k])=><div key={k}>
+                  <div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>{l}</div>
+                  <input value={editForm[k]||''} onChange={e=>setEditForm(f=>({...f,[k]:e.target.value}))} style={inp}/>
+                </div>)}
+                <div><div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>Side</div>
+                  <select value={editForm.side} onChange={e=>setEditForm(f=>({...f,side:e.target.value}))} style={sel}><option>Long</option><option>Short</option></select></div>
+                <div><div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>Session</div>
+                  <select value={editForm.session} onChange={e=>setEditForm(f=>({...f,session:e.target.value}))} style={sel}>{SESSIONS.map(s=><option key={s}>{s}</option>)}</select></div>
+                <div><div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>Model</div>
+                  <select value={editForm.model} onChange={e=>setEditForm(f=>({...f,model:e.target.value}))} style={sel}>{MODELS.map(m=><option key={m}>{m}</option>)}</select></div>
+                <div><div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>Grade</div>
+                  <select value={editForm.grade} onChange={e=>setEditForm(f=>({...f,grade:e.target.value}))} style={sel}>{GRADES.map(g=><option key={g}>{g}</option>)}</select></div>
+                <div><div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>Mistakes</div>
+                  <select value={editForm.mistakes} onChange={e=>setEditForm(f=>({...f,mistakes:e.target.value}))} style={sel}>{MISTAKES.map(m=><option key={m}>{m}</option>)}</select></div>
+                <div><div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>Exp. RR</div>
+                  <select value={editForm.expectedRR} onChange={e=>setEditForm(f=>({...f,expectedRR:e.target.value}))} style={sel}>{RR_OPTIONS.map(r=><option key={r}>{r}</option>)}</select></div>
+              </div>
+              <div><div style={{fontSize:9.5,fontWeight:400,color:'var(--t3)',marginBottom:4}}>Notes</div>
+                <textarea value={editForm.notes} onChange={e=>setEditForm(f=>({...f,notes:e.target.value}))} rows={2} style={{...inp,resize:'vertical'}}/>
+              </div>
+              <div style={{display:'flex',gap:8,marginTop:10}}>
+                <button onClick={()=>saveEdit(t.id)} style={{background:'linear-gradient(135deg,var(--acc),var(--accD))',color:'#fff',border:'none',borderRadius:10,padding:'9px 22px',fontSize:13,fontWeight:700,cursor:'pointer',boxShadow:'0 3px 12px color-mix(in srgb, var(--acc) 40%, transparent)'}}>✓ Save Changes</button>
+                <button onClick={cancelEdit} style={{background:'var(--s3)',color:'var(--t2)',border:'1px solid var(--border)',borderRadius:10,padding:'9px 18px',fontSize:13,fontWeight:700,cursor:'pointer'}}>✕ Cancel</button>
+              </div>
+            </div>}
+          </div>;
+        })}
+        {visible.length===0&&<div style={{textAlign:'center',padding:'30px',color:'var(--t3)',fontSize:13}}>No trades match filters</div>}
+      </div>
+    </div>
+  </div>;
+}
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════ */
+function Sidebar({activeTab,setTab,sidebarOpen,setSidebarOpen,setSidebarHover,userName,setUserName,accounts,seedTrades,editingUi,setEditingUi,uiBlocks,toggleBlock,resetUi,onOpenSettings,theme,setTheme}){
+  const isMobile=useMediaQuery('(max-width:768px)');
+  const TABS=[
+    {id:'overview',label:'Overview',icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>},
+    {id:'analytics',label:'Analytics',icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>},
+    {id:'psychology',label:'Psychology',icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>},
+    {id:'tradelog',label:'Trade Log',icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>},
+    {id:'calendar',label:'Calendar',icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>},
+  ];
+  const allT=accounts.length?accounts.flatMap(a=>a.trades):seedTrades;
+  const totalPnl=allT.reduce((s,t)=>s+t.pnl,0);
+  const initials=userName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const click=id=>{setTab(id);if(isMobile)setSidebarOpen(false)};
+
+  if(!sidebarOpen)return <div style={{width:isMobile?0:56,background:'var(--surface)',height:'100vh',position:'fixed',left:0,top:0,zIndex:200,display:isMobile?'none':'flex',flexDirection:'column',alignItems:'center',paddingTop:12,gap:2,borderRight:'1px solid var(--border)',boxShadow:'var(--sh1)'}}
+    onMouseEnter={()=>setSidebarHover&&setSidebarHover(true)}
+    onMouseLeave={()=>setSidebarHover&&setSidebarHover(false)}>
+    <div style={{width:36,height:36,borderRadius:10,background:'linear-gradient(135deg,var(--acc),var(--accD))',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:8,boxShadow:'0 2px 10px color-mix(in srgb, var(--acc) 40%, transparent)',flexShrink:0}}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <button onClick={()=>setSidebarOpen(true)} style={{background:'none',border:'none',color:'var(--t3)',cursor:'pointer',padding:7,borderRadius:8,width:34,height:34,display:'flex',alignItems:'center',justifyContent:'center',marginBottom:6}} onMouseEnter={e=>{e.currentTarget.style.background='var(--s2)'}} onMouseLeave={e=>{e.currentTarget.style.background='none'}}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div style={{width:28,height:1,background:'var(--border)',margin:'2px 0 4px'}}/>
+    {TABS.map(t=><button key={t.id} onClick={()=>click(t.id)} title={t.label} style={{background:activeTab===t.id?'color-mix(in srgb, var(--acc) 12%, transparent)':'none',border:'none',color:activeTab===t.id?'var(--acc)':'var(--t3)',cursor:'pointer',padding:8,borderRadius:10,width:38,height:38,display:'flex',alignItems:'center',justifyContent:'center',position:'relative',transition:'all .15s'}} onMouseEnter={e=>{if(activeTab!==t.id)e.currentTarget.style.background='var(--s2)'}} onMouseLeave={e=>{if(activeTab!==t.id)e.currentTarget.style.background='none'}}>
+      {activeTab===t.id&&<div style={{position:'absolute',right:-1,top:'50%',transform:'translateY(-50%)',width:3,height:22,background:'var(--acc)',borderRadius:'3px 0 0 3px'}}/>}
+      {t.icon}
+    </button>)}
+  </div>;
+
+  return <>
+    {isMobile&&<div onClick={()=>setSidebarOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,.35)',zIndex:199}}/>}
+    {/* Hover zone trigger strip */}
+    {!isMobile&&<div style={{position:'fixed',left:0,top:0,width:8,height:'100vh',zIndex:198}} onMouseEnter={()=>setSidebarHover&&setSidebarHover(true)}/>}
+    <div style={{width:228,background:'var(--surface)',height:'100vh',position:'fixed',left:0,top:0,zIndex:200,display:'flex',flexDirection:'column',borderRight:'1px solid var(--border)',boxShadow:'var(--sh3)',animation:'sidebarSlide .22s cubic-bezier(.22,1,.36,1)'}}
+      onMouseLeave={()=>setSidebarHover&&setSidebarHover(false)}>
+      {/* Header */}
+      <div style={{padding:'16px 16px 12px',display:'flex',alignItems:'center',gap:10}}>
+        <div style={{width:38,height:38,borderRadius:12,background:'linear-gradient(135deg,var(--acc),var(--accD))',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:'0 3px 12px color-mix(in srgb, var(--acc) 40%, transparent)'}}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:14,fontWeight:600,letterSpacing:'-.3px',lineHeight:1.1}}>TradeJournal</div>
+          <div style={{fontSize:9,fontWeight:400,color:'var(--t3)',letterSpacing:.5,textTransform:'uppercase',marginTop:2}}>Pro · v7.0</div>
+        </div>
+        <button onClick={()=>setSidebarOpen(false)} style={{background:'none',border:'1px solid var(--border)',color:'var(--t3)',cursor:'pointer',padding:4,borderRadius:7,display:'flex',alignItems:'center',width:26,height:26,justifyContent:'center'}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--acc)';e.currentTarget.style.color='var(--acc)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--t3)'}}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+      </div>
+      {/* CTA */}
+      <div style={{padding:'0 12px 14px'}}>
+        <button onClick={()=>click('tradelog')} style={{width:'100%',background:'linear-gradient(135deg,var(--acc),var(--accD))',color:'#fff',border:'none',borderRadius:11,padding:'11px 16px',fontSize:13,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',gap:8,boxShadow:'0 4px 14px color-mix(in srgb, var(--acc) 38%, transparent)'}}>
+          <div style={{width:22,height:22,borderRadius:6,background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,fontWeight:300}}>+</div>
+          Log Trade
+        </button>
+      </div>
+      {/* Nav */}
+      <div style={{flex:1,padding:'0 8px',display:'flex',flexDirection:'column',gap:2,overflowY:'auto'}}>
+        {TABS.map(t=>{const active=activeTab===t.id;return <button key={t.id} onClick={()=>click(t.id)} className="nav-btn" style={{background:active?'color-mix(in srgb, var(--acc) 10%, transparent)':'transparent',color:active?'var(--acc)':'var(--t2)',fontWeight:active?700:500,fontSize:13,boxShadow:active?'inset 0 0 0 1px color-mix(in srgb, var(--acc) 25%, transparent)':'none'}}>
+          <span style={{opacity:active?1:.6}}>{t.icon}</span>
+          <span style={{flex:1}}>{t.label}</span>
+          {active&&<div style={{width:6,height:6,borderRadius:'50%',background:'var(--acc)'}}/>}
+        </button>})}
+      </div>
+      {/* UI Edit Panel */}
+      {editingUi&&<div style={{margin:'0 8px 8px',background:'var(--s2)',border:'1px solid var(--border)',borderRadius:12,padding:'10px 12px'}}>
+        <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          UI Blocks
+          <button onClick={resetUi} style={{background:'var(--accF)',border:'1px solid color-mix(in srgb, var(--acc) 30%, transparent)',color:'var(--accD)',borderRadius:6,padding:'2px 8px',fontSize:9,fontWeight:700,cursor:'pointer'}}>Reset All</button>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:5}}>
+          {Object.entries({bestTradeGrade:'Best Trade Grade',disciplineScore:'Discipline Score',bestMindset:'Best Mindset',worstMindset:'Worst Mindset',mistakeRate:'Mistake Rate',equityCurve:'Equity Curve',monthlyBars:'Monthly Bars',winRateCard:'Win Rate Card',gradeBreakdown:'Grade Breakdown',sessionBreakdown:'Session Breakdown',modelBreakdown:'Model Breakdown'}).map(([k,label])=><label key={k} style={{display:'flex',alignItems:'center',gap:7,cursor:'pointer'}}>
+            <div onClick={()=>toggleBlock(k)} style={{width:28,height:15,borderRadius:8,background:uiBlocks[k]?'var(--acc)':'var(--border2)',position:'relative',cursor:'pointer',transition:'background .2s',flexShrink:0}}>
+              <div style={{position:'absolute',top:2,left:uiBlocks[k]?13:2,width:11,height:11,borderRadius:'50%',background:'#fff',transition:'left .15s',boxShadow:'0 1px 3px rgba(0,0,0,.2)'}}/>
+            </div>
+            <span style={{fontSize:10.5,color:uiBlocks[k]?'var(--text)':'var(--t3)',fontWeight:uiBlocks[k]?600:400}}>{label}</span>
+          </label>)}
+        </div>
+      </div>}
+      {/* Footer */}
+      <div style={{padding:'12px 14px',borderTop:'1px solid var(--border)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+          <div style={{width:34,height:34,borderRadius:10,background:'linear-gradient(135deg,var(--acc),var(--accD))',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:600,color:'#fff',flexShrink:0,boxShadow:'0 2px 8px color-mix(in srgb, var(--acc) 30%, transparent)'}}>{initials}</div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:12.5,fontWeight:700,color:'var(--text)'}}>{userName}</div>
+            <div style={{fontSize:10,color:'var(--t3)',marginTop:1}}>{allT.length} trades · <span style={{color:totalPnl>=0?'var(--acc)':'var(--t3)',fontWeight:700}}>{fmtPct(totalPnl)}</span></div>
+          </div>
+        </div>
+        {/* Edit UI Button */}
+        <button onClick={()=>setEditingUi(e=>!e)} style={{width:'100%',background:editingUi?'var(--accF)':'var(--s2)',border:`1px solid ${editingUi?'color-mix(in srgb, var(--acc) 40%, transparent)':'var(--border)'}`,color:editingUi?'var(--accD)':'var(--t3)',borderRadius:9,padding:'7px 10px',fontSize:11,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',gap:7,marginBottom:6}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          {editingUi?'✓ Done Editing UI':'✏️ Edit UI'}
+        </button>
+        <button onClick={()=>{onOpenSettings&&onOpenSettings()}} style={{width:'100%',background:'var(--s2)',border:'1px solid var(--border)',color:'var(--t3)',borderRadius:9,padding:'7px 10px',fontSize:11,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',gap:7,marginBottom:7}}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--acc)';e.currentTarget.style.color='var(--accD)'}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--t3)'}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          ⚙️ Appearance
+        </button>
+        <div style={{fontSize:9.5,color:'var(--t3)',textAlign:'center',paddingTop:8,borderTop:'1px solid var(--border)',letterSpacing:.3}}>TradeJournal Pro · v7.0</div>
+      </div>
+    </div>
+  </>;
+}
+
+/* ══════════════════════════════════════════════════
+   MAIN APP
+══════════════════════════════════════════════════ */
+const DEFAULT_UI_BLOCKS={bestTradeGrade:true,disciplineScore:true,bestMindset:true,worstMindset:true,mistakeRate:true,equityCurve:true,monthlyBars:true,winRateCard:true,gradeBreakdown:true,sessionBreakdown:true,modelBreakdown:true};
+function App(){
+  const[tab,setTab]=useState('overview');
+  const[toast,setToast]=useState(null);
+  const[syncingId,setSyncingId]=useState(null);
+  const[activeAccId,setActiveAccId]=useState('all');
+  const[accounts,setAccounts]=useState(()=>loadAccounts());
+  const[tradeMeta,setTradeMeta]=useState(()=>loadTradeMeta());
+  const[sidebarOpen,setSidebarOpen]=useState(false);
+  const[sidebarHover,setSidebarHover]=useState(false);
+  const[uiBlocks,setUiBlocks]=useState(()=>{try{const r=localStorage.getItem('tj5_uiblocks');return r?{...DEFAULT_UI_BLOCKS,...JSON.parse(r)}:DEFAULT_UI_BLOCKS}catch{return DEFAULT_UI_BLOCKS}});
+  const[editingUi,setEditingUi]=useState(false);
+  const[userName,setUserName]=useState(()=>{try{return localStorage.getItem('tj5_username')||'Trader'}catch{return'Trader'}});
+  const[dayPopup,setDayPopup]=useState(null);
+  const[editingDayTrade,setEditingDayTrade]=useState(null);
+  const[dateRange,setDateRange]=useState({from:null,to:null});
+  const[theme,setTheme]=useState(()=>loadTheme());
+  const[accent,setAccent]=useState(()=>loadAccent());
+  const[showSettings,setShowSettings]=useState(false);
+  const isMobile=useMediaQuery('(max-width:768px)');
+  const sidebarEffectiveOpen=sidebarOpen||sidebarHover;
+
+  // Apply theme + accent to document
+  useEffect(()=>{
+    document.documentElement.setAttribute('data-theme',theme);
+    document.documentElement.setAttribute('data-accent',accent);
+    try{localStorage.setItem('tj5_theme',theme);localStorage.setItem('tj5_accent',accent)}catch{}
+  },[theme,accent]);
+
+  useEffect(()=>{if(!isMobile)setSidebarOpen(true)},[isMobile]);
+  useEffect(()=>{try{localStorage.setItem('tj5_uiblocks',JSON.stringify(uiBlocks))}catch{}},[uiBlocks]);
+  const toggleBlock=useCallback(k=>setUiBlocks(b=>({...b,[k]:!b[k]})),[]);
+  const resetUi=useCallback(()=>setUiBlocks(DEFAULT_UI_BLOCKS),[]);
+  // Save full accounts including trades on every change
+  useEffect(()=>{saveAccounts(accounts)},[accounts]);
+  useEffect(()=>{try{localStorage.setItem('tj5_meta',JSON.stringify(tradeMeta))}catch{}},[tradeMeta]);
+
+  const showToast=useCallback((msg,type='info')=>{setToast({msg,type});setTimeout(()=>setToast(null),4500)},[]);
+
+  const handleSync=useCallback(async acc=>{
+    if(acc.isDemo){showToast(`${acc.label} is a demo account — no sync needed`,'info');return;}
+    setSyncingId(acc.id);
+    try{
+      const res=await fetch(`${API_URL}/sync-account`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({login:acc.login,password:acc.password,server:acc.server})});
+      if(!res.ok){let m=`Server error ${res.status}`;try{const j=await res.json();m=j.error||m}catch{}throw new Error(m)}
+      const data=await res.json();
+      const incoming=(data.trades||[]).map(t=>({...t,accountId:acc.id}));
+      setAccounts(prev=>prev.map(a=>a.id!==acc.id?a:{...a,trades:incoming,info:data.account||null,connected:true,lastSync:new Date().toLocaleTimeString()}));
+      showToast(`✓ ${acc.label} — ${incoming.length} trades synced`,'success');
+    }catch(err){showToast(err.message.includes('fetch')||err.message.includes('Failed')?'Cannot reach MT5 backend':err.message,'error');setAccounts(prev=>prev.map(a=>a.id!==acc.id?a:{...a,connected:false}));}
+    finally{setSyncingId(null);}
+  },[showToast]);
+
+  const handleAddAcc=useCallback(c=>{
+    const id=Date.now().toString();
+    const na={...c,id,trades:[],info:null,connected:false,lastSync:null};
+    setAccounts(p=>[...p,na]);
+    if(!c.isDemo)setTimeout(()=>handleSync(na),60);
+    else showToast(`✓ ${c.label} demo account created`,'success');
+  },[handleSync,showToast]);
+  const handleRemoveAcc=useCallback(id=>{setAccounts(p=>p.filter(a=>a.id!==id));if(activeAccId===id)setActiveAccId('all')},[activeAccId]);
+
+  // Use SEED if no accounts
+  const allTrades=useMemo(()=>{
+    if(accounts.length===0)return SEED;
+    if(activeAccId==='all')return accounts.flatMap(a=>a.trades);
+    return accounts.find(a=>a.id===activeAccId)?.trades||[];
+  },[accounts,activeAccId]);
+
+  const displayTrades=useMemo(()=>{
+    if(!dateRange.from&&!dateRange.to)return allTrades;
+    return allTrades.filter(t=>(!dateRange.from||t.entryDate>=dateRange.from)&&(!dateRange.to||t.entryDate<=dateRange.to));
+  },[allTrades,dateRange]);
+
+  const handleDeleteTrade=useCallback(id=>setAccounts(p=>p.map(a=>({...a,trades:a.trades.filter(t=>t.id!==id)}))),[]);
+  const handleEditTrade=useCallback((id,patch)=>setAccounts(p=>p.map(a=>({...a,trades:a.trades.map(t=>t.id!==id?t:{...t,...patch,id})}))),[]);
+  const handleAddTrade=useCallback(t=>{
+    const nt={...t,id:Date.now(),accountId:'manual'};
+    setAccounts(p=>{
+      if(p.length===0){
+        // Auto-create a demo account
+        const demo={id:'demo-auto',label:'My Account',isDemo:true,connected:false,trades:[nt]};
+        return [demo];
+      }
+      return p.map((a,i)=>i===0?{...a,trades:[nt,...a.trades]}:a);
+    });
+  },[]);
+  const handleUpdateMeta=useCallback((id,patch)=>setTradeMeta(m=>{const next={...m,[id]:{...(m[id]||{}),...patch}};return next}),[]);
+  const saveUserName=n=>{setUserName(n);try{localStorage.setItem('tj5_username',n)}catch{}};
+
+  const TABS_INFO=[{id:'overview',label:'Overview'},{id:'analytics',label:'Analytics'},{id:'psychology',label:'Psychology'},{id:'tradelog',label:'Trade Log'},{id:'calendar',label:'Calendar'}];
+  const live=accounts.filter(a=>a.connected).length;
+  const showDateBar=['overview','analytics','tradelog'].includes(tab);
+  const sideW=isMobile?0:sidebarEffectiveOpen?228:56;
+  const ic=inferCapital(allTrades);
+
+  // Settings Modal
+  const THEMES=[{id:'light',label:'Light',icon:'☀️'},{id:'dark',label:'Dark',icon:'🌙'}];
+  const ACCENTS=[
+    {id:'amber',label:'Amber',col:'#c8983a'},{id:'emerald',label:'Emerald',col:'#059669'},
+    {id:'sky',label:'Sky',col:'#0284c7'},{id:'violet',label:'Violet',col:'#7c3aed'},
+    {id:'rose',label:'Rose',col:'#e11d48'},{id:'teal',label:'Teal',col:'#0d9488'},
+    {id:'indigo',label:'Indigo',col:'#4f46e5'},{id:'slate',label:'Slate',col:'#475569'},
+  ];
+
+  return <ErrorBoundary>
+    <div style={{minHeight:'100vh',background:'var(--bg)',color:'var(--text)'}}>
+      {/* Settings Modal */}
+      {showSettings&&<div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.5)',backdropFilter:'blur(12px)',zIndex:600,display:'flex',alignItems:'center',justifyContent:'center',padding:16,animation:'fadeIn .2s ease'}} onClick={()=>setShowSettings(false)}>
+        <div style={{background:'var(--surface)',borderRadius:20,border:'1px solid var(--border)',width:460,maxWidth:'100%',maxHeight:'90vh',overflow:'auto',boxShadow:'var(--sh3)',animation:'scaleIn .22s cubic-bezier(.22,1,.36,1)'}} onClick={e=>e.stopPropagation()}>
+          <div style={{padding:'22px 24px 16px',borderBottom:'1px solid var(--border)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <div style={{fontSize:16,fontWeight:600,letterSpacing:'-.3px'}}>⚙️ Appearance Settings</div>
+            <button onClick={()=>setShowSettings(false)} style={{background:'var(--s3)',border:'1px solid var(--border)',borderRadius:9,padding:'6px 11px',cursor:'pointer',color:'var(--t2)',fontSize:16,fontWeight:700}}>×</button>
+          </div>
+          <div style={{padding:'20px 24px',display:'flex',flexDirection:'column',gap:22}}>
+            {/* Theme */}
+            <div>
+              <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.1,marginBottom:12}}>Theme Mode</div>
+              <div style={{display:'flex',gap:10}}>
+                {THEMES.map(t=><button key={t.id} onClick={()=>setTheme(t.id)} style={{flex:1,padding:'14px 16px',borderRadius:14,border:`2px solid ${theme===t.id?'var(--acc)':'var(--border)'}`,background:theme===t.id?'color-mix(in srgb, var(--acc) 10%, var(--surface))':'var(--s2)',cursor:'pointer',transition:'all .2s'}}>
+                  <div style={{fontSize:24,marginBottom:6}}>{t.icon}</div>
+                  <div style={{fontSize:13,fontWeight:700,color:theme===t.id?'var(--accD)':'var(--text)'}}>{t.label}</div>
+                  {theme===t.id&&<div style={{width:6,height:6,borderRadius:'50%',background:'var(--acc)',margin:'6px auto 0'}}/>}
+                </button>)}
+              </div>
+            </div>
+            {/* Light theme accent */}
+            <div>
+              <div style={{fontSize:10.5,fontWeight:500,color:'var(--t3)',letterSpacing:.1,marginBottom:12}}>Accent Color (Both Themes)</div>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10}}>
+                {ACCENTS.map(a=><button key={a.id} onClick={()=>setAccent(a.id)} style={{padding:'10px 8px',borderRadius:12,border:`2px solid ${accent===a.id?a.col:'var(--border)'}`,background:accent===a.id?`${a.col}18`:'var(--s2)',cursor:'pointer',transition:'all .18s',display:'flex',flexDirection:'column',alignItems:'center',gap:6}}>
+                  <div style={{width:22,height:22,borderRadius:'50%',background:a.col,boxShadow:accent===a.id?`0 0 0 3px ${a.col}40`:'none',transition:'box-shadow .2s'}}/>
+                  <div style={{fontSize:10.5,fontWeight:700,color:accent===a.id?a.col:'var(--t3)'}}>{a.label}</div>
+                </button>)}
+              </div>
+            </div>
+            {/* Preview */}
+            <div style={{background:'var(--s2)',border:'1px solid var(--border)',borderRadius:14,padding:'16px'}}>
+              <div style={{fontSize:10,fontWeight:500,color:'var(--t3)',marginBottom:10}}>Preview</div>
+              <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
+                <div style={{background:'var(--surface)',border:`2px solid var(--acc)`,borderRadius:10,padding:'8px 14px',fontSize:12,fontWeight:700,color:'var(--accD)'}}>Active Card</div>
+                <button style={{background:'linear-gradient(135deg,var(--acc),var(--accD))',color:'#fff',border:'none',borderRadius:9,padding:'8px 16px',fontSize:12,fontWeight:700,cursor:'default'}}>Primary Button</button>
+                <div style={{fontSize:20,fontWeight:600,color:'var(--text)',letterSpacing:'-1px',fontFamily:"'Outfit',sans-serif"}}>+10.4%</div>
+              </div>
+            </div>
+            <div style={{fontSize:11.5,color:'var(--t3)',textAlign:'center'}}>Settings are saved automatically</div>
+          </div>
+        </div>
+      </div>}
+      {dayPopup&&<DayPopup date={dayPopup} trades={allTrades} onClose={()=>{setDayPopup(null);setEditingDayTrade(null)}} ic={ic} onEdit={handleEditTrade} editingId={editingDayTrade} setEditingId={setEditingDayTrade}/>}
+      <Sidebar activeTab={tab} setTab={setTab} sidebarOpen={sidebarEffectiveOpen} setSidebarOpen={setSidebarOpen} setSidebarHover={setSidebarHover} userName={userName} setUserName={saveUserName} accounts={accounts} seedTrades={SEED} editingUi={editingUi} setEditingUi={setEditingUi} uiBlocks={uiBlocks} toggleBlock={toggleBlock} resetUi={resetUi} onOpenSettings={()=>setShowSettings(true)} theme={theme} setTheme={setTheme}/>
+      {toast&&<div style={{position:'fixed',bottom:24,right:24,zIndex:9999,background:'var(--surface)',borderRadius:16,padding:'13px 18px',fontSize:13,fontWeight:600,boxShadow:'var(--sh3)',display:'flex',alignItems:'center',gap:12,maxWidth:isMobile?'calc(100vw - 32px)':400,animation:'fadeUp .25s ease',border:`1px solid ${toast.type==='success'?'var(--gBdr)':toast.type==='error'?'var(--rBdr)':'var(--border)'}`}}>
+        <span style={{width:32,height:32,borderRadius:9,background:toast.type==='success'?'var(--gBg)':toast.type==='error'?'var(--rBg)':'var(--s2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:15,flexShrink:0}}>
+          {toast.type==='success'?'✓':toast.type==='error'?'✕':'ℹ'}
+        </span>
+        <span style={{flex:1,lineHeight:1.5}}>{toast.msg}</span>
+        <button onClick={()=>setToast(null)} style={{background:'none',border:'none',color:'var(--t3)',cursor:'pointer',fontSize:18,padding:'0 2px',lineHeight:1}}>×</button>
+      </div>}
+      <div style={{marginLeft:sideW,transition:'margin-left .2s ease',minHeight:'100vh'}}>
+        {/* Topbar */}
+        <div style={{background:'var(--topbar-bg)',borderBottom:'1px solid var(--border)',padding:'0 20px',height:52,display:'flex',alignItems:'center',gap:10,position:'sticky',top:0,zIndex:100,backdropFilter:'blur(12px)',WebkitBackdropFilter:'blur(12px)'}}>
+          <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent,var(--acc),transparent)`,opacity:.7}}/>
+          {isMobile&&<button onClick={()=>setSidebarOpen(true)} style={{background:'none',border:'none',cursor:'pointer',padding:6,display:'flex',alignItems:'center',color:'var(--t2)'}}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>}
+          <div style={{display:'flex',alignItems:'center',gap:8}}>
+            <div style={{width:3,height:20,background:`linear-gradient(180deg,var(--acc),var(--accD))`,borderRadius:2}}/>
+            <h1 style={{margin:0,fontSize:15,fontWeight:600,letterSpacing:'-.2px',fontFamily:"'Outfit',sans-serif"}}>{TABS_INFO.find(t=>t.id===tab)?.label||''}</h1>
+          </div>
+          {live>0&&<div className="hide-m" style={{display:'flex',alignItems:'center',gap:6,fontSize:11,color:'var(--green)',fontWeight:700,background:'var(--gBg)',border:'1px solid var(--gBdr)',borderRadius:20,padding:'3px 11px'}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'var(--green)',display:'inline-block',animation:'pulse 2s infinite'}}/>
+            {live} Live
+          </div>}
+          {accounts.length===0&&<div className="hide-m" style={{fontSize:11,color:'var(--t3)',background:'var(--s3)',border:'1px solid var(--border)',borderRadius:20,padding:'3px 11px'}}>Demo Mode — Sample data</div>}
+          <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:8}}>
+            {/* Quick theme toggle */}
+            <button onClick={()=>setTheme(t=>t==='light'?'dark':'light')} title="Toggle theme" style={{background:'var(--s2)',border:'1px solid var(--border)',borderRadius:9,width:32,height:32,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,color:'var(--t2)',transition:'all .15s'}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--acc)';e.currentTarget.style.color='var(--accD)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--t2)'}}>
+              {theme==='light'?'🌙':'☀️'}
+            </button>
+            <button onClick={()=>setShowSettings(true)} title="Settings" style={{background:'var(--s2)',border:'1px solid var(--border)',borderRadius:9,width:32,height:32,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--t2)',transition:'all .15s'}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--acc)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)'}}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </button>
+          </div>
+        </div>
+        {/* Content */}
+        <div className="content-area" style={{maxWidth:tab==='calendar'?1400:1180,margin:'0 auto',padding:'22px 20px 80px'}}>
+          <AccountsPanel accounts={accounts} onSync={handleSync} onRemove={handleRemoveAcc} onAdd={handleAddAcc} syncingId={syncingId}/>
+          {/* Account filter */}
+          {accounts.length>0&&<div style={{display:'flex',gap:7,marginBottom:18,flexWrap:'wrap',alignItems:'center'}}>
+            {[{id:'all',label:'🌐 All',cnt:accounts.reduce((s,a)=>s+a.trades.length,0),col:null},...accounts.map((a,i)=>({id:a.id,label:a.label,cnt:a.trades.length,col:ACC_COLS[i%ACC_COLS.length],isDemo:a.isDemo}))].map(item=><button key={item.id} onClick={()=>setActiveAccId(item.id)} style={{display:'flex',alignItems:'center',gap:6,padding:'6px 14px',borderRadius:20,border:`1.5px solid ${activeAccId===item.id?(item.col||'var(--acc)'):'var(--border)'}`,background:activeAccId===item.id?(item.col?item.col+'20':'var(--accF)'):'var(--surface)',color:activeAccId===item.id?(item.col||'var(--acc)'):'var(--t2)',fontWeight:activeAccId===item.id?700:500,fontSize:12,cursor:'pointer'}}>
+              {item.col&&<span style={{width:7,height:7,borderRadius:'50%',background:item.col}}/>}
+              {item.label}
+              {item.isDemo&&<Chip color="purple" size="sm">Demo</Chip>}
+              <span style={{background:'var(--s3)',borderRadius:10,padding:'1px 7px',fontSize:10,fontWeight:700}}>{item.cnt}</span>
+            </button>)}
+          </div>}
+          {showDateBar&&<DateRangeBar trades={allTrades} dateRange={dateRange} setDateRange={setDateRange}/>}
+          <div key={tab} className="fade-up">
+            {tab==='overview'&&<Overview trades={displayTrades} uiBlocks={uiBlocks}/>}
+            {tab==='analytics'&&<Analytics trades={displayTrades} uiBlocks={uiBlocks}/>}
+            {tab==='psychology'&&<Psychology trades={displayTrades} uiBlocks={uiBlocks}/>}
+            {tab==='tradelog'&&<TradeLog trades={displayTrades} onAdd={handleAddTrade} onDelete={handleDeleteTrade} onEdit={handleEditTrade} onUpdateMeta={handleUpdateMeta} tradeMeta={tradeMeta}/>}
+            {tab==='calendar'&&<CalendarView trades={allTrades} onDayClick={setDayPopup}/>}
+          </div>
+        </div>
+      </div>
+    </div>
+  </ErrorBoundary>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
