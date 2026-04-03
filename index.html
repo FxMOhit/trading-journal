@@ -120,6 +120,22 @@ window.addEventListener('error', function(e) {
   --topbar-bg:rgba(244,244,245,.96);
   --sh1:0 1px 3px rgba(0,0,0,.07);--sh2:0 4px 16px rgba(0,0,0,.09);--sh3:0 20px 50px rgba(0,0,0,.12);
 }
+[data-theme="lavender"]{
+  --color-scheme:light;
+  --bg:#f0edf8;--surface:#faf8ff;--s2:#e8e2f5;--s3:#dbd2f0;
+  --border:#c8beea;--border2:#a090d8;
+  --text:#160e30;--t2:#3d2870;--t3:#7060a8;
+  --topbar-bg:rgba(240,237,248,.96);
+  --sh1:0 1px 3px rgba(40,20,80,.07);--sh2:0 4px 16px rgba(40,20,80,.09);--sh3:0 20px 50px rgba(40,20,80,.12);
+}
+[data-theme="slate"]{
+  --color-scheme:light;
+  --bg:#f1f5f9;--surface:#ffffff;--s2:#e9eef5;--s3:#dce4ef;
+  --border:#c8d4e0;--border2:#94a3b8;
+  --text:#0f172a;--t2:#334155;--t3:#64748b;
+  --topbar-bg:rgba(241,245,249,.96);
+  --sh1:0 1px 3px rgba(0,0,0,.07);--sh2:0 4px 16px rgba(0,0,0,.09);--sh3:0 20px 50px rgba(0,0,0,.12);
+}
 [data-theme="rose"]{
   --color-scheme:light;
   --bg:#fff1f4;--surface:#ffffff;--s2:#fce8ec;--s3:#f8d8e0;
@@ -129,7 +145,7 @@ window.addEventListener('error', function(e) {
   --sh1:0 1px 3px rgba(60,10,20,.07);--sh2:0 4px 16px rgba(60,10,20,.09);--sh3:0 20px 50px rgba(60,10,20,.12);
 }
 /* Keep semantic colors consistent across all themes */
-[data-theme="sepia"],[data-theme="forest"],[data-theme="ocean"],[data-theme="zinc"],[data-theme="rose"]{
+[data-theme="sepia"],[data-theme="forest"],[data-theme="ocean"],[data-theme="zinc"],[data-theme="rose"],[data-theme="lavender"],[data-theme="slate"]{
   --green:#0b9444;--gBg:#edfaf3;--gBdr:#86efba;
   --red:#d91f1f;--rBg:#fef1f1;--rBdr:#fca5a5;
   --blue:#1d4ed8;--bBg:#eff3ff;--bBdr:#bfcffe;
@@ -147,6 +163,13 @@ window.addEventListener('error', function(e) {
 [data-accent="slate"]{--acc:#475569;--accD:#334155;--accL:#f1f5f9;--accF:#f8fafc;}
 [data-accent="teal"]{--acc:#0d9488;--accD:#0f766e;--accL:#ccfbf1;--accF:#f0fdfa;}
 [data-accent="indigo"]{--acc:#4f46e5;--accD:#4338ca;--accL:#e0e7ff;--accF:#eef2ff;}
+[data-accent="amber"]{--acc:#d97706;--accD:#b45309;--accL:#fef3c7;--accF:#fffbeb;}
+[data-accent="emerald"]{--acc:#059669;--accD:#047857;--accL:#d1fae5;--accF:#ecfdf5;}
+[data-accent="fuchsia"]{--acc:#c026d3;--accD:#a21caf;--accL:#fae8ff;--accF:#fdf4ff;}
+[data-accent="orange"]{--acc:#ea580c;--accD:#c2410c;--accL:#ffedd5;--accF:#fff7ed;}
+[data-accent="cyan"]{--acc:#0891b2;--accD:#0e7490;--accL:#cffafe;--accF:#ecfeff;}
+[data-accent="lime"]{--acc:#65a30d;--accD:#4d7c0f;--accL:#ecfccb;--accF:#f7fee7;}
+[data-accent="pink"]{--acc:#db2777;--accD:#be185d;--accL:#fce7f3;--accF:#fdf2f8;}
 
 [data-accent] { --gold:var(--acc);--goldD:var(--accD);--goldL:var(--accL);--goldF:var(--accF); }
 
@@ -477,6 +500,352 @@ label span { overflow-wrap: break-word; word-break: break-word; }
   pointer-events: none !important;
 }
 
+
+/* ═══════════════════════════════════════════════
+   MOBILE UI FIXES v41
+   ═══════════════════════════════════════════════ */
+
+/* Trade log table — horizontal scroll on mobile */
+@media(max-width:768px){
+  .tlog-table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+  .tlog-table-wrap table { min-width: 520px !important; }
+  /* trade row card on mobile — stacked layout */
+  .trade-row-mobile { display: flex !important; flex-direction: column; gap: 4px; padding: 10px 12px !important; }
+  /* hide overflow columns on small screens */
+  .col-hide-mobile { display: none !important; }
+  /* filter bar wraps properly */
+  .filter-row { flex-wrap: wrap !important; gap: 6px !important; }
+  /* date range row in trade log */
+  .date-range-row { flex-wrap: wrap !important; gap: 6px !important; }
+  /* KPI grid — 2 col on phone */
+  .kpi-grid { grid-template-columns: repeat(2,1fr) !important; }
+  /* form grid — 1 col on phone */
+  .form-grid-4 { grid-template-columns: 1fr 1fr !important; }
+  /* settings modal full width */
+  .settings-modal-inner { border-radius: 16px !important; padding: 16px !important; }
+  /* settings tabs scroll */
+  .settings-tab-bar { overflow-x: auto !important; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+  .settings-tab-bar button { flex-shrink: 0 !important; }
+}
+@media(max-width:480px){
+  .form-grid-4 { grid-template-columns: 1fr !important; }
+  .kpi-grid { grid-template-columns: repeat(2,1fr) !important; }
+  /* topbar title area */
+  .topbar-title { font-size: 13px !important; }
+}
+
+/* ═══════════════════════════════════════════════
+   PREMIUM DATE / TIME PICKER — app-themed
+   ═══════════════════════════════════════════════ */
+@keyframes dtPickerIn {
+  from { opacity:0; transform:translateY(-6px) scale(.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+.dtp-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--border2);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--s2);
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+  min-width: 110px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.dtp-trigger:hover {
+  border-color: var(--acc);
+  background: var(--accF);
+}
+.dtp-trigger.dtp-open {
+  border-color: var(--acc);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc) 18%, transparent);
+  background: var(--accF);
+}
+.dtp-trigger svg { color: var(--acc); flex-shrink: 0; }
+
+.dtp-popup {
+  position: absolute;
+  z-index: 9999;
+  background: var(--surface);
+  border: 1.5px solid var(--border2);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0,0,0,.18), 0 4px 14px rgba(0,0,0,.10);
+  padding: 16px;
+  min-width: 260px;
+  animation: dtPickerIn .18s cubic-bezier(.22,1,.36,1);
+  margin-top: 4px;
+}
+
+/* calendar grid inside date picker */
+.dtp-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.dtp-cal-header span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.02em;
+}
+.dtp-cal-nav {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--t2);
+  font-size: 14px;
+  transition: all .12s;
+}
+.dtp-cal-nav:hover { background: var(--accF); border-color: var(--acc); color: var(--accD); }
+
+.dtp-dow-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+}
+.dtp-dow-row span {
+  text-align: center;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 4px 0;
+}
+
+.dtp-day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.dtp-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text);
+  transition: all .1s;
+  border: 1.5px solid transparent;
+  min-width: 0;
+}
+.dtp-day:hover { background: var(--accL); color: var(--accD); }
+.dtp-day.dtp-today { border-color: var(--acc); color: var(--accD); font-weight: 700; }
+.dtp-day.dtp-selected {
+  background: linear-gradient(135deg, var(--acc), var(--accD));
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--acc) 40%, transparent);
+}
+.dtp-day.dtp-other-month { color: var(--t3); opacity: .5; }
+.dtp-day.dtp-disabled { color: var(--border2); cursor: default; pointer-events: none; }
+
+/* time picker wheel */
+.dtp-time-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 0 4px;
+}
+.dtp-time-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.dtp-time-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.dtp-time-spin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--s2);
+  border: 1.5px solid var(--border2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dtp-time-spin button {
+  width: 44px;
+  height: 26px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--t2);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .1s;
+}
+.dtp-time-spin button:hover { background: var(--accL); color: var(--accD); }
+.dtp-time-val {
+  width: 44px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -.04em;
+}
+.dtp-sep {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--acc);
+  margin-top: 22px;
+  line-height: 1;
+}
+.dtp-confirm {
+  width: 100%;
+  margin-top: 12px;
+  background: linear-gradient(135deg, var(--acc), var(--accD));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--acc) 35%, transparent);
+  transition: filter .1s;
+}
+.dtp-confirm:hover { filter: brightness(1.06); }
+
+/* Quick today/tomorrow shortcuts for date picker */
+.dtp-shortcuts {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.dtp-sc-btn {
+  flex: 1;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--s2);
+  color: var(--t2);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+  text-align: center;
+}
+.dtp-sc-btn:hover { border-color: var(--acc); background: var(--accF); color: var(--accD); }
+.dtp-sc-btn.active { border-color: var(--acc); background: var(--accF); color: var(--accD); }
+
+/* ── hide native date/time pickers globally ── */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  display: none !important;
+}
+
+/* ── v41 extra mobile polish ── */
+
+/* hide desktop-only hint on larger screens */
+.hide-desktop { display: none !important; }
+@media(max-width:768px){ .hide-desktop { display: flex !important; } }
+
+/* content area bottom padding for mobile nav */
+@media(max-width:768px){
+  .content-area { padding-bottom: 80px !important; }
+  /* fix kpi card overflow */
+  .kpi-val { font-size: 20px !important; letter-spacing: -1px !important; }
+  /* analytics chart overflow */
+  svg { max-width: 100%; }
+  /* prevent input overflow */
+  input, select, textarea { max-width: 100%; box-sizing: border-box !important; }
+  /* form section headers don't overflow */
+  div[style*="marginBottom: 14"] { overflow: hidden; }
+  /* trade row grid columns collapse */
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] {
+    grid-template-columns: 2fr 1fr 1fr auto !important;
+    font-size: 11px !important;
+  }
+  /* hide extra columns in mobile trade row card */
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] > div:nth-child(5),
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] > div:nth-child(6) {
+    display: none !important;
+  }
+  /* sidebar width full on mobile */
+  .sidebar-mobile-full { width: 260px !important; }
+  /* topbar adjustments */
+  .topbar-inner { gap: 6px !important; padding: 0 12px !important; }
+}
+
+@media(max-width:480px){
+  /* stat cards — 2 cols always */
+  .g4, .g3 { grid-template-columns: 1fr 1fr !important; }
+  /* trade log row even more compact */
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] {
+    grid-template-columns: 2fr 1fr auto !important;
+  }
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] > div:nth-child(2),
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] > div:nth-child(3),
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] > div:nth-child(5),
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] > div:nth-child(6) {
+    display: none !important;
+  }
+  /* P&L and symbol always show */
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] > div:nth-child(1),
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] > div:nth-child(4),
+  div[style*="gridTemplateColumns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto"] > div:last-child {
+    display: flex !important;
+  }
+  /* buttons in trade row wrap */
+  div[style*="display: flex"][style*="gap: 5"] button { padding: 4px 8px !important; font-size: 10px !important; }
+  /* dtp popup fits screen */
+  .dtp-popup { left: 0 !important; right: auto !important; max-width: calc(100vw - 32px) !important; }
+}
+
+/* ── date/time picker full width in form ── */
+.dtp-trigger { width: 100% !important; box-sizing: border-box; }
+
+/* ── settings modal full height scroll on mobile ── */
+@media(max-width:600px){
+  /* settings inner panel */
+  div[style*="width: 820"][style*="maxWidth: 100%"] {
+    border-radius: 16px !important;
+    max-height: calc(100vh - 24px) !important;
+  }
+  /* settings tab bar wraps and scrolls */
+  .settings-tab-bar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 1px;
+    scrollbar-width: none;
+  }
+  .settings-tab-bar::-webkit-scrollbar { display: none; }
+  .settings-tab-bar button { padding: 6px 10px !important; font-size: 11px !important; }
+}
 </style>
 </head>
 <body>
@@ -549,6 +918,276 @@ function InputModal({ open, title, subtitle, placeholder, defaultVal, onConfirm,
       React.createElement("button", { className: "custom-modal-add", onClick: submit, disabled: !val.trim() }, "Add")
     )
   ));
+}
+
+
+/* ---- CustomDatePicker & CustomTimePicker injected by v41 ---- */
+
+function CustomDatePicker({ value, onChange, style }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+  const popRef = React.useRef(null);
+
+  // Parse value "YYYY-MM-DD"
+  const parsed = value ? new Date(value + 'T00:00:00') : new Date();
+  const [viewYear, setViewYear] = React.useState(parsed.getFullYear());
+  const [viewMonth, setViewMonth] = React.useState(parsed.getMonth());
+
+  const todayStr = new Date().toISOString().slice(0,10);
+
+  React.useEffect(() => {
+    function handler(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    if (open) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  function selectDay(y, m, d) {
+    const mm = String(m+1).padStart(2,'0');
+    const dd = String(d).padStart(2,'0');
+    const s = `${y}-${mm}-${dd}`;
+    onChange(s);
+    setOpen(false);
+  }
+
+  function shortcut(offsetDays) {
+    const d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    const s = d.toISOString().slice(0,10);
+    onChange(s);
+    setViewYear(d.getFullYear());
+    setViewMonth(d.getMonth());
+    setOpen(false);
+  }
+
+  function prevMonth() {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y-1); }
+    else setViewMonth(m => m-1);
+  }
+  function nextMonth() {
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y+1); }
+    else setViewMonth(m => m+1);
+  }
+
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+  function buildCalendar() {
+    const first = new Date(viewYear, viewMonth, 1).getDay();
+    const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+    const daysInPrev = new Date(viewYear, viewMonth, 0).getDate();
+    const cells = [];
+    for (let i = first-1; i >= 0; i--) cells.push({ day: daysInPrev-i, month: viewMonth-1, year: viewMonth === 0 ? viewYear-1 : viewYear, other: true });
+    for (let i = 1; i <= daysInMonth; i++) cells.push({ day: i, month: viewMonth, year: viewYear, other: false });
+    while (cells.length < 42) {
+      const last = cells.length - daysInMonth - first + 1;
+      cells.push({ day: last, month: viewMonth+1, year: viewMonth === 11 ? viewYear+1 : viewYear, other: true });
+    }
+    return cells;
+  }
+
+  const cells = buildCalendar();
+  const dispVal = value ? value.split('-').reverse().join('/') : 'Pick date';
+
+  return React.createElement('div', { ref, style: { position: 'relative', display: 'inline-block', ...(style||{}) } },
+    React.createElement('div', {
+      className: 'dtp-trigger' + (open ? ' dtp-open' : ''),
+      onClick: () => setOpen(o => !o)
+    },
+      React.createElement('svg', { width: 14, height: 14, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+        React.createElement('rect', { x: 3, y: 4, width: 18, height: 18, rx: 2 }),
+        React.createElement('line', { x1: 16, y1: 2, x2: 16, y2: 6 }),
+        React.createElement('line', { x1: 8, y1: 2, x2: 8, y2: 6 }),
+        React.createElement('line', { x1: 3, y1: 10, x2: 21, y2: 10 })
+      ),
+      React.createElement('span', null, dispVal)
+    ),
+    open && React.createElement('div', { ref: popRef, className: 'dtp-popup', style: { left: 0, top: '100%' } },
+      React.createElement('div', { className: 'dtp-shortcuts' },
+        React.createElement('button', { className: 'dtp-sc-btn' + (value === todayStr ? ' active' : ''), onClick: () => shortcut(0) }, 'Today'),
+        React.createElement('button', { className: 'dtp-sc-btn', onClick: () => shortcut(-1) }, 'Yesterday'),
+        React.createElement('button', { className: 'dtp-sc-btn', onClick: () => shortcut(1) }, 'Tomorrow')
+      ),
+      React.createElement('div', { className: 'dtp-cal-header' },
+        React.createElement('button', { className: 'dtp-cal-nav', onClick: prevMonth }, '‹'),
+        React.createElement('span', null, MONTHS[viewMonth] + ' ' + viewYear),
+        React.createElement('button', { className: 'dtp-cal-nav', onClick: nextMonth }, '›')
+      ),
+      React.createElement('div', { className: 'dtp-dow-row' },
+        DAYS.map(d => React.createElement('span', { key: d }, d))
+      ),
+      React.createElement('div', { className: 'dtp-day-grid' },
+        cells.map((c, i) => {
+          const mm = String(c.month+1).padStart(2,'0');
+          const dd = String(c.day).padStart(2,'0');
+          const s = `${c.year}-${mm}-${dd}`;
+          const isSel = s === value;
+          const isToday = s === todayStr;
+          return React.createElement('div', {
+            key: i,
+            className: 'dtp-day' + (c.other ? ' dtp-other-month' : '') + (isSel ? ' dtp-selected' : '') + (isToday && !isSel ? ' dtp-today' : ''),
+            onClick: () => selectDay(c.year, c.month, c.day)
+          }, c.day);
+        })
+      )
+    )
+  );
+}
+
+function CustomTimePicker({ value, onChange, style }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+
+  // Persist 12/24hr mode preference
+  const [is12hr, setIs12hr] = React.useState(() => {
+    try { return localStorage.getItem('tj5_time12hr') === '1'; } catch(e) { return false; }
+  });
+
+  // value is "HH:MM" or "HH:MM:SS" — always stored in 24hr internally
+  const parts = (value || '09:00').split(':');
+  const [h, setH] = React.useState(parseInt(parts[0]||'9', 10));
+  const [m, setM] = React.useState(parseInt(parts[1]||'0', 10));
+  // ampm derived from h
+  const [ampm, setAmpm] = React.useState(parseInt(parts[0]||'9', 10) < 12 ? 'AM' : 'PM');
+
+  React.useEffect(() => {
+    const p = (value || '09:00').split(':');
+    const hh = parseInt(p[0]||'9', 10);
+    setH(hh);
+    setM(parseInt(p[1]||'0', 10));
+    setAmpm(hh < 12 ? 'AM' : 'PM');
+  }, [value]);
+
+  React.useEffect(() => {
+    function handler(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    if (open) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  function commit(hh, mm) {
+    onChange(String(hh).padStart(2,'0') + ':' + String(mm).padStart(2,'0') + ':00');
+  }
+
+  // 24hr increment
+  function incH(delta) {
+    const v = ((h + delta + 24) % 24);
+    setH(v);
+    setAmpm(v < 12 ? 'AM' : 'PM');
+    commit(v, m);
+  }
+  function incM(delta) { const v = ((m + delta + 60) % 60); setM(v); commit(h, v); }
+
+  // In 12hr mode, hour spinner goes 1-12
+  function incH12(delta) {
+    // current display hour (1-12)
+    const disp = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    const newDisp = ((disp - 1 + delta + 12) % 12) + 1; // 1-12
+    // convert back to 24hr
+    let newH24;
+    if (ampm === 'AM') {
+      newH24 = newDisp === 12 ? 0 : newDisp;
+    } else {
+      newH24 = newDisp === 12 ? 12 : newDisp + 12;
+    }
+    setH(newH24);
+    commit(newH24, m);
+  }
+
+  function toggleAmpm() {
+    const newAmpm = ampm === 'AM' ? 'PM' : 'AM';
+    setAmpm(newAmpm);
+    let newH;
+    if (newAmpm === 'PM') {
+      newH = h < 12 ? h + 12 : h;
+    } else {
+      newH = h >= 12 ? h - 12 : h;
+    }
+    setH(newH);
+    commit(newH, m);
+  }
+
+  function toggleMode() {
+    const next = !is12hr;
+    setIs12hr(next);
+    try { localStorage.setItem('tj5_time12hr', next ? '1' : '0'); } catch(e) {}
+  }
+
+  // Display values
+  const dispH24 = String(h).padStart(2,'0');
+  const dispH12 = (() => { const d = h === 0 ? 12 : h > 12 ? h - 12 : h; return String(d).padStart(2,'0'); })();
+  const dispM = String(m).padStart(2,'0');
+  const dispVal = is12hr ? `${dispH12}:${dispM} ${ampm}` : `${dispH24}:${dispM}`;
+
+  return React.createElement('div', { ref, style: { position: 'relative', display: 'inline-block', ...(style||{}) } },
+    React.createElement('div', {
+      className: 'dtp-trigger' + (open ? ' dtp-open' : ''),
+      onClick: () => setOpen(o => !o)
+    },
+      React.createElement('svg', { width: 14, height: 14, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+        React.createElement('circle', { cx: 12, cy: 12, r: 10 }),
+        React.createElement('polyline', { points: '12 6 12 12 16 14' })
+      ),
+      React.createElement('span', null, dispVal)
+    ),
+    open && React.createElement('div', { className: 'dtp-popup', style: { left: 0, top: '100%', minWidth: 'auto' } },
+      // Header row: title + 12/24hr toggle
+      React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 } },
+        React.createElement('div', { style: { fontSize: 11, fontWeight: 700, color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: '.04em' } }, 'Entry Time'),
+        // 12hr / 24hr pill toggle
+        React.createElement('div', { style: { display: 'flex', background: 'var(--s3)', borderRadius: 8, padding: 2, gap: 2 } },
+          React.createElement('button', {
+            onClick: () => { if (is12hr) toggleMode(); },
+            style: { padding: '3px 8px', borderRadius: 6, border: 'none', fontSize: 10, fontWeight: 700, cursor: 'pointer',
+              background: !is12hr ? 'var(--acc)' : 'transparent',
+              color: !is12hr ? '#fff' : 'var(--t3)', transition: 'all .15s' }
+          }, '24H'),
+          React.createElement('button', {
+            onClick: () => { if (!is12hr) toggleMode(); },
+            style: { padding: '3px 8px', borderRadius: 6, border: 'none', fontSize: 10, fontWeight: 700, cursor: 'pointer',
+              background: is12hr ? 'var(--acc)' : 'transparent',
+              color: is12hr ? '#fff' : 'var(--t3)', transition: 'all .15s' }
+          }, '12H')
+        )
+      ),
+      React.createElement('div', { className: 'dtp-time-wrap' },
+        // Hour column
+        React.createElement('div', { className: 'dtp-time-col' },
+          React.createElement('div', { className: 'dtp-time-label' }, 'Hour'),
+          React.createElement('div', { className: 'dtp-time-spin' },
+            React.createElement('button', { onClick: () => is12hr ? incH12(1) : incH(1) }, '▲'),
+            React.createElement('div', { className: 'dtp-time-val' }, is12hr ? dispH12 : dispH24),
+            React.createElement('button', { onClick: () => is12hr ? incH12(-1) : incH(-1) }, '▼')
+          )
+        ),
+        React.createElement('div', { className: 'dtp-sep' }, ':'),
+        // Minute column
+        React.createElement('div', { className: 'dtp-time-col' },
+          React.createElement('div', { className: 'dtp-time-label' }, 'Min'),
+          React.createElement('div', { className: 'dtp-time-spin' },
+            React.createElement('button', { onClick: () => incM(5) }, '▲'),
+            React.createElement('div', { className: 'dtp-time-val' }, dispM),
+            React.createElement('button', { onClick: () => incM(-5) }, '▼')
+          )
+        ),
+        // AM/PM column — only in 12hr mode
+        is12hr && React.createElement(React.Fragment, null,
+          React.createElement('div', { style: { width: 6 } }),
+          React.createElement('div', { className: 'dtp-time-col' },
+            React.createElement('div', { className: 'dtp-time-label' }, 'Period'),
+            React.createElement('div', { className: 'dtp-time-spin', style: { cursor: 'pointer' } },
+              React.createElement('button', { onClick: toggleAmpm }, '▲'),
+              React.createElement('div', { className: 'dtp-time-val', style: { fontSize: 13, fontWeight: 800, color: 'var(--accD)', width: 44 } }, ampm),
+              React.createElement('button', { onClick: toggleAmpm }, '▼')
+            )
+          )
+        )
+      ),
+      React.createElement('button', { className: 'dtp-confirm', onClick: () => setOpen(false) }, '✓ Set ' + dispVal)
+    )
+  );
 }
 
 const API_URL = "https://api.tradexy.online";
@@ -723,6 +1362,7 @@ function sanitizeAccount(a) {
     connected: Boolean(a.connected),
     lastSync: a.lastSync || null,
     info: a.info || null,
+    balanceAdjustments: Array.isArray(a.balanceAdjustments) ? a.balanceAdjustments : [],
     trades: Array.isArray(a.trades) ? a.trades.map(sanitizeTrade).filter(Boolean) : []
   };
 }
@@ -763,14 +1403,14 @@ function saveTradeMeta(meta) {
 }
 function loadTheme() {
   try {
-    return localStorage.getItem("tj5_theme") || "sepia";
+    return localStorage.getItem("tj5_theme") || "zinc";
   } catch (e) {
     return "light";
   }
 }
 function loadAccent() {
   try {
-    return localStorage.getItem("tj5_accent") || "slate";
+    return localStorage.getItem("tj5_accent") || "indigo";
   } catch (e) {
     return "slate";
   }
@@ -1034,6 +1674,54 @@ function calcProfitFactor(trades) {
   const gl = Math.abs(trades.filter((t) => t.profit < 0).reduce((s, t) => s + t.profit, 0));
   return gl ? gw / gl : gw > 0 ? Infinity : 0;
 }
+
+// ── calcTrueBalance: account for Cash Adjustments / Debt Write-offs ──
+// balanceAdjustments: [{ date: "YYYY-MM-DD", writeOffAmount: number, label: string }]
+// writeOffAmount = positive value the broker forgave (cancels your negative balance).
+// Each adjustment adds that amount to the running balance at that point in time.
+// Returns: { balance, capital, adjustedCapital, netProfit }
+function calcTrueBalance(account) {
+  const trades = account.trades || [];
+  const adjs = (account.balanceAdjustments || []).slice().sort((a, b) => a.date.localeCompare(b.date));
+  const startCapital = account.capital || 0;
+
+  if (!adjs.length) {
+    const netProfit = trades.reduce((s, t) => s + (t.profit || 0), 0);
+    return { balance: startCapital + netProfit, capital: startCapital, adjustedCapital: startCapital, netProfit };
+  }
+
+  const sortedTrades = trades.slice().sort((a, b) => a.entryDate.localeCompare(b.entryDate));
+  let runningBalance = startCapital;
+  let prevDate = '0000-00-00';
+
+  for (const adj of adjs) {
+    // Add profits from trades strictly before this adjustment date
+    const segTrades = sortedTrades.filter(t => t.entryDate > prevDate && t.entryDate < adj.date);
+    runningBalance += segTrades.reduce((s, t) => s + (t.profit || 0), 0);
+    // Apply the write-off: adds the forgiven debt amount (restores balance toward zero/positive)
+    const writeOff = adj.writeOffAmount || adj.amount || 0; // fallback for legacy records
+    runningBalance += writeOff;
+    prevDate = adj.date;
+  }
+
+  // Add profits from trades on or after the last adjustment date
+  const lastAdjDate = adjs[adjs.length - 1].date;
+  const postTrades = sortedTrades.filter(t => t.entryDate >= lastAdjDate);
+  const postProfit = postTrades.reduce((s, t) => s + (t.profit || 0), 0);
+  runningBalance += postProfit;
+
+  // adjustedCapital = balance right after last adjustment (before post trades)
+  // used as the denominator for P&L % calculations
+  const adjustedCapital = runningBalance - postProfit;
+
+  return {
+    balance: runningBalance,
+    capital: startCapital,
+    adjustedCapital: adjustedCapital > 0 ? adjustedCapital : startCapital,
+    netProfit: postProfit
+  };
+}
+
 function calcHourlyStats(trades) {
   const hours = Array.from({ length: 24 }, (_, h) => ({ h, n: 0, w: 0, pnl: 0, profit: 0 }));
   trades.forEach((t) => {
@@ -1589,7 +2277,100 @@ function parseJournalJSON(jsonText) {
   }));
 }
 
-function AccountsPanel({ accounts, onSync, onRemove, onAdd, syncingId, onImportToAccount }) {
+/* ── Balance Adjustment Panel — MT5 live accounts only, compact ── */
+function BalanceAdjustmentPanel({ account, onAddAdjustment, onRemoveAdjustment }) {
+  // Only show for non-demo (MT5 live) accounts
+  if (account.isDemo) return null;
+
+  const [showForm, setShowForm] = React.useState(false);
+  const [adjDate, setAdjDate] = React.useState('');
+  const [adjAmount, setAdjAmount] = React.useState('');
+  const [adjSign, setAdjSign] = React.useState('+');
+  const adjs = account.balanceAdjustments || [];
+  const fmt = (n) => '$' + Math.abs(n).toFixed(2);
+
+  function handleAdd() {
+    const val = parseFloat(adjAmount);
+    if (!adjDate || isNaN(val) || val <= 0) return;
+    onAddAdjustment(account.id, {
+      date: adjDate,
+      writeOffAmount: adjSign === '+' ? val : -val,
+      label: adjSign === '+' ? 'Cash Adjustment (+)' : 'Cash Adjustment (-)'
+    });
+    setAdjDate(''); setAdjAmount(''); setShowForm(false);
+  }
+
+  const canSave = adjDate && adjAmount && !isNaN(parseFloat(adjAmount)) && parseFloat(adjAmount) > 0;
+
+  return React.createElement('div', { style: { borderTop: '1px solid var(--border)', padding: '5px 13px 7px', background: 'color-mix(in srgb, var(--oBg) 40%, var(--surface))' } },
+
+    // Compact header row — label + existing pills + add button all inline
+    React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', minHeight: 24 } },
+      React.createElement('span', { style: { fontSize: 9, fontWeight: 700, color: 'var(--orange)', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0 } }, '⚖️ Cash Adj.'),
+
+      // Existing adjustment pills
+      adjs.map((adj, idx) => {
+        const amt = adj.writeOffAmount !== undefined ? adj.writeOffAmount : (adj.amount || 0);
+        const isPos = amt >= 0;
+        return React.createElement('div', { key: idx, style: { display: 'flex', alignItems: 'center', gap: 3, background: isPos ? 'var(--gBg)' : 'var(--rBg)', border: `1px solid ${isPos ? 'var(--gBdr)' : 'var(--rBdr)'}`, borderRadius: 20, padding: '1px 6px 1px 7px' } },
+          React.createElement('span', { style: { fontSize: 10, fontWeight: 700, color: isPos ? 'var(--green)' : 'var(--red)', fontVariantNumeric: 'tabular-nums' } }, (isPos ? '+' : '-') + fmt(amt)),
+          React.createElement('span', { style: { fontSize: 9, color: 'var(--t3)', marginLeft: 2 } }, adj.date),
+          React.createElement('button', { onClick: () => onRemoveAdjustment(account.id, idx), style: { background: 'none', border: 'none', color: 'var(--t3)', cursor: 'pointer', fontSize: 10, padding: '0 0 0 3px', lineHeight: 1 } }, '✕')
+        );
+      }),
+
+      React.createElement('button', {
+        onClick: () => setShowForm(v => !v),
+        style: { fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 20, border: `1px solid ${showForm ? 'var(--border)' : 'var(--oBdr)'}`, background: showForm ? 'var(--s3)' : 'var(--oBg)', color: showForm ? 'var(--t3)' : 'var(--orange)', cursor: 'pointer', flexShrink: 0 }
+      }, showForm ? '✕ Cancel' : '+ Add')
+    ),
+
+    // Inline form — compact single row: [date picker] [+/-] [amount] [Save]
+    showForm && React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 6, marginTop: 7, flexWrap: 'wrap', position: 'relative', zIndex: 9999 } },
+
+      // Date picker — uses existing CustomDatePicker, popup escapes via z-index
+      React.createElement('div', { style: { position: 'relative', zIndex: 9999, flexShrink: 0 } },
+        React.createElement(CustomDatePicker, { value: adjDate, onChange: setAdjDate })
+      ),
+
+      // +/- toggle
+      React.createElement('div', { style: { display: 'flex', background: 'var(--s3)', borderRadius: 7, padding: 2, gap: 1, flexShrink: 0 } },
+        ['+', '-'].map(sign =>
+          React.createElement('button', {
+            key: sign,
+            onClick: () => setAdjSign(sign),
+            style: {
+              width: 28, height: 26, borderRadius: 5, border: 'none', cursor: 'pointer',
+              fontWeight: 800, fontSize: 14, lineHeight: 1,
+              background: adjSign === sign ? (sign === '+' ? 'var(--green)' : 'var(--red)') : 'transparent',
+              color: adjSign === sign ? '#fff' : 'var(--t3)',
+              transition: 'all .12s'
+            }
+          }, sign)
+        )
+      ),
+
+      // Amount input
+      React.createElement('input', {
+        type: 'number',
+        placeholder: '0.00',
+        value: adjAmount,
+        onChange: e => setAdjAmount(e.target.value),
+        onKeyDown: e => { if (e.key === 'Enter') handleAdd(); },
+        style: { width: 100, border: '1.5px solid var(--border)', borderRadius: 7, padding: '5px 8px', fontSize: 12, fontWeight: 700, background: 'var(--surface)', color: adjSign === '+' ? 'var(--green)' : 'var(--red)', outline: 'none', fontVariantNumeric: 'tabular-nums' }
+      }),
+
+      // Save button
+      React.createElement('button', {
+        onClick: handleAdd,
+        disabled: !canSave,
+        style: { padding: '5px 12px', borderRadius: 7, border: 'none', background: canSave ? 'linear-gradient(135deg, var(--acc), var(--accD))' : 'var(--s3)', color: canSave ? '#fff' : 'var(--t3)', fontWeight: 700, fontSize: 11, cursor: canSave ? 'pointer' : 'not-allowed' }
+      }, '✓ Save')
+    )
+  );
+}
+
+function AccountsPanel({ accounts, onSync, onRemove, onAdd, onAddAdjustment, onRemoveAdjustment, syncingId, onImportToAccount }) {
   const [adding, setAdding] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [mode, setMode] = useState("demo");
@@ -1601,7 +2382,26 @@ function AccountsPanel({ accounts, onSync, onRemove, onAdd, syncingId, onImportT
   const firstDemoId = accounts.find(a => a.isDemo)?.id || "";
   const [targetAccId, setTargetAccId] = useState("");
   const fileRef = React.useRef(null);
+  const panelRef = React.useRef(null);
   const isMobile = useMediaQuery("(max-width:768px)");
+
+  // Close expanded/adding/importMode when clicking outside
+  React.useEffect(() => {
+    if (!expanded && !adding && !importMode) return;
+    function handleOutside(e) {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setExpanded(false);
+        setAdding(false);
+        setImportMode(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('touchstart', handleOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('touchstart', handleOutside);
+    };
+  }, [expanded, adding, importMode]);
   const mt5CapOk = mode !== "mt5" || (+creds.capital > 0);
   const canAdd = mode === "demo" ? creds.label : (creds.login && creds.password && creds.server && mt5CapOk);
   const inp = { width: "100%", border: "1.5px solid var(--border)", borderRadius: 9, padding: "9px 12px", fontSize: 13, outline: "none", background: "var(--s2)", color: "var(--text)", boxSizing: "border-box", fontFamily: "inherit" };
@@ -1670,7 +2470,7 @@ function AccountsPanel({ accounts, onSync, onRemove, onAdd, syncingId, onImportT
   const hasAccounts = accounts.length > 0;
   const demoAccounts = accounts.filter(a => a.isDemo);
 
-  return React.createElement("div", { style: { background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 14, marginBottom: 16, boxShadow: "var(--sh1)", overflow: "hidden" } },
+  return React.createElement("div", { ref: panelRef, style: { background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 14, marginBottom: 16, boxShadow: "var(--sh1)" } },
     /* Header row */
     React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", cursor: hasAccounts ? "pointer" : "default" }, onClick: hasAccounts ? () => setExpanded((v) => !v) : undefined },
       React.createElement("div", { style: { width: 30, height: 30, borderRadius: 9, background: "linear-gradient(135deg,var(--accF),var(--s3))", border: "1.5px solid color-mix(in srgb, var(--acc) 25%, transparent)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 } }, "\u21CC"),
@@ -1706,21 +2506,40 @@ function AccountsPanel({ accounts, onSync, onRemove, onAdd, syncingId, onImportT
     ),
 
     /* Expanded accounts list */
-    expanded && hasAccounts && React.createElement("div", { style: { borderTop: "1px solid var(--border)", padding: "10px 16px", display: "flex", flexDirection: "column", gap: 6 } },
+    expanded && hasAccounts && React.createElement("div", { style: { borderTop: "1px solid var(--border)", padding: "10px 16px", display: "flex", flexDirection: "column", gap: 8 } },
       accounts.map((acc, i) => {
         const col = ACC_COLS[i % ACC_COLS.length];
         const isSyncing = syncingId === acc.id;
-        return React.createElement("div", { key: acc.id, style: { display: "flex", alignItems: "center", gap: 10, background: "var(--s2)", border: `1px solid ${acc.connected ? "var(--gBdr)" : "var(--border)"}`, borderRadius: 10, padding: "9px 13px", flexWrap: "wrap" } },
-          React.createElement("span", { style: { width: 8, height: 8, borderRadius: "50%", background: col, flexShrink: 0, boxShadow: `0 0 0 2px ${col}25` } }),
-          React.createElement("div", { style: { flex: 1, minWidth: 0 } },
-            React.createElement("div", { style: { fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" } }, acc.label, acc.isDemo && React.createElement(Chip, { color: "purple", size: "sm" }, "DEMO"), acc.connected && !acc.isDemo && React.createElement(Chip, { color: "truegreen", size: "sm" }, "\u25CF LIVE")),
-            React.createElement("div", { style: { fontSize: 10, color: "var(--t3)", marginTop: 1 } }, acc.isDemo ? `Capital: ${fmtUSD(acc.capital || 1e4, false)} \u00B7 ${acc.trades ? acc.trades.length : 0} trades` : `#${acc.login} \u00B7 ${acc.server}`, acc.lastSync && ` \u00B7 synced ${acc.lastSync}`)
+        const tb = calcTrueBalance(acc);
+        const adjs = acc.balanceAdjustments || [];
+        return React.createElement("div", { key: acc.id, style: { background: "var(--s2)", border: `1px solid ${acc.connected ? "var(--gBdr)" : "var(--border)"}`, borderRadius: 10 } },
+          // Account row
+          React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "9px 13px", flexWrap: "wrap" } },
+            React.createElement("span", { style: { width: 8, height: 8, borderRadius: "50%", background: col, flexShrink: 0, boxShadow: `0 0 0 2px ${col}25` } }),
+            React.createElement("div", { style: { flex: 1, minWidth: 0 } },
+              React.createElement("div", { style: { fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" } }, acc.label, acc.isDemo && React.createElement(Chip, { color: "purple", size: "sm" }, "DEMO"), acc.connected && !acc.isDemo && React.createElement(Chip, { color: "truegreen", size: "sm" }, "\u25CF LIVE")),
+              React.createElement("div", { style: { fontSize: 10, color: "var(--t3)", marginTop: 1 } },
+                acc.isDemo
+                  ? `Capital: ${fmtUSD(acc.capital || 1e4, false)} · ${acc.trades ? acc.trades.length : 0} trades`
+                  : `#${acc.login} · ${acc.server}`,
+                acc.lastSync && ` · synced ${acc.lastSync}`,
+                adjs.length > 0 && React.createElement("span", { style: { color: "var(--orange)", fontWeight: 700, marginLeft: 4 } }, `· ${adjs.length} adjustment${adjs.length > 1 ? 's' : ''}`)
+              )
+            ),
+            !acc.isDemo && React.createElement("button", { onClick: () => onSync(acc), disabled: isSyncing, style: { background: isSyncing ? "var(--s3)" : col, color: "#fff", border: "none", borderRadius: 7, padding: "5px 11px", fontWeight: 700, fontSize: 10, cursor: isSyncing ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 4, opacity: isSyncing ? 0.65 : 1 } },
+              React.createElement("span", { style: { display: "inline-block", animation: isSyncing ? "spin 1s linear infinite" : "none" } }, "\u27F3"),
+              isSyncing ? "Syncing" : "Sync"
+            ),
+            React.createElement("button", { onClick: () => onRemove(acc.id), style: { background: "none", border: "1px solid var(--border)", color: "var(--t3)", cursor: "pointer", fontSize: 11, padding: "4px 8px", borderRadius: 6 }, onMouseEnter: (e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.color = "var(--red)"; }, onMouseLeave: (e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--t3)"; } }, "\u2715")
           ),
-          !acc.isDemo && React.createElement("button", { onClick: () => onSync(acc), disabled: isSyncing, style: { background: isSyncing ? "var(--s3)" : col, color: "#fff", border: "none", borderRadius: 7, padding: "5px 11px", fontWeight: 700, fontSize: 10, cursor: isSyncing ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 4, opacity: isSyncing ? 0.65 : 1 } },
-            React.createElement("span", { style: { display: "inline-block", animation: isSyncing ? "spin 1s linear infinite" : "none" } }, "\u27F3"),
-            isSyncing ? "Syncing" : "Sync"
-          ),
-          React.createElement("button", { onClick: () => onRemove(acc.id), style: { background: "none", border: "1px solid var(--border)", color: "var(--t3)", cursor: "pointer", fontSize: 11, padding: "4px 8px", borderRadius: 6 }, onMouseEnter: (e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.color = "var(--red)"; }, onMouseLeave: (e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--t3)"; } }, "\u2715")
+
+          // ── Balance Adjustment section ──
+          React.createElement(BalanceAdjustmentPanel, {
+            account: acc,
+            onUpdate: onAdd ? null : null, // passed via onAddAdjustment below
+            onAddAdjustment,
+            onRemoveAdjustment
+          })
         );
       })
     ),
@@ -1874,7 +2693,7 @@ function DateRangeBar({ trades, dateRange, setDateRange, capital }) {
   const filtered = dateRange.from || dateRange.to ? trades.filter((t) => (!dateRange.from || t.entryDate >= dateRange.from) && (!dateRange.to || t.entryDate <= dateRange.to)) : trades;
   const totalP = filtered.reduce((s, t) => s + (t.profit || 0), 0);
   const totalPnl = calcPnL(totalP, cap);
-  return /* @__PURE__ */ React.createElement("div", { style: { background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 13, padding: "11px 16px", marginBottom: 16, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" } }, presets.map((p) => /* @__PURE__ */ React.createElement("button", { key: p.id, onClick: p.fn, style: { padding: "5px 14px", borderRadius: 20, border: `1.5px solid ${mode === p.id ? "var(--acc)" : "var(--border)"}`, background: mode === p.id ? "var(--accF)" : "var(--surface)", color: mode === p.id ? "var(--accD)" : "var(--t2)", fontWeight: mode === p.id ? 700 : 500, fontSize: 12, cursor: "pointer" } }, p.label)), /* @__PURE__ */ React.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("input", { type: "date", value: dateRange.from || "", onChange: (e) => setDateRange((r) => __spreadProps(__spreadValues({}, r), { from: e.target.value || null })), style: { border: "1.5px solid var(--border)", borderRadius: 8, padding: "5px 10px", fontSize: 12, outline: "none", background: "var(--surface)", color: "var(--text)", colorScheme: "var(--color-scheme, light)" } }), /* @__PURE__ */ React.createElement("span", { style: { color: "var(--t3)", fontSize: 14 } }, "\u2192"), /* @__PURE__ */ React.createElement("input", { type: "date", value: dateRange.to || "", onChange: (e) => setDateRange((r) => __spreadProps(__spreadValues({}, r), { to: e.target.value || null })), style: { border: "1.5px solid var(--border)", borderRadius: 8, padding: "5px 10px", fontSize: 12, outline: "none", background: "var(--surface)", color: "var(--text)", colorScheme: "var(--color-scheme, light)" } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, fontWeight: 700, color: totalP >= 0 ? "var(--accD)" : "var(--t2)" } }, totalP !== 0 ? (totalP >= 0 ? "+$" : "-$") + Math.abs(totalP).toFixed(0) + " \xB7 " : "", fmtPct(totalPnl, 2), " \xB7 ", filtered.length, " trades")));
+  return /* @__PURE__ */ React.createElement("div", { style: { background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 13, padding: "11px 16px", marginBottom: 16, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" } }, presets.map((p) => /* @__PURE__ */ React.createElement("button", { key: p.id, onClick: p.fn, style: { padding: "5px 14px", borderRadius: 20, border: `1.5px solid ${mode === p.id ? "var(--acc)" : "var(--border)"}`, background: mode === p.id ? "var(--accF)" : "var(--surface)", color: mode === p.id ? "var(--accD)" : "var(--t2)", fontWeight: mode === p.id ? 700 : 500, fontSize: 12, cursor: "pointer" } }, p.label)), /* @__PURE__ */ React.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement(CustomDatePicker, { value: dateRange.from || "", onChange: (v) => setDateRange((r) => __spreadProps(__spreadValues({}, r), { from: v || null })) }), /* @__PURE__ */ React.createElement("span", { style: { color: "var(--t3)", fontSize: 14 } }, "\u2192"), /* @__PURE__ */ React.createElement(CustomDatePicker, { value: dateRange.to || "", onChange: (v) => setDateRange((r) => __spreadProps(__spreadValues({}, r), { to: v || null })) }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, fontWeight: 700, color: totalP >= 0 ? "var(--accD)" : "var(--t2)" } }, totalP !== 0 ? (totalP >= 0 ? "+$" : "-$") + Math.abs(totalP).toFixed(0) + " \xB7 " : "", fmtPct(totalPnl, 2), " \xB7 ", filtered.length, " trades")));
 }
 function MiniCalendarWidget({ trades, ic, capital: propCapital }) {
   const capital = (propCapital && propCapital > 0) ? propCapital : (ic && ic > 0 ? ic : 5000);
@@ -2054,7 +2873,7 @@ function MiniCalendarWidget({ trades, ic, capital: propCapital }) {
     )
   );
 }
-const Overview = memo(function Overview2({ trades, uiBlocks = {}, capital: propCapital }) {
+const Overview = memo(function Overview2({ trades, allTrades, uiBlocks = {}, capital: propCapital }) {
   const capital = propCapital && propCapital > 0 ? propCapital : 5000;
   const wins = trades.filter((t) => t.profit > 0), losses = trades.filter((t) => t.profit <= 0), total = trades.length;
   const wr = total ? wins.length / total * 100 : 0;
@@ -2167,7 +2986,7 @@ const Overview = memo(function Overview2({ trades, uiBlocks = {}, capital: propC
     { label: "Win Rate", val: wr.toFixed(1) + "%", sub: wr >= 50 ? "Above average" : "Below average", subCol: wr >= 50 ? "var(--accD)" : "var(--t3)", accent: wr >= 50 ? "var(--acc)" : "var(--t2)", spark: sparkWR, sparkCol: wr >= 50 ? "#16a34a" : "#9ca3af" },
     { label: "Net P&L", val: grossUSD !== 0 ? fmtUSD(grossUSD, false).replace(/^\+/, "") : fmtPct(grossPct), sub: grossUSD !== 0 ? `${grossPct >= 0 ? "+" : ""}${grossPct.toFixed(2)}%` : "", subCol: grossPct >= 0 ? "var(--accD)" : "var(--red)", accent: grossPct >= 0 ? "var(--acc)" : "var(--red)", spark: sparkPnl, sparkCol: grossPct >= 0 ? "var(--acc)" : "#ef4444" },
     { label: "Win/Loss Ratio", val: wlR, sub: parseFloat(wlR) >= 1.5 ? "Excellent" : "Needs improvement", subCol: parseFloat(wlR) >= 1 ? "var(--green)" : "var(--t3)", accent: "var(--green)", spark: [], sparkCol: "#16a34a" }
-  ].map((kpi, i) => /* @__PURE__ */ React.createElement("div", { key: i, className: "card count-up", style: { borderTop: `2px solid ${kpi.accent}`, paddingTop: 18, animationDelay: `${i * 60}ms`, position: "relative", overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: "var(--t3)", letterSpacing: 0.3, marginBottom: 10, display: "flex", justifyContent: "space-between", alignItems: "center", textTransform: "uppercase" } }, kpi.label, /* @__PURE__ */ React.createElement("div", { style: { width: 5, height: 5, borderRadius: "50%", background: kpi.accent, opacity: 0.7 } })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 8 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 30, fontWeight: 800, letterSpacing: "-1.5px", lineHeight: 1, color: "var(--text)", fontFamily: "'Inter',sans-serif" } }, kpi.val), kpi.sub && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, marginTop: 6, color: kpi.subCol, fontWeight: 500 } }, kpi.sub)), kpi.spark && kpi.spark.length > 1 && /* @__PURE__ */ React.createElement(MiniSparkline, { values: kpi.spark, color: kpi.sparkCol }))))), uiBlocks.equityCurve !== false && /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 8 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, fontWeight: 500, color: "var(--t3)", letterSpacing: 0.1, marginBottom: 6 } }, "Cumulative P&L"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 28, fontWeight: 800, letterSpacing: "-1.5px", color: grossPct >= 0 ? "var(--accD)" : "var(--red)", fontFamily: "'Inter',sans-serif" } }, fmtPct(grossPct), grossUSD !== 0 && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, marginLeft: 10, fontWeight: 600, opacity: 0.65 } }, fmtUSD(grossUSD)))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 16, fontSize: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 500, color: "var(--accD)", fontSize: 16 } }, wins.length), /* @__PURE__ */ React.createElement("div", { style: { color: "var(--t3)", fontWeight: 600, letterSpacing: 0.5 } }, "WINS")), /* @__PURE__ */ React.createElement("div", { style: { width: 1, background: "var(--border)" } }), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 500, color: "var(--t2)", fontSize: 16 } }, losses.length), /* @__PURE__ */ React.createElement("div", { style: { color: "var(--t3)", fontWeight: 600, letterSpacing: 0.5 } }, "LOSSES")))), /* @__PURE__ */ React.createElement(ProfitCurve, { trades, height: 150, capital }), /* @__PURE__ */ React.createElement("div", { style: { border: "1px solid var(--border)", borderRadius: 12, padding: "12px", marginTop: 20, background: "var(--s2)" } }, React.createElement(MiniCalendarWidget, { trades, ic: capital, capital })), /* @__PURE__ */ React.createElement("div", { className: "g2", style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 4 } }, /* @__PURE__ */ React.createElement("div", { className: "card", style: { borderLeft: `3px solid ${streak.type === "win" ? "var(--green)" : streak.type === "loss" ? "var(--red)" : "var(--border)"}`, paddingLeft: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: "var(--t3)", letterSpacing: 0.04, marginBottom: 10, textTransform: "uppercase" } }, "Current Streak"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 36, fontWeight: 800, lineHeight: 1, color: streak.type === "win" ? "var(--green)" : streak.type === "loss" ? "var(--red)" : "var(--t3)", letterSpacing: "-2px" } }, streak.type === "win" ? "+" : streak.type === "loss" ? "-" : "", streak.current), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 700, color: streak.type === "win" ? "var(--green)" : streak.type === "loss" ? "var(--red)" : "var(--t3)" } }, streak.type === "win" ? "Win Streak" : streak.type === "loss" ? "Loss Streak" : "No Trades"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "var(--t3)", marginTop: 2 } }, "consecutive ", streak.type === "win" ? "wins" : "losses"))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 16, paddingTop: 10, borderTop: "1px solid var(--border)" } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "var(--t3)", fontWeight: 600, letterSpacing: 0.04, textTransform: "uppercase", marginBottom: 3 } }, "Best Win Streak"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 18, fontWeight: 700, color: "var(--green)" } }, streak.longest.win)), /* @__PURE__ */ React.createElement("div", { style: { width: 1, background: "var(--border)" } }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "var(--t3)", fontWeight: 600, letterSpacing: 0.04, textTransform: "uppercase", marginBottom: 3 } }, "Worst Loss Streak"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 18, fontWeight: 700, color: "var(--red)" } }, streak.longest.loss))))), weeklySummary ? /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: "var(--t3)", letterSpacing: 0.04, marginBottom: 10, textTransform: "uppercase" } }, "This Week \xB7 ", weeklySummary.from, " \u2192 ", weeklySummary.to), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 10 } }, [
+  ].map((kpi, i) => /* @__PURE__ */ React.createElement("div", { key: i, className: "card count-up", style: { borderTop: `2px solid ${kpi.accent}`, paddingTop: 18, animationDelay: `${i * 60}ms`, position: "relative", overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: "var(--t3)", letterSpacing: 0.3, marginBottom: 10, display: "flex", justifyContent: "space-between", alignItems: "center", textTransform: "uppercase" } }, kpi.label, /* @__PURE__ */ React.createElement("div", { style: { width: 5, height: 5, borderRadius: "50%", background: kpi.accent, opacity: 0.7 } })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 8 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 30, fontWeight: 800, letterSpacing: "-1.5px", lineHeight: 1, color: "var(--text)", fontFamily: "'Inter',sans-serif" } }, kpi.val), kpi.sub && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, marginTop: 6, color: kpi.subCol, fontWeight: 500 } }, kpi.sub)), kpi.spark && kpi.spark.length > 1 && /* @__PURE__ */ React.createElement(MiniSparkline, { values: kpi.spark, color: kpi.sparkCol }))))), uiBlocks.equityCurve !== false && /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 8 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, fontWeight: 500, color: "var(--t3)", letterSpacing: 0.1, marginBottom: 6 } }, "Cumulative P&L"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 28, fontWeight: 800, letterSpacing: "-1.5px", color: grossPct >= 0 ? "var(--accD)" : "var(--red)", fontFamily: "'Inter',sans-serif" } }, fmtPct(grossPct), grossUSD !== 0 && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 15, marginLeft: 10, fontWeight: 600, opacity: 0.65 } }, fmtUSD(grossUSD)))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 16, fontSize: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 500, color: "var(--accD)", fontSize: 16 } }, wins.length), /* @__PURE__ */ React.createElement("div", { style: { color: "var(--t3)", fontWeight: 600, letterSpacing: 0.5 } }, "WINS")), /* @__PURE__ */ React.createElement("div", { style: { width: 1, background: "var(--border)" } }), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 500, color: "var(--t2)", fontSize: 16 } }, losses.length), /* @__PURE__ */ React.createElement("div", { style: { color: "var(--t3)", fontWeight: 600, letterSpacing: 0.5 } }, "LOSSES")))), /* @__PURE__ */ React.createElement(ProfitCurve, { trades, height: 150, capital }), /* @__PURE__ */ React.createElement("div", { style: { border: "1px solid var(--border)", borderRadius: 12, padding: "12px", marginTop: 20, background: "var(--s2)" } }, React.createElement(MiniCalendarWidget, { trades: allTrades || trades, ic: capital, capital })), /* @__PURE__ */ React.createElement("div", { className: "g2", style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 4 } }, /* @__PURE__ */ React.createElement("div", { className: "card", style: { borderLeft: `3px solid ${streak.type === "win" ? "var(--green)" : streak.type === "loss" ? "var(--red)" : "var(--border)"}`, paddingLeft: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: "var(--t3)", letterSpacing: 0.04, marginBottom: 10, textTransform: "uppercase" } }, "Current Streak"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 36, fontWeight: 800, lineHeight: 1, color: streak.type === "win" ? "var(--green)" : streak.type === "loss" ? "var(--red)" : "var(--t3)", letterSpacing: "-2px" } }, streak.type === "win" ? "+" : streak.type === "loss" ? "-" : "", streak.current), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 700, color: streak.type === "win" ? "var(--green)" : streak.type === "loss" ? "var(--red)" : "var(--t3)" } }, streak.type === "win" ? "Win Streak" : streak.type === "loss" ? "Loss Streak" : "No Trades"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "var(--t3)", marginTop: 2 } }, "consecutive ", streak.type === "win" ? "wins" : "losses"))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 16, paddingTop: 10, borderTop: "1px solid var(--border)" } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "var(--t3)", fontWeight: 600, letterSpacing: 0.04, textTransform: "uppercase", marginBottom: 3 } }, "Best Win Streak"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 18, fontWeight: 700, color: "var(--green)" } }, streak.longest.win)), /* @__PURE__ */ React.createElement("div", { style: { width: 1, background: "var(--border)" } }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "var(--t3)", fontWeight: 600, letterSpacing: 0.04, textTransform: "uppercase", marginBottom: 3 } }, "Worst Loss Streak"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 18, fontWeight: 700, color: "var(--red)" } }, streak.longest.loss))))), weeklySummary ? /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: "var(--t3)", letterSpacing: 0.04, marginBottom: 10, textTransform: "uppercase" } }, "This Week \xB7 ", weeklySummary.from, " \u2192 ", weeklySummary.to), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 10 } }, [
     { l: "Trades", v: weeklySummary.total, c: "var(--text)" },
     { l: "Win Rate", v: `${weeklySummary.wr}%`, c: +weeklySummary.wr >= 50 ? "var(--green)" : "var(--t2)" },
     { l: "Net P&L", v: `${weeklySummary.pnl >= 0 ? "+" : ""}${weeklySummary.pnl}%`, c: +weeklySummary.pnl >= 0 ? "var(--accD)" : "var(--red)" }
@@ -2605,7 +3424,7 @@ function TradeLog({ trades, onAdd, onDelete, onEdit, onUpdateMeta, tradeMeta, on
   return /* @__PURE__ */ React.createElement("div", { className: "fade-up" },
     /* @__PURE__ */ React.createElement(InputModal, { open: keyLevelModal, title: "Add Key Level", subtitle: "e.g. 2345.50 resistance · support · POI · liquidity zone", placeholder: "e.g. 2345.50 resistance", onConfirm: (v) => setForm((f) => ({ ...f, keyLevels: [...(f.keyLevels || []), v] })), onClose: () => setKeyLevelModal(false) }),
     lightbox && /* @__PURE__ */ React.createElement("div", { onClick: () => setLightbox(null), style: { position: "fixed", inset: 0, background: "rgba(0,0,0,.96)", zIndex: 2147483647, display: "flex", alignItems: "center", justifyContent: "center", padding: 24, cursor: "zoom-out" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", maxWidth: "96vw", maxHeight: "94vh" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("img", { src: lightbox, alt: "Chart Screenshot", onLoad: (e) => { e.target.style.opacity="1"; }, onError: (e) => { e.target.style.opacity="1"; }, style: { maxWidth: "96vw", maxHeight: "90vh", width: "auto", height: "auto", objectFit: "contain", borderRadius: 10, boxShadow: "0 40px 120px rgba(0,0,0,.9)", display: "block", opacity: 0, transition: "opacity .3s ease", background: "transparent" } }), /* @__PURE__ */ React.createElement("button", { onClick: () => setLightbox(null), style: { position: "absolute", top: -16, right: -16, background: "#fff", border: "none", borderRadius: "50%", width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 18, fontWeight: 800, boxShadow: "0 4px 16px rgba(0,0,0,.5)", color: "#111", lineHeight: 1 } }, "\u00D7"), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", bottom: -30, left: 0, right: 0, textAlign: "center", color: "rgba(255,255,255,.5)", fontSize: 12 } }, "Tap anywhere or \u00D7 to close"))),
-    /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center", marginBottom: 10, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => {
+    /* @__PURE__ */ React.createElement("div", { className: "hide-desktop", style: { fontSize: 10, color: "var(--t3)", background: "var(--s2)", borderRadius: 8, padding: "5px 10px", marginBottom: 8, display: "flex", alignItems: "center", gap: 5 } }, "💡 Double-tap any trade row to edit"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center", marginBottom: 10, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => {
     if (open && !editingId) {
       setForm(blank);
       setOpen(false);
@@ -2643,7 +3462,7 @@ function TradeLog({ trades, onAdd, onDelete, onEdit, onUpdateMeta, tradeMeta, on
     ["Date", "entryDate", "date", null],
     ["Entry Time", "entryTime", "time", null],
     ["Direction", "side", "select", null]
-  ].map(([l, k, t, ph]) => /* @__PURE__ */ React.createElement("div", { key: k }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: "var(--t3)", marginBottom: 5, textTransform: "uppercase", letterSpacing: 0.04 } }, l), t === "select" ? /* @__PURE__ */ React.createElement("select", { value: form[k], onChange: (e) => setForm((f) => __spreadProps(__spreadValues({}, f), { [k]: e.target.value })), style: sel }, /* @__PURE__ */ React.createElement("option", null, "Long"), /* @__PURE__ */ React.createElement("option", null, "Short")) : /* @__PURE__ */ React.createElement("input", { type: t, step: t === "number" ? ".01" : void 0, placeholder: ph || void 0, value: form[k] || "", onChange: (e) => setForm((f) => __spreadProps(__spreadValues({}, f), { [k]: e.target.value })), style: inp })))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(3,1fr)", gap: 10, marginTop: 10 } }, [
+  ].map(([l, k, t, ph]) => /* @__PURE__ */ React.createElement("div", { key: k }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: "var(--t3)", marginBottom: 5, textTransform: "uppercase", letterSpacing: 0.04 } }, l), t === "select" ? /* @__PURE__ */ React.createElement("select", { value: form[k], onChange: (e) => setForm((f) => __spreadProps(__spreadValues({}, f), { [k]: e.target.value })), style: sel }, /* @__PURE__ */ React.createElement("option", null, "Long"), /* @__PURE__ */ React.createElement("option", null, "Short")) : t === "date" ? /* @__PURE__ */ React.createElement(CustomDatePicker, { value: form[k] || "", onChange: (v) => setForm((f) => __spreadProps(__spreadValues({}, f), { [k]: v })), style: { width: "100%" } }) : t === "time" ? /* @__PURE__ */ React.createElement(CustomTimePicker, { value: form[k] || "", onChange: (v) => setForm((f) => __spreadProps(__spreadValues({}, f), { [k]: v })), style: { width: "100%" } }) : /* @__PURE__ */ React.createElement("input", { type: t, step: t === "number" ? ".01" : void 0, placeholder: ph || void 0, value: form[k] || "", onChange: (e) => setForm((f) => __spreadProps(__spreadValues({}, f), { [k]: e.target.value })), style: inp })))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(3,1fr)", gap: 10, marginTop: 10 } }, [
     ["Entry Price ($)", "entryPrice", "number", "e.g. 2150.00"],
     ["Exit Price ($)", "exitPrice", "number", "e.g. 2165.00 (optional)"],
     ["Net P&L ($)", "profit", "number", "e.g. 85.00 or -42.50"]
@@ -2673,7 +3492,7 @@ function TradeLog({ trades, onAdd, onDelete, onEdit, onUpdateMeta, tradeMeta, on
     setForm(blank);
     setEditingId(null);
     setOpen(false);
-  }, style: { background: "var(--s3)", color: "var(--t2)", border: "1px solid var(--border)", borderRadius: 10, padding: "10px 18px", fontWeight: 600, fontSize: 13, cursor: "pointer" } }, "Cancel"))), /* @__PURE__ */ React.createElement("div", { style: { background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden", boxShadow: "var(--sh2)" } }, /* @__PURE__ */ React.createElement("div", { style: { overflowX: "auto" } }, /* @__PURE__ */ React.createElement("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 11.5, minWidth: 680, tableLayout: "auto" } }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", { style: { borderBottom: "1px solid var(--border)" } }, /* @__PURE__ */ React.createElement(TH, { l: "Symbol", f: "symbol" }), /* @__PURE__ */ React.createElement(TH, { l: "Date", f: "entryDate" }), !isMobile && /* @__PURE__ */ React.createElement(TH, { l: "Time", f: "entryTime" }), /* @__PURE__ */ React.createElement(TH, { l: "Side", f: "side" }), /* @__PURE__ */ React.createElement(TH, { l: "Session", f: "session" }), !isMobile && /* @__PURE__ */ React.createElement(TH, { l: "Model", f: "model" }), /* @__PURE__ */ React.createElement(TH, { l: "Grade", f: "grade" }), /* @__PURE__ */ React.createElement(TH, { l: "Entry", f: "entryPrice" }), /* @__PURE__ */ React.createElement(TH, { l: "Exit", f: "exitPrice" }), /* @__PURE__ */ React.createElement(TH, { l: "P&L%", f: "pnl" }), /* @__PURE__ */ React.createElement(TH, { l: "Exp.RR", f: "expectedRR" }), !isMobile && /* @__PURE__ */ React.createElement(TH, { l: "Emotion", f: "emotionBefore" }), /* @__PURE__ */ React.createElement("th", { style: { padding: "10px 12px", background: "var(--s2)", fontSize: 10, color: "var(--t3)", fontWeight: 500 } }, "Actions"))), /* @__PURE__ */ React.createElement("tbody", null, !visible.length && /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("td", { colSpan: 13, style: { padding: 40, textAlign: "center", color: "var(--t3)", fontSize: 13 } }, trades.length === 0 ? /* @__PURE__ */ React.createElement("span", null, "No trades logged yet \u2014 press ", /* @__PURE__ */ React.createElement("kbd", { style: { background: "var(--s3)", border: "1px solid var(--border)", borderRadius: 4, padding: "0 5px", fontSize: 11, fontFamily: "monospace" } }, "N"), " to log your first trade") : "No trades match your current filters \u2014 try adjusting or clearing them")), (showAll ? visible : visible.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)).map((t, i) => {
+  }, style: { background: "var(--s3)", color: "var(--t2)", border: "1px solid var(--border)", borderRadius: 10, padding: "10px 18px", fontWeight: 600, fontSize: 13, cursor: "pointer" } }, "Cancel"))), /* @__PURE__ */ React.createElement("div", { style: { background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden", boxShadow: "var(--sh2)" } }, /* @__PURE__ */ React.createElement("div", { className: "tlog-table-wrap", style: { overflowX: "auto" } }, /* @__PURE__ */ React.createElement("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 11.5, minWidth: 680, tableLayout: "auto" } }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", { style: { borderBottom: "1px solid var(--border)" } }, /* @__PURE__ */ React.createElement(TH, { l: "Symbol", f: "symbol" }), /* @__PURE__ */ React.createElement(TH, { l: "Date", f: "entryDate" }), !isMobile && /* @__PURE__ */ React.createElement(TH, { l: "Time", f: "entryTime" }), /* @__PURE__ */ React.createElement(TH, { l: "Side", f: "side" }), /* @__PURE__ */ React.createElement(TH, { l: "Session", f: "session" }), !isMobile && /* @__PURE__ */ React.createElement(TH, { l: "Model", f: "model" }), /* @__PURE__ */ React.createElement(TH, { l: "Grade", f: "grade" }), /* @__PURE__ */ React.createElement(TH, { l: "Entry", f: "entryPrice" }), /* @__PURE__ */ React.createElement(TH, { l: "Exit", f: "exitPrice" }), /* @__PURE__ */ React.createElement(TH, { l: "P&L%", f: "pnl" }), /* @__PURE__ */ React.createElement(TH, { l: "Exp.RR", f: "expectedRR" }), !isMobile && /* @__PURE__ */ React.createElement(TH, { l: "Emotion", f: "emotionBefore" }), /* @__PURE__ */ React.createElement("th", { style: { padding: "10px 12px", background: "var(--s2)", fontSize: 10, color: "var(--t3)", fontWeight: 500 } }, "Actions"))), /* @__PURE__ */ React.createElement("tbody", null, !visible.length && /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("td", { colSpan: 13, style: { padding: 40, textAlign: "center", color: "var(--t3)", fontSize: 13 } }, trades.length === 0 ? /* @__PURE__ */ React.createElement("span", null, "No trades logged yet \u2014 press ", /* @__PURE__ */ React.createElement("kbd", { style: { background: "var(--s3)", border: "1px solid var(--border)", borderRadius: 4, padding: "0 5px", fontSize: 11, fontFamily: "monospace" } }, "N"), " to log your first trade") : "No trades match your current filters \u2014 try adjusting or clearing them")), (showAll ? visible : visible.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)).map((t, i) => {
     var _a;
     const dir = deriveDir(t);
     const meta = tradeMeta[t.id] || {};
@@ -2685,6 +3504,8 @@ function TradeLog({ trades, onAdd, onDelete, onEdit, onUpdateMeta, tradeMeta, on
       {
         style: { background: rowBg, borderBottom: isExp ? "none" : `1px solid var(--border)`, cursor: "pointer", transition: "background .1s" },
         onClick: () => setExpandedId(isExp ? null : t.id),
+        onDoubleClick: () => { setExpandedId(null); startEdit(t); },
+        title: "Double-tap to edit",
         onMouseEnter: (e) => {
           e.currentTarget.style.background = "var(--s3)";
           e.currentTarget.style.boxShadow = `inset 3px 0 0 var(--acc)`;
@@ -2846,7 +3667,7 @@ const CalendarView = memo(function CalendarView2({ trades, onDayClick, capital: 
     );
   }), /* @__PURE__ */ React.createElement("div", { style: { background: weekStats[wi].count ? weekStats[wi].profit >= 0 ? "color-mix(in srgb, var(--acc) 10%, transparent)" : "rgba(148,163,184,.15)" : "var(--s2)", border: `1.5px solid ${weekStats[wi].count ? weekStats[wi].profit >= 0 ? "color-mix(in srgb, var(--acc) 30%, transparent)" : "var(--border2)" : "var(--border)"}`, borderRadius: 12, padding: "8px", minHeight: 80, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 3 } }, weekStats[wi].count > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 500, color: weekStats[wi].profit >= 0 ? "var(--accD)" : "var(--t2)", textAlign: "center" } }, fmt(weekStats[wi].profit, weekStats[wi].pnl)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: "var(--t3)", textAlign: "center" } }, weekStats[wi].count, " trades"))))))));
 });
-function DayPopup({ date, trades, onClose, ic, capital: propCapital, onEdit, editingId, setEditingId, onOpenSettings }) {
+function DayPopup({ date, trades, onClose, ic, capital: propCapital, onEdit, editingId, setEditingId, onOpenSettings, usedSessions = SESSIONS, usedMistakes = MISTAKES }) {
   const capital = (propCapital && propCapital > 0) ? propCapital : ((ic && ic > 0) ? ic : 5000);
   const dayTrades = trades.filter((t) => t.entryDate === date).sort((a, b) => a.entryTime.localeCompare(b.entryTime));
   const [editForm, setEditForm] = useState(null);
@@ -3247,7 +4068,7 @@ function ImportTradesPanel({ onImport }) {
     setError("");
   }, style: { padding: "6px 14px", borderRadius: 20, border: `1.5px solid ${broker === id ? "var(--acc)" : "var(--border)"}`, background: broker === id ? "var(--accF)" : "var(--surface)", color: broker === id ? "var(--accD)" : "var(--t2)", fontWeight: broker === id ? 700 : 500, fontSize: 12, cursor: "pointer" } }, label)))), /* @__PURE__ */ React.createElement("div", { style: { background: "var(--s2)", borderRadius: 10, padding: "10px 14px", marginBottom: 14, fontSize: 11, color: "var(--t2)", lineHeight: 1.7 } }, broker === "mt5" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("b", null, "MT5:"), " Go to History tab \u2192 Right click \u2192 Save as Report \u2192 Tab-separated file (.htm/.csv)"), broker === "tradovate" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("b", null, "Tradovate:"), " Account tab \u2192 Performance \u2192 Export to CSV"), broker === "projectx" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("b", null, "ProjectX / Futures:"), " Export trade history CSV from your dashboard"), broker === "tradexy" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("b", null, "Tradexy CSV:"), " Trade Log tab \u2192 \u2193 CSV button — re-import your own journal export with all fields preserved"), broker === "json" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("b", null, "JSON Backup:"), " Trade Log tab \u2192 \u2193 JSON button — full lossless backup, restores every field including confluences & emotions")), /* @__PURE__ */ React.createElement("label", { style: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, border: `2px dashed ${file ? "var(--acc)" : "var(--border2)"}`, borderRadius: 12, padding: "20px", cursor: "pointer", background: file ? "var(--accF)" : "var(--s2)", transition: "all .15s", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 28 } }, file ? "\u2713" : (broker === "json" ? "\uD83D\uDCBE" : broker === "tradexy" ? "\uD83D\uDDD2" : "\uD83D\uDCC4")), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, fontWeight: 600, color: file ? "var(--accD)" : "var(--t3)" } }, file ? file.name : "Click to upload trade history file"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 10, color: "var(--t3)" } }, broker === "json" ? "JSON backup exported from this journal" : broker === "tradexy" ? "CSV exported from this journal" : "CSV, TSV, or HTM"), /* @__PURE__ */ React.createElement("input", { type: "file", accept: broker === "json" ? ".json" : ".csv,.tsv,.htm,.html,.txt", style: { display: "none" }, onChange: handleFile })), error && /* @__PURE__ */ React.createElement("div", { style: { background: "var(--rBg)", border: "1px solid var(--rBdr)", borderRadius: 8, padding: "8px 12px", fontSize: 11, color: "var(--red)", marginBottom: 10 } }, "\u26A0 ", error), preview && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 600, color: "var(--green)", marginBottom: 8 } }, "\u2713 ", preview.length, " trades ready to import"), /* @__PURE__ */ React.createElement("div", { style: { background: "var(--s2)", borderRadius: 10, overflow: "hidden", border: "1px solid var(--border)" } }, /* @__PURE__ */ React.createElement("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 11 } }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", { style: { background: "var(--s3)" } }, ["Date", "Symbol", "Side", "P&L%", "Profit $"].map((h) => /* @__PURE__ */ React.createElement("th", { key: h, style: { padding: "7px 10px", textAlign: "left", fontSize: 9.5, color: "var(--t3)", fontWeight: 600, textTransform: "uppercase" } }, h)))), /* @__PURE__ */ React.createElement("tbody", null, preview.slice(0, 5).map((t, i) => /* @__PURE__ */ React.createElement("tr", { key: i, style: { borderTop: "1px solid var(--border)" } }, /* @__PURE__ */ React.createElement("td", { style: { padding: "6px 10px", color: "var(--t2)", fontFamily: "monospace", fontSize: 10 } }, t.entryDate), /* @__PURE__ */ React.createElement("td", { style: { padding: "6px 10px", fontWeight: 600 } }, t.symbol), /* @__PURE__ */ React.createElement("td", { style: { padding: "6px 10px" } }, /* @__PURE__ */ React.createElement(Chip, { color: t.side === "Long" ? "truegreen" : "red", size: "sm" }, t.side)), /* @__PURE__ */ React.createElement("td", { style: { padding: "6px 10px", color: t.profit >= 0 ? "var(--accD)" : "var(--red)", fontWeight: 700 } }, t.profit >= 0 ? "+$" : "-$", Math.abs(t.profit).toFixed(2)), /* @__PURE__ */ React.createElement("td", { style: { padding: "6px 10px", color: t.profit >= 0 ? "var(--accD)" : "var(--red)", fontWeight: 700 } }, t.profit >= 0 ? "+$" : "-$", Math.abs(t.profit).toFixed(2)))), preview.length > 5 && /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("td", { colSpan: 5, style: { padding: "6px 10px", color: "var(--t3)", fontSize: 10, textAlign: "center" } }, "\u2026and ", preview.length - 5, " more")))))), preview && /* @__PURE__ */ React.createElement("button", { onClick: doImport, disabled: importing, style: { width: "100%", background: "linear-gradient(135deg,var(--acc),var(--accD))", color: "#fff", border: "none", borderRadius: 10, padding: "11px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: "0 3px 10px color-mix(in srgb, var(--acc) 35%, transparent)" } }, importing ? "Importing\u2026" : "\u2713 Import " + preview.length + " Trades"));
 }
-function Sidebar({ activeTab, setTab, sidebarOpen, setSidebarOpen, setSidebarHover, userName, setUserName, accounts, seedTrades, editingUi, setEditingUi, uiBlocks, toggleBlock, resetUi, onOpenSettings, theme, setTheme }) {
+function Sidebar({ activeTab, setTab, sidebarOpen, setSidebarOpen, setSidebarHover, userName, setUserName, accounts, seedTrades, demoDeleted, editingUi, setEditingUi, uiBlocks, toggleBlock, resetUi, onOpenSettings, theme, setTheme }) {
   const isMobile = useMediaQuery("(max-width:768px)");
   const TABS = [
     { id: "overview", label: "Overview", icon: /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "3", width: "7", height: "7" }), /* @__PURE__ */ React.createElement("rect", { x: "14", y: "3", width: "7", height: "7" }), /* @__PURE__ */ React.createElement("rect", { x: "3", y: "14", width: "7", height: "7" }), /* @__PURE__ */ React.createElement("rect", { x: "14", y: "14", width: "7", height: "7" })) },
@@ -3256,7 +4077,7 @@ function Sidebar({ activeTab, setTab, sidebarOpen, setSidebarOpen, setSidebarHov
     { id: "psychology", label: "Psychology", icon: /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" })) },
     { id: "tradelog", label: "Trade Log", icon: /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("line", { x1: "8", y1: "6", x2: "21", y2: "6" }), /* @__PURE__ */ React.createElement("line", { x1: "8", y1: "12", x2: "21", y2: "12" }), /* @__PURE__ */ React.createElement("line", { x1: "8", y1: "18", x2: "21", y2: "18" }), /* @__PURE__ */ React.createElement("line", { x1: "3", y1: "6", x2: "3.01", y2: "6" }), /* @__PURE__ */ React.createElement("line", { x1: "3", y1: "12", x2: "3.01", y2: "12" }), /* @__PURE__ */ React.createElement("line", { x1: "3", y1: "18", x2: "3.01", y2: "18" })) }
   ];
-  const allT = accounts.length ? accounts.flatMap((a) => a.trades) : seedTrades;
+  const allT = accounts.length ? accounts.flatMap((a) => a.trades) : (demoDeleted ? [] : seedTrades);
   const totalProfit = allT.reduce((s, t) => s + (t.profit || 0), 0);
   const sidebarCapital = accounts.length > 0 && accounts[0].capital > 0 ? accounts[0].capital : 5000;
   const totalPnl = calcPnL(totalProfit, sidebarCapital);
@@ -3321,8 +4142,8 @@ function OnboardingModal({ onDone }) {
 
   const close = React.useCallback(() => {
     setClosing(true);
-    if (previewTheme) { const s = localStorage.getItem("tj5_theme")||"sepia"; document.documentElement.setAttribute("data-theme", s); }
-    if (previewAccent) { const s = localStorage.getItem("tj5_accent")||"slate"; document.documentElement.setAttribute("data-accent", s); }
+    if (previewTheme) { const s = localStorage.getItem("tj5_theme")||"zinc"; document.documentElement.setAttribute("data-theme", s); }
+    if (previewAccent) { const s = localStorage.getItem("tj5_accent")||"indigo"; document.documentElement.setAttribute("data-accent", s); }
     setTimeout(() => { try { localStorage.setItem("tj_onboarding_done","1"); } catch(e){} onDone(); }, 200);
   }, [onDone, previewTheme, previewAccent]);
 
@@ -3399,22 +4220,29 @@ function OnboardingModal({ onDone }) {
   const current = stepInfo[step];
 
   const themes = [
+    { id: "zinc",     label: "Zinc",     bg: "#f4f4f5", dot: "#4f46e5" },
     { id: "light",    label: "Light",    bg: "#f0f2ff", dot: "#c8983a" },
+    { id: "slate",    label: "Slate",    bg: "#f1f5f9", dot: "#475569" },
+    { id: "lavender", label: "Lavender", bg: "#f0edf8", dot: "#7c3aed" },
     { id: "dark",     label: "Dark",     bg: "#0c1018", dot: "#c8983a", light: false },
-    { id: "midnight", label: "Midnight", bg: "#0d0f1a", dot: "#7c3aed", light: false },
     { id: "sepia",    label: "Sepia",    bg: "#f2ece0", dot: "#a87c28" },
     { id: "forest",   label: "Forest",   bg: "#eef4ee", dot: "#059669" },
     { id: "ocean",    label: "Ocean",    bg: "#e8f4f8", dot: "#0284c7" },
-    { id: "zinc",     label: "Zinc",     bg: "#f4f4f5", dot: "#475569" },
     { id: "rose",     label: "Rose",     bg: "#fff1f4", dot: "#e11d48" },
   ];
   const accents = [
-    { id:"sky", color:"#0284c7" },{ id:"violet", color:"#7c3aed" },
-    { id:"rose", color:"#e11d48" },{ id:"teal", color:"#0d9488" },
-    { id:"indigo", color:"#4f46e5" },{ id:"slate", color:"#475569" },
+    { id:"indigo",  color:"#4f46e5", label:"Indigo"  },
+    { id:"emerald", color:"#059669", label:"Emerald" },
+    { id:"amber",   color:"#d97706", label:"Amber"   },
+    { id:"rose",    color:"#e11d48", label:"Rose"    },
+    { id:"fuchsia", color:"#c026d3", label:"Fuchsia" },
+    { id:"pink",    color:"#db2777", label:"Pink"    },
+    { id:"cyan",    color:"#0891b2", label:"Cyan"    },
+    { id:"lime",    color:"#65a30d", label:"Lime"    },
+    { id:"slate",   color:"#475569", label:"Slate"   },
   ];
-  const curTheme  = document.documentElement.getAttribute("data-theme")  || "sepia";
-  const curAccent = document.documentElement.getAttribute("data-accent") || "slate";
+  const curTheme  = document.documentElement.getAttribute("data-theme")  || "zinc";
+  const curAccent = document.documentElement.getAttribute("data-accent") || "indigo";
 
   // ── Render ────────────────────────────────────────────────────
   return E("div", {
@@ -3478,13 +4306,18 @@ function OnboardingModal({ onDone }) {
             )
           ),
           E("div", { style: { fontSize: 10, fontWeight: 700, color: "var(--t3,#6b7a96)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 } }, "Accent Colour"),
-          E("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } },
+          E("div", { style: { display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 8 } },
             ...accents.map(a =>
               E("div", { key: a.id, onClick: () => applyAccent(a.id),
-                style: { width: 30, height: 30, borderRadius: "50%", background: a.color, cursor: "pointer",
+                style: { display:"flex", flexDirection:"column", alignItems:"center", gap:4, cursor:"pointer",
+                  padding:"6px 4px", borderRadius:9, background: curAccent===a.id?"var(--s2,#f4f5ff)":"transparent",
+                  border:`1.5px solid ${curAccent===a.id?"var(--acc,#4f46e5)":"transparent"}`,
+                  transition:"all .15s" } },
+                E("div", { style: { width: 24, height: 24, borderRadius: "50%", background: a.color,
                   border: `3px solid ${curAccent===a.id?"white":"transparent"}`,
-                  boxShadow: curAccent===a.id?`0 0 0 3px ${a.color},0 3px 10px rgba(0,0,0,.2)`:"0 2px 6px rgba(0,0,0,.15)",
-                  transition: "box-shadow .15s,border-color .15s" } }
+                  boxShadow: curAccent===a.id?`0 0 0 3px ${a.color},0 3px 8px rgba(0,0,0,.2)`:"0 2px 5px rgba(0,0,0,.15)",
+                  transition: "box-shadow .15s,border-color .15s" } }),
+                E("div", { style: { fontSize:8, fontWeight:700, color: curAccent===a.id?"var(--accD,#4338ca)":"var(--t3,#6b7a96)", letterSpacing:"0.04em", lineHeight:1 } }, a.label)
               )
             )
           ),
@@ -3555,6 +4388,175 @@ function OnboardingModal({ onDone }) {
   );
 } // end OnboardingModal
 
+/* ============================================================
+   WALLET DROPDOWN COMPONENT — topbar right-corner balance widget
+   Shows CURRENT account balance with dropdown for all accounts
+   ============================================================ */
+function WalletDropdown({ accounts, activeAccId, setActiveAccId, accountCapital, trueBalanceInfo, allTrades, isMobile }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    function handler(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    if (open) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  // Use pre-computed trueBalanceInfo from App (already calls calcTrueBalance with adjustments)
+  const tb = trueBalanceInfo || { balance: accountCapital, adjustedCapital: accountCapital, netProfit: 0 };
+  const netProfit = tb.netProfit;
+  const capital = tb.adjustedCapital > 0 ? tb.adjustedCapital : accountCapital;
+  const currentBalance = tb.balance;
+  const netPct = capital > 0 ? (netProfit / capital * 100) : 0;
+  const isPos = netProfit >= 0;
+
+  // Current account label
+  const activeAcc = activeAccId === 'all' ? null : accounts.find(a => a.id === activeAccId);
+  const acctLabel = activeAcc ? activeAcc.label : (accounts.length > 1 ? 'All Accounts' : accounts.length === 1 ? accounts[0].label : 'No Account');
+
+  const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
+  const fmtFull = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n);
+
+  return React.createElement('div', { ref, style: { position: 'relative' } },
+    // ── Trigger button ──
+    React.createElement('button', {
+      onClick: () => setOpen(o => !o),
+      title: 'Account Balance',
+      style: {
+        display: 'flex', alignItems: 'center', gap: 7,
+        background: open ? 'var(--accF)' : 'var(--s2)',
+        border: `1.5px solid ${open ? 'var(--acc)' : 'var(--border)'}`,
+        borderRadius: 10, padding: '5px 10px 5px 9px',
+        cursor: 'pointer', transition: 'all .15s',
+        boxShadow: open ? '0 0 0 3px color-mix(in srgb, var(--acc) 15%, transparent)' : 'none'
+      },
+      onMouseEnter: (e) => { if (!open) { e.currentTarget.style.borderColor = 'var(--acc)'; e.currentTarget.style.background = 'var(--accF)'; } },
+      onMouseLeave: (e) => { if (!open) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--s2)'; } }
+    },
+      // Wallet SVG icon
+      React.createElement('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'var(--acc)', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', style: { flexShrink: 0 } },
+        React.createElement('rect', { x: 1, y: 6, width: 22, height: 15, rx: 2 }),
+        React.createElement('path', { d: 'M1 10h22' }),
+        React.createElement('circle', { cx: 17, cy: 15, r: 1.5, fill: 'var(--acc)', stroke: 'none' })
+      ),
+      // Balance text — hidden on mobile
+      !isMobile && React.createElement('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.15 } },
+        React.createElement('div', { style: { fontSize: 9.5, fontWeight: 700, color: 'var(--t3)', letterSpacing: '0.04em', textTransform: 'uppercase' } },
+          'Balance'
+        ),
+        React.createElement('div', { style: { fontSize: 12.5, fontWeight: 800, color: 'var(--text)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.03em' } },
+          fmt(currentBalance)
+        )
+      ),
+      // Chevron
+      React.createElement('svg', { width: 10, height: 10, viewBox: '0 0 24 24', fill: 'none', stroke: 'var(--t3)', strokeWidth: 3,
+        style: { transform: open ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform .2s', flexShrink: 0 }
+      },
+        React.createElement('polyline', { points: '6 9 12 15 18 9' })
+      )
+    ),
+
+    // ── Dropdown panel — anchored to RIGHT corner ──
+    open && React.createElement('div', {
+      style: {
+        position: 'absolute', top: 'calc(100% + 6px)', right: 0,
+        background: 'var(--surface)', border: '1.5px solid var(--border2)',
+        borderRadius: 16,
+        boxShadow: '0 16px 48px rgba(0,0,0,.2), 0 4px 14px rgba(0,0,0,.12)',
+        minWidth: 260, zIndex: 9001, padding: '14px',
+        animation: 'dtPickerIn .18s cubic-bezier(.22,1,.36,1)'
+      }
+    },
+      // Header label
+      React.createElement('div', { style: { fontSize: 10, fontWeight: 700, color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10, paddingLeft: 2 } },
+        '💼 Current Account'
+      ),
+
+      // ── Current account summary card ──
+      React.createElement('div', { style: {
+        background: 'linear-gradient(135deg, var(--accF), var(--s2))',
+        border: '1.5px solid color-mix(in srgb, var(--acc) 28%, transparent)',
+        borderRadius: 12, padding: '13px 14px', marginBottom: 10
+      } },
+        React.createElement('div', { style: { fontSize: 10, fontWeight: 700, color: 'var(--t3)', marginBottom: 2, textTransform: 'uppercase', letterSpacing: '0.04em' } },
+          acctLabel
+        ),
+        // Starting capital
+        React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 } },
+          React.createElement('div', { style: { fontSize: 9.5, color: 'var(--t3)', fontWeight: 600 } }, 'Starting Capital'),
+          React.createElement('div', { style: { fontSize: 12, fontWeight: 700, color: 'var(--t2)', fontVariantNumeric: 'tabular-nums' } }, fmtFull(capital))
+        ),
+        // Current balance big number
+        React.createElement('div', { style: { fontSize: 24, fontWeight: 800, color: 'var(--text)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.04em', marginBottom: 8, lineHeight: 1 } },
+          fmtFull(currentBalance)
+        ),
+        // P&L row
+        React.createElement('div', { style: { display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' } },
+          React.createElement('div', { style: {
+            fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 8,
+            color: isPos ? 'var(--accD)' : 'var(--red)',
+            background: isPos ? 'color-mix(in srgb, var(--acc) 15%, transparent)' : 'var(--rBg)',
+            border: `1px solid ${isPos ? 'color-mix(in srgb, var(--acc) 30%, transparent)' : 'var(--rBdr)'}`,
+            fontVariantNumeric: 'tabular-nums'
+          } }, (isPos ? '▲ +' : '▼ ') + netPct.toFixed(2) + '%'),
+          React.createElement('div', { style: { fontSize: 11, color: isPos ? 'var(--accD)' : 'var(--red)', fontVariantNumeric: 'tabular-nums', fontWeight: 600 } },
+            (isPos ? '+' : '') + fmtFull(netProfit)
+          )
+        )
+      ),
+
+      // ── Switch account list ──
+      accounts.length > 1 && React.createElement('div', null,
+        React.createElement('div', { style: { fontSize: 9.5, fontWeight: 700, color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6, paddingLeft: 2 } }, 'Switch Account'),
+        React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 3 } },
+          [{ id: 'all', label: '🌐 All Accounts', capital: accounts.reduce((s, a) => s + (a.capital || 0), 0), trades: accounts.flatMap(a => a.trades), color: null }]
+            .concat(accounts.map((a, i) => ({ id: a.id, label: a.label, capital: a.capital, trades: a.trades, color: ACC_COLS[i % ACC_COLS.length], isDemo: a.isDemo })))
+            .map(item => {
+              const iActive = activeAccId === item.id;
+              const tb = calcTrueBalance(item);
+              const accProfit = tb.netProfit;
+              const accCap = tb.adjustedCapital || 5000;
+              const accPct = accCap > 0 ? (accProfit / accCap * 100) : 0;
+              const accPos = accProfit >= 0;
+              return React.createElement('div', {
+                key: item.id,
+                onClick: () => { setActiveAccId(item.id); setOpen(false); },
+                style: {
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '7px 10px', borderRadius: 9, cursor: 'pointer',
+                  background: iActive ? 'var(--accF)' : 'transparent',
+                  border: `1.5px solid ${iActive ? 'var(--acc)' : 'transparent'}`,
+                  transition: 'all .1s'
+                },
+                onMouseEnter: (e) => { if (!iActive) e.currentTarget.style.background = 'var(--s2)'; },
+                onMouseLeave: (e) => { if (!iActive) e.currentTarget.style.background = 'transparent'; }
+              },
+                React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 } },
+                  item.color
+                    ? React.createElement('div', { style: { width: 7, height: 7, borderRadius: '50%', background: item.color, flexShrink: 0 } })
+                    : React.createElement('div', { style: { width: 7, height: 7, borderRadius: '50%', background: 'var(--acc)', flexShrink: 0 } }),
+                  React.createElement('div', { style: { fontSize: 11.5, fontWeight: iActive ? 700 : 500, color: iActive ? 'var(--accD)' : 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 130 } },
+                    item.label
+                  )
+                ),
+                React.createElement('div', { style: { fontSize: 10.5, fontWeight: 700, flexShrink: 0, color: accPos ? 'var(--accD)' : 'var(--red)', fontVariantNumeric: 'tabular-nums' } },
+                  (accPos ? '+' : '') + accPct.toFixed(2) + '%'
+                )
+              );
+            })
+        )
+      ),
+
+      // Empty state
+      accounts.length === 0 && React.createElement('div', { style: { padding: '8px 4px', fontSize: 11.5, color: 'var(--t3)', textAlign: 'center' } },
+        'Add an account to track your balance'
+      )
+    )
+  );
+}
+
 
 function App() {
   var _a;
@@ -3598,6 +4600,7 @@ function App() {
   const [openTradeForm, setOpenTradeForm] = useState(false);
   const [demoBannerDismissed, setDemoBannerDismissed] = useState(function(){ try{return !!localStorage.getItem("tj5_demo_dismissed");}catch(e){return false;} });
   const [settingsModal, setSettingsModal] = useState(null); // {title,subtitle,placeholder,defaultVal,onConfirm}
+  const [demoDeleted, setDemoDeleted] = useState(function(){ try{return !!localStorage.getItem("tj5_demo_deleted");}catch(e){return false;} });
   const isMobile = useMediaQuery("(max-width:768px)");
   const sidebarEffectiveOpen = sidebarOpen || sidebarHover;
   useEffect(() => {
@@ -3729,33 +4732,68 @@ function App() {
       setSyncingId(null);
     }
   }, [showToast]);
+  const handleAddAdjustment = useCallback((accId, adj) => {
+    setAccounts(prev => prev.map(a => a.id !== accId ? a : {
+      ...a,
+      balanceAdjustments: [...(a.balanceAdjustments || []), adj].sort((x, y) => x.date.localeCompare(y.date))
+    }));
+  }, []);
+  const handleRemoveAdjustment = useCallback((accId, idx) => {
+    setAccounts(prev => prev.map(a => a.id !== accId ? a : {
+      ...a,
+      balanceAdjustments: (a.balanceAdjustments || []).filter((_, i) => i !== idx)
+    }));
+  }, []);
   const handleAddAcc = useCallback((c) => {
     const id = Date.now().toString();
     const na = __spreadProps(__spreadValues({}, c), { id, trades: [], info: null, connected: false, lastSync: null });
     setAccounts((p) => [...p, na]);
+    // Adding a real account clears the "demo deleted" gate
+    setDemoDeleted(false);
+    try { localStorage.removeItem("tj5_demo_deleted"); } catch(e) {}
     if (!c.isDemo) setTimeout(() => handleSync(na), 60);
     else showToast(`\u2713 ${c.label} demo account created`, "success");
   }, [handleSync, showToast]);
   const handleRemoveAcc = useCallback((id) => {
-    setAccounts((p) => p.filter((a) => a.id !== id));
+    setAccounts((p) => {
+      const next = p.filter((a) => a.id !== id);
+      // If removing results in no accounts left, mark demo as deleted to prevent ghost SEED data
+      if (next.length === 0) {
+        setDemoDeleted(true);
+        try { localStorage.setItem("tj5_demo_deleted", "1"); } catch(e) {}
+      }
+      return next;
+    });
     if (activeAccId === id) setActiveAccId("all");
   }, [activeAccId]);
   const selectedAccount = useMemo(() => {
     if (activeAccId === "all") return null;
     return accounts.find((a) => a.id === activeAccId) || null;
   }, [accounts, activeAccId]);
-  const accountCapital = useMemo(() => {
-    if (selectedAccount && selectedAccount.capital > 0) return selectedAccount.capital;
-    // For "all" accounts: use the first account's capital or fallback
-    if (accounts.length > 0 && accounts[0].capital > 0) return accounts[0].capital;
-    return 5000;
+
+  // trueBalanceInfo: uses calcTrueBalance so Cash Adjustments are reflected everywhere
+  const trueBalanceInfo = useMemo(() => {
+    if (selectedAccount) return calcTrueBalance(selectedAccount);
+    if (accounts.length > 0) {
+      // "All" mode: sum balances across accounts
+      const totalBalance = accounts.reduce((s, a) => s + calcTrueBalance(a).balance, 0);
+      const totalCapital = accounts.reduce((s, a) => s + (a.capital || 0), 0);
+      return { balance: totalBalance, capital: totalCapital, adjustedCapital: totalCapital, netProfit: totalBalance - totalCapital };
+    }
+    return { balance: 5000, capital: 5000, adjustedCapital: 5000, netProfit: 0 };
   }, [selectedAccount, accounts]);
+
+  // accountCapital = the effective capital base AFTER adjustments (used for P&L% denominator)
+  const accountCapital = useMemo(() => {
+    return trueBalanceInfo.adjustedCapital > 0 ? trueBalanceInfo.adjustedCapital : 5000;
+  }, [trueBalanceInfo]);
   const allTrades = useMemo(() => {
     var _a2;
-    if (accounts.length === 0) return SEED;
+    // Only show SEED demo data on genuine first visit (no accounts AND demo was never deleted)
+    if (accounts.length === 0) return demoDeleted ? [] : SEED;
     if (activeAccId === "all") return accounts.flatMap((a) => a.trades);
     return ((_a2 = accounts.find((a) => a.id === activeAccId)) == null ? void 0 : _a2.trades) || [];
-  }, [accounts, activeAccId]);
+  }, [accounts, activeAccId, demoDeleted]);
   const displayTrades = useMemo(() => {
     if (!dateRange.from && !dateRange.to) return allTrades;
     return allTrades.filter((t) => (!dateRange.from || t.entryDate >= dateRange.from) && (!dateRange.to || t.entryDate <= dateRange.to));
@@ -3779,6 +4817,9 @@ function App() {
       }
       return p.map((a, i) => i === 0 ? __spreadProps(__spreadValues({}, a), { trades: [nt, ...a.trades] }) : a);
     });
+    // If user is adding a trade after clearing demo, un-block the empty state
+    setDemoDeleted(false);
+    try { localStorage.removeItem("tj5_demo_deleted"); } catch(e) {}
   }, []);
   const handleImportTrades = useCallback((importedTrades) => {
     const sanitized = importedTrades.map((t) => sanitizeTrade(__spreadProps(__spreadValues({}, t), { id: Date.now() + Math.random(), accountId: "manual", createdAt: (/* @__PURE__ */ new Date()).toISOString(), updatedAt: (/* @__PURE__ */ new Date()).toISOString() }))).filter(Boolean);
@@ -3839,25 +4880,29 @@ function App() {
   const ic = accountCapital;
   const [settingsTab, setSettingsTab] = useState("appearance");
   const THEMES = [
-    { id: "light", label: "Light", icon: "\u2600\uFE0F" },
-    { id: "dark", label: "Dark", icon: "\u{1F319}" },
-    { id: "sepia", label: "Sepia", icon: "\u{1F4DC}" },
-    { id: "forest", label: "Forest", icon: "\u{1F333}" },
-    { id: "ocean", label: "Ocean", icon: "\u{1F30A}" },
-    { id: "midnight", label: "Midnight", icon: "\u{1F30C}" },
-    { id: "zinc", label: "Zinc", icon: "\u{1FA76}" },
-    { id: "rose", label: "Rose", icon: "\u{1F338}" },
+    { id: "zinc",     label: "Zinc",     icon: "\u{1FA76}" },
+    { id: "light",    label: "Light",    icon: "\u2600\uFE0F" },
+    { id: "slate",    label: "Slate",    icon: "\u{1F5F3}\uFE0F" },
+    { id: "lavender", label: "Lavender", icon: "\u{1F338}" },
+    { id: "dark",     label: "Dark",     icon: "\u{1F319}" },
+    { id: "sepia",    label: "Sepia",    icon: "\u{1F4DC}" },
+    { id: "forest",   label: "Forest",   icon: "\u{1F333}" },
+    { id: "ocean",    label: "Ocean",    icon: "\u{1F30A}" },
+    { id: "rose",     label: "Rose",     icon: "\u{1F339}" },
   ];
   const ACCENTS = [
-    { id: "sky", label: "Sky", col: "#0284c7" },
-    { id: "violet", label: "Violet", col: "#7c3aed" },
-    { id: "rose", label: "Rose", col: "#e11d48" },
-    { id: "teal", label: "Teal", col: "#0d9488" },
-    { id: "indigo", label: "Indigo", col: "#4f46e5" },
-    { id: "slate", label: "Slate", col: "#475569" }
+    { id: "indigo",  label: "Indigo",  col: "#4f46e5" },
+    { id: "emerald", label: "Emerald", col: "#059669" },
+    { id: "amber",   label: "Amber",   col: "#d97706" },
+    { id: "rose",    label: "Rose",    col: "#e11d48" },
+    { id: "fuchsia", label: "Fuchsia", col: "#c026d3" },
+    { id: "pink",    label: "Pink",    col: "#db2777" },
+    { id: "cyan",    label: "Cyan",    col: "#0891b2" },
+    { id: "lime",    label: "Lime",    col: "#65a30d" },
+    { id: "slate",   label: "Slate",   col: "#475569" }
   ];
   const _settingsOnImport = handleImportTrades;
-  return /* @__PURE__ */ React.createElement(ErrorBoundary, null, /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "var(--bg)", color: "var(--text)" } }, showGuide && /* @__PURE__ */ React.createElement(OnboardingModal, { onDone: () => { setShowGuide(false); try { localStorage.setItem("tj_onboarding_done", "1"); } catch(e) {} } }), showSettings && /* @__PURE__ */ React.createElement("div", { style: { position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", backdropFilter: "blur(12px)", zIndex: 600, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, animation: "fadeIn .2s ease" }, onClick: () => setShowSettings(false) }, /* @__PURE__ */ React.createElement("div", { style: { background: "var(--surface)", borderRadius: 20, border: "1px solid var(--border)", width: 820, maxWidth: "100%", maxHeight: "calc(100vh - 32px)", overflowY: "auto", boxShadow: "var(--sh3)", animation: "scaleIn .22s cubic-bezier(.22,1,.36,1)" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { style: { padding: "20px 24px 0", borderBottom: "1px solid var(--border)" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, fontWeight: 700, letterSpacing: "-.3px" } }, "Settings"), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSettings(false), style: { background: "var(--s3)", border: "1px solid var(--border)", borderRadius: 9, padding: "6px 11px", cursor: "pointer", color: "var(--t2)", fontSize: 16, fontWeight: 700 } }, "\xD7")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 0 } }, [{ id: "appearance", label: "\u{1F3A8} Appearance" }, { id: "editui", label: "\u{1F9E9} Edit UI" }, { id: "lists", label: "\u{1F4DD} Lists" }, { id: "import", label: "\u{1F4E5} Import Trades" }, { id: "rules", label: "\u{1F4CB} Trading Rules" }, { id: "account", label: "\u{1F464} Profile" }, { id: "guide", label: "\uD83D\uDCD6 Guide" }].map((t) => /* @__PURE__ */ React.createElement("button", { key: t.id, onClick: () => setSettingsTab(t.id), style: { padding: "8px 16px", fontSize: 12, fontWeight: settingsTab === t.id ? 700 : 500, color: settingsTab === t.id ? "var(--accD)" : "var(--t3)", background: "none", border: "none", cursor: "pointer", borderBottom: settingsTab === t.id ? "2px solid var(--acc)" : "2px solid transparent", whiteSpace: "nowrap" } }, t.label)))), /* @__PURE__ */ React.createElement("div", { style: { padding: "20px 24px", display: "flex", flexDirection: "column", gap: 20 } }, settingsTab === "appearance" && /* @__PURE__ */ React.createElement(React.Fragment, null,
+  return /* @__PURE__ */ React.createElement(ErrorBoundary, null, /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "var(--bg)", color: "var(--text)" } }, showGuide && /* @__PURE__ */ React.createElement(OnboardingModal, { onDone: () => { setShowGuide(false); try { localStorage.setItem("tj_onboarding_done", "1"); } catch(e) {} } }), showSettings && /* @__PURE__ */ React.createElement("div", { style: { position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", backdropFilter: "blur(12px)", zIndex: 600, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, animation: "fadeIn .2s ease" }, onClick: () => setShowSettings(false) }, /* @__PURE__ */ React.createElement("div", { style: { background: "var(--surface)", borderRadius: 20, border: "1px solid var(--border)", width: 820, maxWidth: "100%", maxHeight: "calc(100vh - 32px)", overflowY: "auto", boxShadow: "var(--sh3)", animation: "scaleIn .22s cubic-bezier(.22,1,.36,1)" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { style: { padding: "20px 24px 0", borderBottom: "1px solid var(--border)" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, fontWeight: 700, letterSpacing: "-.3px" } }, "Settings"), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSettings(false), style: { background: "var(--s3)", border: "1px solid var(--border)", borderRadius: 9, padding: "6px 11px", cursor: "pointer", color: "var(--t2)", fontSize: 16, fontWeight: 700 } }, "\xD7")), /* @__PURE__ */ React.createElement("div", { className: "settings-tab-bar", style: { display: "flex", gap: 0 } }, [{ id: "appearance", label: "\u{1F3A8} Appearance" }, { id: "account", label: "\u{1F464} Profile" }, { id: "lists", label: "\u{1F4DD} Lists" }, { id: "import", label: "\u{1F4E5} Import Trades" }, { id: "editui", label: "\u{1F9E9} Edit UI" }, { id: "guide", label: "\uD83D\uDCD6 Guide" }].map((t) => /* @__PURE__ */ React.createElement("button", { key: t.id, onClick: () => setSettingsTab(t.id), style: { padding: "8px 16px", fontSize: 12, fontWeight: settingsTab === t.id ? 700 : 500, color: settingsTab === t.id ? "var(--accD)" : "var(--t3)", background: "none", border: "none", cursor: "pointer", borderBottom: settingsTab === t.id ? "2px solid var(--acc)" : "2px solid transparent", whiteSpace: "nowrap" } }, t.label)))), /* @__PURE__ */ React.createElement("div", { style: { padding: "20px 24px", display: "flex", flexDirection: "column", gap: 20 } }, settingsTab === "appearance" && /* @__PURE__ */ React.createElement(React.Fragment, null,
   /* 2-col grid for the wider panel */
   /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 } },
     /* LEFT: Theme + Preview */
@@ -3931,9 +4976,13 @@ function App() {
   }, style: { padding: "8px 16px", borderRadius: 9, border: "1.5px solid var(--rBdr)", background: "var(--rBg)", color: "var(--red)", fontSize: 11, fontWeight: 700, cursor: "pointer", alignSelf: "flex-start" } }, "Clear All Local Data")))))), /* @__PURE__ */ React.createElement(InputModal, { open: !!settingsModal, title: settingsModal && settingsModal.title, subtitle: settingsModal && settingsModal.subtitle, placeholder: settingsModal && settingsModal.placeholder, defaultVal: settingsModal && settingsModal.defaultVal, onConfirm: (v) => { settingsModal && settingsModal.onConfirm(v); setSettingsModal(null); }, onClose: () => setSettingsModal(null) }), dayPopup && /* @__PURE__ */ React.createElement(DayPopup, { date: dayPopup, trades: allTrades, onClose: () => {
     setDayPopup(null);
     setEditingDayTrade(null);
-  }, ic, capital: accountCapital, onEdit: handleEditTrade, editingId: editingDayTrade, setEditingId: setEditingDayTrade, onOpenSettings: () => { setShowSettings(true); setSettingsTab("lists"); } }), /* @__PURE__ */ React.createElement(Sidebar, { activeTab: tab, setTab, sidebarOpen: sidebarEffectiveOpen, setSidebarOpen, setSidebarHover, userName, setUserName: saveUserName, accounts, seedTrades: SEED, editingUi, setEditingUi, uiBlocks, toggleBlock, resetUi, onOpenSettings: () => setShowSettings(true), theme, setTheme }), toast && /* @__PURE__ */ React.createElement("div", { style: { position: "fixed", bottom: 24, right: 24, zIndex: 9999, background: "var(--surface)", borderRadius: 16, padding: "13px 18px", fontSize: 13, fontWeight: 600, boxShadow: "var(--sh3)", display: "flex", alignItems: "center", gap: 12, maxWidth: isMobile ? "calc(100vw - 32px)" : 400, animation: "fadeUp .25s ease", border: `1px solid ${toast.type === "success" ? "var(--gBdr)" : toast.type === "error" ? "var(--rBdr)" : "var(--border)"}` } }, /* @__PURE__ */ React.createElement("span", { style: { width: 32, height: 32, borderRadius: 9, background: toast.type === "success" ? "var(--gBg)" : toast.type === "error" ? "var(--rBg)" : "var(--s2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, flexShrink: 0 } }, toast.type === "success" ? "\u2713" : toast.type === "error" ? "\u2715" : "\u2139"), /* @__PURE__ */ React.createElement("span", { style: { flex: 1, lineHeight: 1.5 } }, toast.msg), /* @__PURE__ */ React.createElement("button", { onClick: () => setToast(null), style: { background: "none", border: "none", color: "var(--t3)", cursor: "pointer", fontSize: 18, padding: "0 2px", lineHeight: 1 } }, "\xD7")), /* @__PURE__ */ React.createElement("div", { style: { marginLeft: sideW, transition: "margin-left .2s ease", minHeight: "100vh" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "var(--topbar-bg)", borderBottom: "1px solid var(--border)", padding: "0 20px", height: 52, display: "flex", alignItems: "center", gap: 10, position: "sticky", top: 0, zIndex: 100, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,var(--acc),transparent)`, opacity: 0.7 } }), isMobile && /* @__PURE__ */ React.createElement("button", { onClick: () => setSidebarOpen(true), style: { background: "none", border: "none", cursor: "pointer", padding: 6, display: "flex", alignItems: "center", color: "var(--t2)" } }, /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ React.createElement("line", { x1: "3", y1: "6", x2: "21", y2: "6" }), /* @__PURE__ */ React.createElement("line", { x1: "3", y1: "12", x2: "21", y2: "12" }), /* @__PURE__ */ React.createElement("line", { x1: "3", y1: "18", x2: "21", y2: "18" }))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 3, height: 20, background: `linear-gradient(180deg,var(--acc),var(--accD))`, borderRadius: 2 } }), /* @__PURE__ */ React.createElement("h1", { style: { margin: 0, fontSize: 15, fontWeight: 700, letterSpacing: "-0.025em", fontFamily: "'Inter',sans-serif" } }, ((_a = TABS_INFO.find((t) => t.id === tab)) == null ? void 0 : _a.label) || "")), live > 0 && /* @__PURE__ */ React.createElement("div", { className: "hide-m", style: { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "var(--green)", fontWeight: 700, background: "var(--gBg)", border: "1px solid var(--gBdr)", borderRadius: 20, padding: "3px 11px" } }, /* @__PURE__ */ React.createElement("span", { style: { width: 6, height: 6, borderRadius: "50%", background: "var(--green)", display: "inline-block", animation: "pulse 2s infinite" } }), live, " Live"), accounts.length === 0 && /* @__PURE__ */ React.createElement("div", { className: "hide-m", style: { fontSize: 11, color: "var(--t3)", background: "var(--s3)", border: "1px solid var(--border)", borderRadius: 20, padding: "3px 11px" } }, "Demo Mode \xB7 Sample data"), /* @__PURE__ */ React.createElement("div", { style: { marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 } },
+  }, ic, capital: accountCapital, onEdit: handleEditTrade, editingId: editingDayTrade, setEditingId: setEditingDayTrade, onOpenSettings: () => { setShowSettings(true); setSettingsTab("lists"); }, usedSessions: usedSessions || SESSIONS, usedMistakes: usedMistakes || MISTAKES }), /* @__PURE__ */ React.createElement(Sidebar, { activeTab: tab, setTab, sidebarOpen: sidebarEffectiveOpen, setSidebarOpen, setSidebarHover, userName, setUserName: saveUserName, accounts, seedTrades: SEED, demoDeleted, editingUi, setEditingUi, uiBlocks, toggleBlock, resetUi, onOpenSettings: () => setShowSettings(true), theme, setTheme }), toast && /* @__PURE__ */ React.createElement("div", { style: { position: "fixed", bottom: 24, right: 24, zIndex: 9999, background: "var(--surface)", borderRadius: 16, padding: "13px 18px", fontSize: 13, fontWeight: 600, boxShadow: "var(--sh3)", display: "flex", alignItems: "center", gap: 12, maxWidth: isMobile ? "calc(100vw - 32px)" : 400, animation: "fadeUp .25s ease", border: `1px solid ${toast.type === "success" ? "var(--gBdr)" : toast.type === "error" ? "var(--rBdr)" : "var(--border)"}` } }, /* @__PURE__ */ React.createElement("span", { style: { width: 32, height: 32, borderRadius: 9, background: toast.type === "success" ? "var(--gBg)" : toast.type === "error" ? "var(--rBg)" : "var(--s2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, flexShrink: 0 } }, toast.type === "success" ? "\u2713" : toast.type === "error" ? "\u2715" : "\u2139"), /* @__PURE__ */ React.createElement("span", { style: { flex: 1, lineHeight: 1.5 } }, toast.msg), /* @__PURE__ */ React.createElement("button", { onClick: () => setToast(null), style: { background: "none", border: "none", color: "var(--t3)", cursor: "pointer", fontSize: 18, padding: "0 2px", lineHeight: 1 } }, "\xD7")), /* @__PURE__ */ React.createElement("div", { style: { marginLeft: sideW, transition: "margin-left .2s ease", minHeight: "100vh" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "var(--topbar-bg)", borderBottom: "1px solid var(--border)", padding: "0 20px", height: 52, display: "flex", alignItems: "center", gap: 10, position: "sticky", top: 0, zIndex: 100, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,var(--acc),transparent)`, opacity: 0.7 } }), isMobile && /* @__PURE__ */ React.createElement("button", { onClick: () => setSidebarOpen(true), style: { background: "none", border: "none", cursor: "pointer", padding: 6, display: "flex", alignItems: "center", color: "var(--t2)" } }, /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ React.createElement("line", { x1: "3", y1: "6", x2: "21", y2: "6" }), /* @__PURE__ */ React.createElement("line", { x1: "3", y1: "12", x2: "21", y2: "12" }), /* @__PURE__ */ React.createElement("line", { x1: "3", y1: "18", x2: "21", y2: "18" }))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 3, height: 20, background: `linear-gradient(180deg,var(--acc),var(--accD))`, borderRadius: 2 } }), /* @__PURE__ */ React.createElement("h1", { style: { margin: 0, fontSize: 15, fontWeight: 700, letterSpacing: "-0.025em", fontFamily: "'Inter',sans-serif" } }, ((_a = TABS_INFO.find((t) => t.id === tab)) == null ? void 0 : _a.label) || "")), live > 0 && /* @__PURE__ */ React.createElement("div", { className: "hide-m", style: { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "var(--green)", fontWeight: 700, background: "var(--gBg)", border: "1px solid var(--gBdr)", borderRadius: 20, padding: "3px 11px" } }, /* @__PURE__ */ React.createElement("span", { style: { width: 6, height: 6, borderRadius: "50%", background: "var(--green)", display: "inline-block", animation: "pulse 2s infinite" } }), live, " Live"), accounts.length === 0 && !demoDeleted && /* @__PURE__ */ React.createElement("div", { className: "hide-m", style: { fontSize: 11, color: "var(--t3)", background: "var(--s3)", border: "1px solid var(--border)", borderRadius: 20, padding: "3px 11px" } }, "Demo Mode \xB7 Sample data"),
+  /* ── right side controls ── */
+  /* @__PURE__ */ React.createElement("div", { style: { marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 } },
+  /* ── Wallet Dropdown (right corner) ── */
+  React.createElement(WalletDropdown, { accounts, activeAccId, setActiveAccId, accountCapital, trueBalanceInfo, allTrades, isMobile }),
   /* Theme toggle - cycles through all themes */
-  /* @__PURE__ */ React.createElement("button", { onClick: () => { const allThemes = ["light","dark","sepia","forest","ocean","midnight","zinc","rose"]; const idx = allThemes.indexOf(theme); setTheme(allThemes[(idx + 1) % allThemes.length]); }, title: "Cycle theme",
+  /* @__PURE__ */ React.createElement("button", { onClick: () => { const allThemes = ["zinc","light","slate","lavender","dark","sepia","forest","ocean","rose"]; const idx = allThemes.indexOf(theme); setTheme(allThemes[(idx + 1) % allThemes.length]); }, title: "Cycle theme",
     style: { background: "var(--s2)", border: "1px solid var(--border)", borderRadius: 9, width: 32, height: 32, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "var(--t2)", transition: "all .15s" },
     onMouseEnter: (e) => { e.currentTarget.style.borderColor = "var(--acc)"; e.currentTarget.style.color = "var(--accD)"; },
     onMouseLeave: (e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--t2)"; }
@@ -3949,7 +4998,7 @@ function App() {
       /* @__PURE__ */ React.createElement("path", { d: "M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" })
     )
   )
-)), /* @__PURE__ */ React.createElement("div", { className: "content-area", style: { maxWidth: tab === "calendar" ? 1400 : 1180, margin: "0 auto", padding: "22px 20px 80px" } }, /* @__PURE__ */ React.createElement(AccountsPanel, { accounts, onSync: handleSync, onRemove: handleRemoveAcc, onAdd: handleAddAcc, syncingId, onImportToAccount: handleImportToAccount }), accounts.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 7, marginBottom: 18, flexWrap: "wrap", alignItems: "center" } }, [{ id: "all", label: "\u{1F310} All", cnt: accounts.reduce((s, a) => s + a.trades.length, 0), col: null }, ...accounts.map((a, i) => ({ id: a.id, label: a.label, cnt: a.trades.length, col: ACC_COLS[i % ACC_COLS.length], isDemo: a.isDemo }))].map((item) => /* @__PURE__ */ React.createElement("button", { key: item.id, onClick: () => setActiveAccId(item.id), style: { display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, border: `1.5px solid ${activeAccId === item.id ? item.col || "var(--acc)" : "var(--border)"}`, background: activeAccId === item.id ? item.col ? item.col + "20" : "var(--accF)" : "var(--surface)", color: activeAccId === item.id ? item.col || "var(--acc)" : "var(--t2)", fontWeight: activeAccId === item.id ? 700 : 500, fontSize: 12, cursor: "pointer", maxWidth: isMobile ? 90 : "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, item.col && /* @__PURE__ */ React.createElement("span", { style: { width: 7, height: 7, borderRadius: "50%", background: item.col } }), /* @__PURE__ */ React.createElement("span", { style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: isMobile ? 72 : "none" } }, item.label), !isMobile && item.isDemo && /* @__PURE__ */ React.createElement(Chip, { color: "purple", size: "sm" }, "Demo"), /* @__PURE__ */ React.createElement("span", { style: { background: "var(--s3)", borderRadius: 10, padding: "1px 7px", fontSize: 10, fontWeight: 700 } }, item.cnt)))), showDateBar && /* @__PURE__ */ React.createElement(DateRangeBar, { trades: allTrades, dateRange, setDateRange, capital: accountCapital }), (!demoBannerDismissed&&accounts.length>0&&accounts.some(function(a){return a.isDemo&&(a.trades||[]).some(function(t){return(t.tags||[]).indexOf("Sample Data")>=0;});})) ? /* @__PURE__ */ React.createElement("div",{style:{background:"var(--bBg)",border:"1.5px solid var(--bBdr)",borderRadius:12,padding:"10px 16px",marginBottom:14,display:"flex",alignItems:"center",gap:10}}, /* @__PURE__ */ React.createElement("span",{style:{fontSize:18}},"🧪"), /* @__PURE__ */ React.createElement("div",{style:{flex:1,fontSize:12,color:"var(--blue)",fontWeight:500}},"This is demo data — explore freely. Delete sample trades anytime from Trade Log."), /* @__PURE__ */ React.createElement("button",{onClick:function(){setDemoBannerDismissed(true);try{localStorage.setItem("tj5_demo_dismissed","1");}catch(e){}},style:{fontSize:11,fontWeight:700,color:"var(--blue)",background:"none",border:"1px solid var(--bBdr)",borderRadius:7,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit"}},"Dismiss")) : null, dailyLimit.enabled && (() => {
+)), /* @__PURE__ */ React.createElement("div", { className: "content-area", style: { maxWidth: tab === "calendar" ? 1400 : 1180, margin: "0 auto", padding: "22px 20px 80px" } }, /* @__PURE__ */ React.createElement(AccountsPanel, { accounts, onSync: handleSync, onRemove: handleRemoveAcc, onAdd: handleAddAcc, onAddAdjustment: handleAddAdjustment, onRemoveAdjustment: handleRemoveAdjustment, syncingId, onImportToAccount: handleImportToAccount }), accounts.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 7, marginBottom: 18, flexWrap: "wrap", alignItems: "center" } }, [{ id: "all", label: "\u{1F310} All", cnt: accounts.reduce((s, a) => s + a.trades.length, 0), col: null }, ...accounts.map((a, i) => ({ id: a.id, label: a.label, cnt: a.trades.length, col: ACC_COLS[i % ACC_COLS.length], isDemo: a.isDemo }))].map((item) => /* @__PURE__ */ React.createElement("button", { key: item.id, onClick: () => setActiveAccId(item.id), style: { display: "flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 20, border: `1.5px solid ${activeAccId === item.id ? item.col || "var(--acc)" : "var(--border)"}`, background: activeAccId === item.id ? item.col ? item.col + "20" : "var(--accF)" : "var(--surface)", color: activeAccId === item.id ? item.col || "var(--acc)" : "var(--t2)", fontWeight: activeAccId === item.id ? 700 : 500, fontSize: 12, cursor: "pointer", maxWidth: isMobile ? 90 : "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, item.col && /* @__PURE__ */ React.createElement("span", { style: { width: 7, height: 7, borderRadius: "50%", background: item.col } }), /* @__PURE__ */ React.createElement("span", { style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: isMobile ? 72 : "none" } }, item.label), !isMobile && item.isDemo && /* @__PURE__ */ React.createElement(Chip, { color: "purple", size: "sm" }, "Demo"), /* @__PURE__ */ React.createElement("span", { style: { background: "var(--s3)", borderRadius: 10, padding: "1px 7px", fontSize: 10, fontWeight: 700 } }, item.cnt)))), showDateBar && /* @__PURE__ */ React.createElement(DateRangeBar, { trades: allTrades, dateRange, setDateRange, capital: accountCapital }), (!demoBannerDismissed&&accounts.length>0&&accounts.some(function(a){return a.isDemo&&(a.trades||[]).some(function(t){return(t.tags||[]).indexOf("Sample Data")>=0;});})) ? /* @__PURE__ */ React.createElement("div",{style:{background:"var(--bBg)",border:"1.5px solid var(--bBdr)",borderRadius:12,padding:"10px 16px",marginBottom:14,display:"flex",alignItems:"center",gap:10}}, /* @__PURE__ */ React.createElement("span",{style:{fontSize:18}},"🧪"), /* @__PURE__ */ React.createElement("div",{style:{flex:1,fontSize:12,color:"var(--blue)",fontWeight:500}},"This is demo data — explore freely. Delete sample trades anytime from Trade Log."), /* @__PURE__ */ React.createElement("button",{onClick:function(){setDemoBannerDismissed(true);try{localStorage.setItem("tj5_demo_dismissed","1");}catch(e){}},style:{fontSize:11,fontWeight:700,color:"var(--blue)",background:"none",border:"1px solid var(--bBdr)",borderRadius:7,padding:"4px 10px",cursor:"pointer",fontFamily:"inherit"}},"Dismiss")) : null, dailyLimit.enabled && (() => {
     const today = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
     const todayT = allTrades.filter((t) => t.entryDate === today);
     const todayProfit = todayT.reduce((s, t) => s + (t.profit || 0), 0);
@@ -3958,7 +5007,7 @@ function App() {
     const lossBreach = todayPnl <= dailyLimit.maxLoss;
     if (!tradesBreach && !lossBreach) return null;
     return /* @__PURE__ */ React.createElement("div", { style: { background: "var(--rBg)", border: "1.5px solid var(--rBdr)", borderRadius: 12, padding: "10px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10, animation: "fadeUp .3s ease" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 18 } }, "\u{1F6AB}"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: "var(--red)" } }, "Daily limit reached \u2014 stop trading for today"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "var(--t2)", marginTop: 2 } }, tradesBreach && `${todayT.length}/${dailyLimit.maxTrades} trades used`, tradesBreach && lossBreach && " \xB7 ", lossBreach && `${todayPnl.toFixed(2)}% P&L (limit: ${dailyLimit.maxLoss}%)`)), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSettings(true), style: { fontSize: 11, fontWeight: 600, color: "var(--red)", background: "none", border: "1px solid var(--rBdr)", borderRadius: 7, padding: "4px 10px", cursor: "pointer" } }, "Edit rules"));
-  })(), /* @__PURE__ */ React.createElement("div", { key: tab, className: "fade-up" }, tab === "overview" && /* @__PURE__ */ React.createElement(Overview, { trades: displayTrades, uiBlocks, capital: accountCapital }), tab === "analytics" && /* @__PURE__ */ React.createElement(Analytics, { trades: displayTrades, uiBlocks, capital: accountCapital }), tab === "psychology" && /* @__PURE__ */ React.createElement(Psychology, { trades: displayTrades, uiBlocks, capital: accountCapital }), tab === "tradelog" && /* @__PURE__ */ React.createElement(TradeLog, { trades: displayTrades, onAdd: handleAddTrade, onDelete: handleDeleteTrade, onEdit: handleEditTrade, onUpdateMeta: handleUpdateMeta, tradeMeta, onDuplicate: handleDuplicateTrade, openFormTrigger: openTradeForm, onFormOpened: () => setOpenTradeForm(false), usedConfluences, usedSessions, usedMistakes, saveCustomList, customLists, onOpenSettings: (tab) => { setShowSettings(true); setSettingsTab(tab || "lists"); }, capital: accountCapital }), tab === "calendar" && /* @__PURE__ */ React.createElement(CalendarView, { trades: allTrades, onDayClick: setDayPopup, capital: accountCapital }))))));
+  })(), /* @__PURE__ */ React.createElement("div", { key: tab, className: "fade-up" }, tab === "overview" && /* @__PURE__ */ React.createElement(Overview, { trades: displayTrades, allTrades, uiBlocks, capital: accountCapital }), tab === "analytics" && /* @__PURE__ */ React.createElement(Analytics, { trades: displayTrades, uiBlocks, capital: accountCapital }), tab === "psychology" && /* @__PURE__ */ React.createElement(Psychology, { trades: displayTrades, uiBlocks, capital: accountCapital }), tab === "tradelog" && /* @__PURE__ */ React.createElement(TradeLog, { trades: displayTrades, onAdd: handleAddTrade, onDelete: handleDeleteTrade, onEdit: handleEditTrade, onUpdateMeta: handleUpdateMeta, tradeMeta, onDuplicate: handleDuplicateTrade, openFormTrigger: openTradeForm, onFormOpened: () => setOpenTradeForm(false), usedConfluences, usedSessions, usedMistakes, saveCustomList, customLists, onOpenSettings: (tab) => { setShowSettings(true); setSettingsTab(tab || "lists"); }, capital: accountCapital }), tab === "calendar" && /* @__PURE__ */ React.createElement(CalendarView, { trades: allTrades, onDayClick: setDayPopup, capital: accountCapital }))))));
 }
 const rootEl = document.getElementById("root");
 if (rootEl) {
