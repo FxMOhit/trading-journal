@@ -2137,6 +2137,20 @@ function parseTradovateCSV(csvText) {
       const entryPrice = iEntry >= 0 ? parseFloat(cols[iEntry]) || 0 : 0;
       const exitPrice = iExit >= 0 ? parseFloat(cols[iExit]) || 0 : 0;
       const qty = iQty >= 0 ? parseInt(cols[iQty]) || 1 : 1;
+      // Per-symbol round-turn commission (per side × 2) — Tradovate schedule
+      const TRAD_COMM = {
+        ES:3.50,MES:1.00,NQ:3.50,MNQ:1.00,RTY:3.50,M2K:1.00,
+        NKD:3.50,YM:3.50,MYM:1.00,
+        A6:4.80,B6:4.80,C6:4.80,E6:4.80,J6:4.80,S6:4.80,N6:4.80,
+        CL:4.00,MCL:1.00,QM:4.00,QG:2.60,NG:4.00,
+        PL:4.60,HG:5.80,GC:4.60,MGC:1.60,SI:4.60,SIL:3.20,
+        HE:5.60,LE:5.60,ZS:5.60,ZC:5.60,ZL:5.60,ZM:5.60,ZW:5.60
+      };
+      // Strip month/year suffix to get root symbol (e.g. MNQM6 → MNQ)
+      const rootSym = symbol.replace(/[A-Z]?\d+$/,"");
+      const commPerContract = TRAD_COMM[rootSym] !== undefined ? TRAD_COMM[rootSym] : 5.00;
+      const commission = qty * commPerContract;
+      const netProfit = parseFloat((profit - commission).toFixed(2));
       const h = parseInt(entryTime);
       const session = h < 7 ? "Asia" : h < 12 ? "London Open" : h < 16 ? "New York" : "Out of Session";
       trades.push({
@@ -2144,12 +2158,12 @@ function parseTradovateCSV(csvText) {
         symbol, entryDate, entryTime, side, entryPrice, exitPrice,
         stopLoss: 0, takeProfit: 0,
         pnl: 0, // calculated dynamically from profit/accountCapital
-        profit: parseFloat(profit.toFixed(2)),
+        profit: netProfit,
         status: "Closed", confluences: [], session,
         model: "In Session", emotionBefore: "Calm & Focused",
-        emotionAfter: profit > 0 ? "Satisfied" : "Lesson Learned",
-        mistakes: "None", grade: profit > 50 ? "A" : profit > 0 ? "B" : profit > -50 ? "C" : "D",
-        expectedRR: "1:2", actualRR: "", notes: "Tradovate Import",
+        emotionAfter: netProfit > 0 ? "Satisfied" : "Lesson Learned",
+        mistakes: "None", grade: netProfit > 50 ? "A" : netProfit > 0 ? "B" : netProfit > -50 ? "C" : "D",
+        expectedRR: "1:2", actualRR: "", notes: `Tradovate Import | Comm: -$${commission.toFixed(2)} ($${commPerContract}/ct)`,
         riskAmount: 0, tags: ["Tradovate"], accountId: ""
       });
     } catch(e) {}
@@ -4046,11 +4060,25 @@ function ImportTradesPanel({ onImport }) {
         const sellId = parseInt(g(iSellFillId)) || 0;
         if (buyId && sellId) side = buyId < sellId ? "Long" : "Short";
       }
-      const profit = parseTradPnl(g(iProfit));
+      const rawProfit = parseTradPnl(g(iProfit));
+      const qty2 = iQty >= 0 ? (parseInt(g(iQty)) || 1) : 1;
+      // Per-symbol round-turn commission (per side × 2) — Tradovate schedule
+      const TRAD_COMM2 = {
+        ES:3.50,MES:1.00,NQ:3.50,MNQ:1.00,RTY:3.50,M2K:1.00,
+        NKD:3.50,YM:3.50,MYM:1.00,
+        A6:4.80,B6:4.80,C6:4.80,E6:4.80,J6:4.80,S6:4.80,N6:4.80,
+        CL:4.00,MCL:1.00,QM:4.00,QG:2.60,NG:4.00,
+        PL:4.60,HG:5.80,GC:4.60,MGC:1.60,SI:4.60,SIL:3.20,
+        HE:5.60,LE:5.60,ZS:5.60,ZC:5.60,ZL:5.60,ZM:5.60,ZW:5.60
+      };
+      const rootSym2 = sym.replace(/[A-Z]?\d+$/,"");
+      const commPerContract2 = TRAD_COMM2[rootSym2] !== undefined ? TRAD_COMM2[rootSym2] : 5.00;
+      const commission2 = qty2 * commPerContract2;
+      const profit = parseFloat((rawProfit - commission2).toFixed(2));
       trades.push(buildTrade(i, {
         symbol: sym, entryDate, entryTime: parseTradTime(dateRaw), side,
         entryPrice: parseNum(g(iEntry)), exitPrice: parseNum(g(iExit)) || parseNum(g(iEntry)),
-        pnl: parseNum(g(iPct)), profit, notes: "Imported from Tradovate"
+        pnl: parseNum(g(iPct)), profit, notes: `Tradovate Import | Comm: -$${commission2.toFixed(2)} ($${commPerContract2}/ct)`
       }));
     }
     return trades;
