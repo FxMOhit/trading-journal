@@ -822,50 +822,67 @@ function calcProfitFactor(trades) {
   return gl ? gw / gl : gw > 0 ? Infinity : 0;
 }
 
-// ── calcTrueBalance: account for Cash Adjustments / Debt Write-offs ──
-// balanceAdjustments: [{ date: "YYYY-MM-DD", writeOffAmount: number, label: string }]
-// writeOffAmount = positive value the broker forgave (cancels your negative balance).
-// Each adjustment adds that amount to the running balance at that point in time.
-// Returns: { balance, capital, adjustedCapital, netProfit }
+// ── calcTrueBalance: account for Deposits, Withdrawals & Debt Write-offs ──
+// balanceAdjustments: [{ date: "YYYY-MM-DD", writeOffAmount: number, label: string, type: string }]
+//   type = "deposit"    → adds funds to balance (NOT trading profit)
+//   type = "withdrawal" → removes funds from balance (NOT trading profit)
+//   type = "writeoff"   → broker debt forgiveness (legacy records without type treated as writeoff)
+// writeOffAmount: positive = add to balance, negative = subtract from balance
+// Returns: { balance, capital, adjustedCapital, netProfit, totalDeposited, totalWithdrawn }
 function calcTrueBalance(account) {
   const trades = account.trades || [];
   const adjs = (account.balanceAdjustments || []).slice().sort((a, b) => a.date.localeCompare(b.date));
   const startCapital = account.capital || 0;
 
+  // Total trading P&L — always computed from ALL trades, never includes transfers
+  const allTradeProfit = trades.reduce((s, t) => s + (t.profit || 0), 0);
+
   if (!adjs.length) {
-    const netProfit = trades.reduce((s, t) => s + (t.profit || 0), 0);
-    return { balance: startCapital + netProfit, capital: startCapital, adjustedCapital: startCapital, netProfit };
+    return {
+      balance: startCapital + allTradeProfit,
+      capital: startCapital,
+      adjustedCapital: startCapital,
+      netProfit: allTradeProfit,
+      totalDeposited: 0,
+      totalWithdrawn: 0
+    };
   }
 
+  // Walk trades and adjustments together in date order using a pointer — no double-counting.
   const sortedTrades = trades.slice().sort((a, b) => a.entryDate.localeCompare(b.entryDate));
   let runningBalance = startCapital;
-  let prevDate = '0000-00-00';
+  let tradeIdx = 0;
+  let totalDeposited = 0;
+  let totalWithdrawn = 0;
+  let adjustedCapital = startCapital;
 
   for (const adj of adjs) {
-    // Add profits from trades strictly before this adjustment date
-    const segTrades = sortedTrades.filter(t => t.entryDate > prevDate && t.entryDate < adj.date);
-    runningBalance += segTrades.reduce((s, t) => s + (t.profit || 0), 0);
-    // Apply the write-off: adds the forgiven debt amount (restores balance toward zero/positive)
-    const writeOff = adj.writeOffAmount || adj.amount || 0; // fallback for legacy records
-    runningBalance += writeOff;
-    prevDate = adj.date;
+    // 1. Add profits from all trades with entryDate STRICTLY BEFORE this adjustment date
+    while (tradeIdx < sortedTrades.length && sortedTrades[tradeIdx].entryDate < adj.date) {
+      runningBalance += sortedTrades[tradeIdx].profit || 0;
+      tradeIdx++;
+    }
+    // 2. Apply the adjustment
+    const amt = adj.writeOffAmount !== undefined ? adj.writeOffAmount : (adj.amount || 0);
+    runningBalance += amt;
+    adjustedCapital = runningBalance; // snapshot after each adjustment
+    if (adj.type === 'deposit')    totalDeposited += Math.abs(amt);
+    else if (adj.type === 'withdrawal') totalWithdrawn += Math.abs(amt);
   }
 
-  // Add profits from trades on or after the last adjustment date
-  const lastAdjDate = adjs[adjs.length - 1].date;
-  const postTrades = sortedTrades.filter(t => t.entryDate >= lastAdjDate);
-  const postProfit = postTrades.reduce((s, t) => s + (t.profit || 0), 0);
-  runningBalance += postProfit;
-
-  // adjustedCapital = balance right after last adjustment (before post trades)
-  // used as the denominator for P&L % calculations
-  const adjustedCapital = runningBalance - postProfit;
+  // 3. Add all remaining trades (those on or after the last adjustment date)
+  while (tradeIdx < sortedTrades.length) {
+    runningBalance += sortedTrades[tradeIdx].profit || 0;
+    tradeIdx++;
+  }
 
   return {
     balance: runningBalance,
     capital: startCapital,
     adjustedCapital: adjustedCapital > 0 ? adjustedCapital : startCapital,
-    netProfit: postProfit
+    netProfit: allTradeProfit,
+    totalDeposited,
+    totalWithdrawn
   };
 }
 
@@ -1548,35 +1565,54 @@ function BalanceAdjustmentPanel({ account, onAddAdjustment, onRemoveAdjustment }
   const [showForm, setShowForm] = React.useState(false);
   const [adjDate, setAdjDate] = React.useState('');
   const [adjAmount, setAdjAmount] = React.useState('');
-  const [adjSign, setAdjSign] = React.useState('+');
+  const [adjType, setAdjType] = React.useState('withdrawal'); // 'deposit' | 'withdrawal' | 'writeoff'
   const adjs = account.balanceAdjustments || [];
   const fmt = (n) => '$' + Math.abs(n).toFixed(2);
+
+  const TYPE_CONFIG = {
+    deposit:    { label: '💰 Deposit',    sign: '+', color: 'var(--green)', bg: 'var(--gBg)', bdr: 'var(--gBdr)' },
+    withdrawal: { label: '🏧 Withdrawal', sign: '-', color: 'var(--red)',   bg: 'var(--rBg)', bdr: 'var(--rBdr)' },
+    writeoff:   { label: '⚖️ Write-off',  sign: '+', color: 'var(--orange)', bg: 'var(--oBg)', bdr: 'var(--oBdr)' },
+  };
 
   function handleAdd() {
     const val = parseFloat(adjAmount);
     if (!adjDate || isNaN(val) || val <= 0) return;
+    const cfg = TYPE_CONFIG[adjType];
+    // deposits & write-offs add to balance (+), withdrawals subtract (-)
+    const writeOffAmount = adjType === 'withdrawal' ? -val : val;
     onAddAdjustment(account.id, {
       date: adjDate,
-      writeOffAmount: adjSign === '+' ? val : -val,
-      label: adjSign === '+' ? 'Cash Adjustment (+)' : 'Cash Adjustment (-)'
+      writeOffAmount,
+      type: adjType,
+      label: cfg.label
     });
     setAdjDate(''); setAdjAmount(''); setShowForm(false);
   }
 
   const canSave = adjDate && adjAmount && !isNaN(parseFloat(adjAmount)) && parseFloat(adjAmount) > 0;
 
+  // Get display info for an existing adjustment entry
+  function adjDisplay(adj) {
+    const amt = adj.writeOffAmount !== undefined ? adj.writeOffAmount : (adj.amount || 0);
+    const type = adj.type || (amt >= 0 ? 'writeoff' : 'withdrawal');
+    const cfg = TYPE_CONFIG[type] || TYPE_CONFIG.writeoff;
+    return { amt, type, cfg };
+  }
+
   return React.createElement('div', { style: { borderTop: '1px solid var(--border)', padding: '5px 13px 7px', background: 'color-mix(in srgb, var(--oBg) 40%, var(--surface))' } },
 
     // Compact header row — label + existing pills + add button all inline
     React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', minHeight: 24 } },
-      React.createElement('span', { style: { fontSize: 9, fontWeight: 700, color: 'var(--orange)', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0 } }, '⚖️ Cash Adj.'),
+      React.createElement('span', { style: { fontSize: 9, fontWeight: 700, color: 'var(--orange)', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0 } }, '💼 Transfers'),
 
       // Existing adjustment pills
       adjs.map((adj, idx) => {
-        const amt = adj.writeOffAmount !== undefined ? adj.writeOffAmount : (adj.amount || 0);
+        const { amt, cfg } = adjDisplay(adj);
         const isPos = amt >= 0;
-        return React.createElement('div', { key: idx, style: { display: 'flex', alignItems: 'center', gap: 3, background: isPos ? 'var(--gBg)' : 'var(--rBg)', border: `1px solid ${isPos ? 'var(--gBdr)' : 'var(--rBdr)'}`, borderRadius: 20, padding: '1px 6px 1px 7px' } },
-          React.createElement('span', { style: { fontSize: 10, fontWeight: 700, color: isPos ? 'var(--green)' : 'var(--red)', fontVariantNumeric: 'tabular-nums' } }, (isPos ? '+' : '-') + fmt(amt)),
+        return React.createElement('div', { key: idx, style: { display: 'flex', alignItems: 'center', gap: 3, background: cfg.bg, border: `1px solid ${cfg.bdr}`, borderRadius: 20, padding: '1px 6px 1px 7px' } },
+          React.createElement('span', { style: { fontSize: 9, color: cfg.color, fontWeight: 600, marginRight: 2 } }, adj.label || (isPos ? '+ Deposit' : '− Withdrawal')),
+          React.createElement('span', { style: { fontSize: 10, fontWeight: 700, color: cfg.color, fontVariantNumeric: 'tabular-nums' } }, (isPos ? '+' : '−') + fmt(amt)),
           React.createElement('span', { style: { fontSize: 9, color: 'var(--t3)', marginLeft: 2 } }, adj.date),
           React.createElement('button', { onClick: () => onRemoveAdjustment(account.id, idx), style: { background: 'none', border: 'none', color: 'var(--t3)', cursor: 'pointer', fontSize: 10, padding: '0 0 0 3px', lineHeight: 1 } }, '✕')
         );
@@ -1588,29 +1624,32 @@ function BalanceAdjustmentPanel({ account, onAddAdjustment, onRemoveAdjustment }
       }, showForm ? '✕ Cancel' : '+ Add')
     ),
 
-    // Inline form — compact single row: [date picker] [+/-] [amount] [Save]
+    // Inline form — type selector + date + amount + save
     showForm && React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 6, marginTop: 7, flexWrap: 'wrap', position: 'relative', zIndex: 9999 } },
 
-      // Date picker — uses existing CustomDatePicker, popup escapes via z-index
-      React.createElement('div', { style: { position: 'relative', zIndex: 9999, flexShrink: 0 } },
-        React.createElement(CustomDatePicker, { value: adjDate, onChange: setAdjDate })
-      ),
-
-      // +/- toggle
+      // Type selector buttons
       React.createElement('div', { style: { display: 'flex', background: 'var(--s3)', borderRadius: 7, padding: 2, gap: 1, flexShrink: 0 } },
-        ['+', '-'].map(sign =>
-          React.createElement('button', {
-            key: sign,
-            onClick: () => setAdjSign(sign),
+        ['deposit', 'withdrawal', 'writeoff'].map(t => {
+          const cfg = TYPE_CONFIG[t];
+          const active = adjType === t;
+          return React.createElement('button', {
+            key: t,
+            onClick: () => setAdjType(t),
+            title: t === 'deposit' ? 'Money added to account' : t === 'withdrawal' ? 'Money removed from account' : 'Broker debt forgiveness',
             style: {
-              width: 28, height: 26, borderRadius: 5, border: 'none', cursor: 'pointer',
-              fontWeight: 800, fontSize: 14, lineHeight: 1,
-              background: adjSign === sign ? (sign === '+' ? 'var(--green)' : 'var(--red)') : 'transparent',
-              color: adjSign === sign ? '#fff' : 'var(--t3)',
+              padding: '3px 8px', borderRadius: 5, border: 'none', cursor: 'pointer',
+              fontWeight: 700, fontSize: 10, lineHeight: 1.2, whiteSpace: 'nowrap',
+              background: active ? cfg.color : 'transparent',
+              color: active ? '#fff' : 'var(--t3)',
               transition: 'all .12s'
             }
-          }, sign)
-        )
+          }, t === 'deposit' ? '+ Deposit' : t === 'withdrawal' ? '− Withdrawal' : '⚖ Write-off');
+        })
+      ),
+
+      // Date picker
+      React.createElement('div', { style: { position: 'relative', zIndex: 9999, flexShrink: 0 } },
+        React.createElement(CustomDatePicker, { value: adjDate, onChange: setAdjDate })
       ),
 
       // Amount input
@@ -1620,7 +1659,7 @@ function BalanceAdjustmentPanel({ account, onAddAdjustment, onRemoveAdjustment }
         value: adjAmount,
         onChange: e => setAdjAmount(e.target.value),
         onKeyDown: e => { if (e.key === 'Enter') handleAdd(); },
-        style: { width: 100, border: '1.5px solid var(--border)', borderRadius: 7, padding: '5px 8px', fontSize: 12, fontWeight: 700, background: 'var(--surface)', color: adjSign === '+' ? 'var(--green)' : 'var(--red)', outline: 'none', fontVariantNumeric: 'tabular-nums' }
+        style: { width: 100, border: '1.5px solid var(--border)', borderRadius: 7, padding: '5px 8px', fontSize: 12, fontWeight: 700, background: 'var(--surface)', color: TYPE_CONFIG[adjType].color, outline: 'none', fontVariantNumeric: 'tabular-nums' }
       }),
 
       // Save button
@@ -1787,7 +1826,7 @@ function AccountsPanel({ accounts, onSync, onRemove, onAdd, onAddAdjustment, onR
                   ? `Capital: ${fmtUSD(acc.capital || 1e4, false)} · ${acc.trades ? acc.trades.length : 0} trades`
                   : `#${acc.login} · ${acc.server}`,
                 acc.lastSync && ` · synced ${acc.lastSync}`,
-                adjs.length > 0 && React.createElement("span", { style: { color: "var(--orange)", fontWeight: 700, marginLeft: 4 } }, `· ${adjs.length} adjustment${adjs.length > 1 ? 's' : ''}`)
+                adjs.length > 0 && React.createElement("span", { style: { color: "var(--orange)", fontWeight: 700, marginLeft: 4 } }, `· ${adjs.length} transfer${adjs.length > 1 ? 's' : ''}`)
               )
             ),
             !acc.isDemo && React.createElement("button", { onClick: () => onSync(acc), disabled: isSyncing, style: { background: isSyncing ? "var(--s3)" : col, color: "#fff", border: "none", borderRadius: 7, padding: "5px 11px", fontWeight: 700, fontSize: 10, cursor: isSyncing ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 4, opacity: isSyncing ? 0.65 : 1 } },
