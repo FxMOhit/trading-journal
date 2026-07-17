@@ -2585,6 +2585,73 @@ function parseProjectXCSV(csvText) {
   return trades.map(t => ({ ...t, notes: "Futures Import", tags: ["Futures"] }));
 }
 
+// ── CTRADER STATEMENT CSV IMPORT ──
+// Parses the "Deals" section of a cTrader account statement export.
+// Deals section columns: Symbol,Opening Direction,Closing Time (UTC+X),Entry price,Closing price,Closing Quantity,Net USD,Balance USD
+function parseCTraderCSV(csvText) {
+  const CT_MONTHS = { jan:"01",feb:"02",mar:"03",apr:"04",may:"05",jun:"06",jul:"07",aug:"08",sep:"09",oct:"10",nov:"11",dec:"12" };
+  const splitCSVLine = (line) => line.split(",").map(c => c.trim().replace(/^"|"$/g, ""));
+  const allLines = csvText.split(/\r?\n/);
+  // Locate the "Deals" section header row (case-insensitive)
+  let dealsIdx = allLines.findIndex(l => l.trim().toLowerCase() === "deals");
+  const headerIdx = dealsIdx >= 0 ? dealsIdx + 1 : 0;
+  if (!allLines[headerIdx]) return [];
+  const headers = splitCSVLine(allLines[headerIdx]).map(h => h.toLowerCase());
+  const iSym       = headers.indexOf("symbol");
+  const iDir       = headers.findIndex(h => h.startsWith("opening direction"));
+  const iCloseTime = headers.findIndex(h => h.startsWith("closing time"));
+  const iEntry     = headers.findIndex(h => h.startsWith("entry price"));
+  const iClose     = headers.findIndex(h => h.startsWith("closing price"));
+  const iQty       = headers.findIndex(h => h.startsWith("closing quantity"));
+  const iNet       = headers.findIndex(h => h.startsWith("net usd") || h.startsWith("net "));
+  if (iSym < 0 || iCloseTime < 0 || iNet < 0) return [];
+  const trades = [];
+  for (let i = headerIdx + 1; i < allLines.length; i++) {
+    const raw = allLines[i];
+    if (!raw || !raw.trim()) break; // blank line ends the Deals section
+    const cells = splitCSVLine(raw);
+    const sym = cells[iSym];
+    if (!sym) continue; // skip the trailing totals row (blank symbol)
+    try {
+      const dirRaw = (iDir >= 0 ? cells[iDir] : "Buy").toLowerCase();
+      const side = dirRaw.startsWith("s") ? "Short" : "Long";
+      const entryPrice = parseFloat(String(cells[iEntry]).replace(/[^0-9.\-]/g, "")) || 0;
+      const closePrice = parseFloat(String(cells[iClose]).replace(/[^0-9.\-]/g, "")) || 0;
+      const qty = iQty >= 0 ? (parseFloat(String(cells[iQty]).replace(/[^0-9.]/g, "")) || 0) : 0;
+      const netProfit = parseFloat(String(cells[iNet]).replace(/[^0-9.\-]/g, "")) || 0;
+      // Parse "14 Jul 2026 19:49:45.977"
+      const closeRaw = cells[iCloseTime] || "";
+      const m = closeRaw.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})\s+(\d{2}):(\d{2}):(\d{2})/);
+      if (!m) continue;
+      const [, dd, mon, yyyy, hh, mi, ss] = m;
+      const mm = CT_MONTHS[mon.toLowerCase()] || "01";
+      const entryDate = `${yyyy}-${mm}-${dd.padStart(2, "0")}`;
+      const entryTime = `${hh}:${mi}:${ss}`;
+      const h = parseInt(hh, 10);
+      const session = h < 7 ? "Asia" : h < 12 ? "London Open" : h < 16 ? "New York" : h < 20 ? "London Mid" : "Out of Session";
+      const netRounded = parseFloat(netProfit.toFixed(2));
+      const _ctRaw = [sym, entryDate, entryTime, side, String(entryPrice), String(closePrice), String(netRounded)].join("|");
+      let _cth = 5381; for (let _i = 0; _i < _ctRaw.length; _i++) _cth = (((_cth << 5) + _cth) ^ _ctRaw.charCodeAt(_i)) >>> 0;
+      trades.push({
+        id: "ct_" + _cth.toString(36) + "_" + _ctRaw.length,
+        symbol: sym, entryDate, entryTime,
+        side, entryPrice, exitPrice: closePrice, stopLoss: 0, takeProfit: 0,
+        pnl: 0,
+        profit: netRounded,
+        status: "Closed", confluences: [], session,
+        model: "In Session", emotionBefore: "Calm & Focused",
+        emotionAfter: netRounded > 0 ? "Satisfied" : "Lesson Learned",
+        mistakes: "None",
+        grade: netRounded > 50 ? "A" : netRounded > 0 ? "B" : netRounded > -50 ? "C" : "D",
+        expectedRR: "1:2", actualRR: "",
+        notes: `cTrader Import | Vol:${qty} Lots`,
+        riskAmount: 0, tags: ["cTrader"], accountId: ""
+      });
+    } catch (e) {}
+  }
+  return trades;
+}
+
 // ── TRADEXY JOURNAL CSV IMPORT ──
 // Parses the journal's own CSV export format exactly.
 // Columns: ID, Symbol, Date, Time, Side, Entry, Exit, P&L%, Net P&L $,
@@ -2901,6 +2968,7 @@ function AccountsPanel({ accounts, onSync, onRemove, onAdd, onAddAdjustment, onR
       else if (importType === "matchtrader") parsed = parseMatchTraderCSV(text);
       else if (importType === "tradovate") parsed = parseTradovateCSV(text);
       else if (importType === "futures") parsed = parseProjectXCSV(text);
+      else if (importType === "ctrader") parsed = parseCTraderCSV(text);
       else if (importType === "tradexy") parsed = parseJournalCSV(text);
       else if (importType === "json") parsed = parseJournalJSON(text);
     } catch(err) {
@@ -3035,6 +3103,7 @@ function AccountsPanel({ accounts, onSync, onRemove, onAdd, onAddAdjustment, onR
           { id: "matchtrader", label: "\uD83D\uDCCA Match Trader CSV", desc: ".csv Closed Positions from Match Trader" },
           { id: "tradovate", label: "\uD83D\uDCCA Tradovate CSV", desc: ".csv from Tradovate Trade History" },
           { id: "futures", label: "\u26A1 Futures / Project X", desc: ".csv from any futures platform" },
+          { id: "ctrader", label: "\uD83D\uDCCA cTrader CSV", desc: ".csv Statement export (Deals) from cTrader" },
           { id: "tradexy", label: "\uD83D\uDDD2 Tradexy CSV", desc: ".csv exported from this journal" },
           { id: "json", label: "\uD83D\uDCBE JSON Backup", desc: ".json full backup exported from this journal" },
         ].map(opt =>
@@ -3075,7 +3144,7 @@ function AccountsPanel({ accounts, onSync, onRemove, onAdd, onAddAdjustment, onR
 
       /* File upload */
       React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: "var(--t3)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.04em" } },
-        importType === "mt5html" ? "Upload MT5 Trade History HTML" : importType === "matchtrader" ? "Upload Match Trader CSV" : importType === "tradovate" ? "Upload Tradovate CSV" : importType === "tradexy" ? "Upload Tradexy Journal CSV" : importType === "json" ? "Upload Tradexy JSON Backup" : "Upload Futures CSV"
+        importType === "mt5html" ? "Upload MT5 Trade History HTML" : importType === "matchtrader" ? "Upload Match Trader CSV" : importType === "tradovate" ? "Upload Tradovate CSV" : importType === "ctrader" ? "Upload cTrader Statement CSV" : importType === "tradexy" ? "Upload Tradexy Journal CSV" : importType === "json" ? "Upload Tradexy JSON Backup" : "Upload Futures CSV"
       ),
       React.createElement("div", { style: { border: "2px dashed var(--border2)", borderRadius: 10, padding: "16px", textAlign: "center", background: "var(--surface)", marginBottom: 12, cursor: "pointer", transition: "border-color .15s" },
         onClick: () => fileRef.current && fileRef.current.click(),
@@ -3093,6 +3162,7 @@ function AccountsPanel({ accounts, onSync, onRemove, onAdd, onAddAdjustment, onR
           importType === "mt5html" ? "MetaTrader 5 → Account History → Save as HTML" :
           importType === "matchtrader" ? "Match Trader → Closed Positions tab → Export CSV" :
           importType === "tradovate" ? "Tradovate → Performance → Trade History → Export CSV" :
+          importType === "ctrader" ? "cTrader → History → Export Statement → CSV" :
           importType === "tradexy" ? "Trade Log → ↓ CSV button — re-import your own journal export" :
           importType === "json" ? "Trade Log → ↓ JSON button — full backup with all fields preserved" :
           "Project X / NinjaTrader → Export Trades as CSV"
@@ -3107,6 +3177,7 @@ function AccountsPanel({ accounts, onSync, onRemove, onAdd, onAddAdjustment, onR
         React.createElement("div", null, "\u2022 Live MT5 accounts are protected — import into Demo only"),
         importType === "mt5html" && React.createElement("div", null, "\u2022 MT5: Go to History tab \u2192 right-click \u2192 Save as HTML Report"),
         importType === "matchtrader" && React.createElement("div", null, "\u2022 Match Trader: Closed Positions tab \u2192 Export CSV (includes ID, Symbol, Volume, Side, prices, Commission, Profit)"),
+        importType === "ctrader" && React.createElement("div", null, "\u2022 cTrader: History tab \u2192 Export Statement \u2192 CSV (reads the \u201CDeals\u201D section of the statement)"),
         importType === "tradexy" && React.createElement("div", null, "\u2022 Tradexy CSV: exported from Trade Log using the \u2193 CSV button"),
         importType === "json" && React.createElement("div", null, "\u2022 JSON Backup: exported from Trade Log using the \u2193 JSON button — all fields fully restored")
       ),
